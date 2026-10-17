@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle || 'Dashboard Admin' %> - SIPAT</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif']
+          },
+          colors: {
+            primary: {
+              DEFAULT: '#1d4ed8',
+              hover: '#1e40af',
+              light: '#eff6ff'
+            },
+            slate: {
+              750: '#293548',
+              850: '#172033'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      letter-spacing: -0.011em;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+
+    #sidebar {
+      width: 16rem;
+      overflow: hidden;
+      flex-shrink: 0;
+      transition: width .3s ease;
+    }
+
+    #sidebar.collapsed {
+      width: 0;
+      border-right-color: transparent;
+    }
+
+    #sidebar-inner {
+      width: 16rem;
+      min-height: 100%;
+    }
+
+    #menu-toggle .bar {
+      transform-origin: center;
+      transition: transform .3s ease, opacity .2s ease;
+    }
+
+    #menu-toggle.is-open .bar-1 { transform: translateY(6px) rotate(45deg); }
+    #menu-toggle.is-open .bar-2 { opacity: 0; }
+    #menu-toggle.is-open .bar-3 { transform: translateY(-6px) rotate(-45deg); }
+
+    #sidebar-backdrop { display: none; }
+
+    @media (max-width: 1023px) {
+      #sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 40;
+        box-shadow: 0 10px 40px rgba(15,23,42,.18);
+      }
+
+      #sidebar.collapsed { box-shadow: none; }
+
+      #sidebar-backdrop.show {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        background: rgba(15,23,42,.35);
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-[#f8fafc] text-slate-800 antialiased min-h-screen">
+  <div class="flex min-h-screen w-full">
+
+    <%- include('../partials/sidebar-admin', { currentPath }) %>
+
+    <div class="flex-1 flex flex-col min-w-0">
+      <%- include('../partials/header', { pageTitle }) %>
+
+      <main class="flex-1 min-w-0 p-4 sm:p-8 space-y-6 overflow-x-hidden">
+        <%- body %>
+      </main>
+    </div>
+
+  </div>
+
+  <script src="/js/admin-layout.js"></script>
+</body>
+</html>

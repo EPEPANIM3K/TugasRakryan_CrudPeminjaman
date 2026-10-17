@@ -1,0 +1,311 @@
+<!-- Main Content -->
+<div class="flex flex-col w-full space-y-6">
+  <!-- Header Section -->
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <span class="text-xs font-semibold text-brand-700 tracking-wider uppercase">Manajemen Inventaris Laboratorium</span>
+      </div>
+      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Kelola Alat &amp; Barang</h1>
+      <p class="text-sm text-slate-500 mt-1">Daftar seluruh instrumen, peralatan laboratorium, dan ketersediaan stok fisik.</p>
+    </div>
+    <!-- Action Buttons Right-Aligned -->
+    <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+      <button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm shadow-sm hover:bg-blue-700 transition-all active:scale-[0.99]" type="button">
+        <span class="material-symbols-outlined text-[18px]">add</span>
+        <span class="">Tambah Alat</span>
+      </button>
+      <button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm" type="button">
+        <span class="material-symbols-outlined text-[18px] text-slate-500">file_download</span>
+        <span class="">Excel</span>
+      </button>
+      <button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm" type="button">
+        <span class="material-symbols-outlined text-[18px] text-slate-500">qr_code</span>
+        <span class="">QR Scanner</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistic Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <!-- Card 1: Total Alat -->
+    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
+      <div class="flex items-center justify-between mb-3">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-brand-700">Statistik Alat</span>
+      </div>
+      <div class="my-2">
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight">1,420</div>
+        <div class="text-xs font-medium text-slate-400 mt-1">Tersebar di 8 Laboratorium Aktif</div>
+      </div>
+    </div>
+    <!-- Card 2: Kondisi Baik -->
+    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
+      <div class="flex items-center justify-between mb-3">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700">Kondisi Baik</span>
+      </div>
+      <div class="my-2">
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight">1,356</div>
+        <div class="text-xs font-medium text-slate-400 mt-1">Unit Siap Pakai &amp; Terkalibrasi</div>
+      </div>
+    </div>
+    <!-- Card 3: Sedang Dipinjam -->
+    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
+      <div class="flex items-center justify-between mb-3">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-violet-50 text-violet-700">Sedang Dipinjam</span>
+      </div>
+      <div class="my-2">
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight">176</div>
+        <div class="text-xs font-medium text-slate-400 mt-1">Oleh Mahasiswa &amp; Riset Dosen</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & Filter Toolbar -->
+  <div class="rounded-xl flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+    <div class="relative flex-1">
+      <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] pointer-events-none select-none">search</span>
+      <input class="w-full pl-10 pr-4 h-10 border border-slate-200 text-slate-700 text-sm rounded-lg placeholder-slate-400 focus:outline-none focus:bg-white focus:border-brand-700 transition-colors bg-white" placeholder="Cari nama alat, kode inventaris, atau merk..." type="text">
+    </div>
+    <div class="flex flex-col sm:flex-row items-center gap-3">
+      <div class="relative w-full sm:w-auto min-w-[200px]">
+        <select class="w-full h-10 appearance-none pl-3.5 pr-9 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg cursor-pointer focus:outline-none focus:border-brand-700 transition-colors">
+          <option value="">Semua Kategori</option>
+          <option value="biologi">Lab Biologi</option>
+          <option value="kimia-analisis">Kimia Analisis</option>
+          <option value="kimia-dasar">Kimia Dasar</option>
+          <option value="elektronik">Elektronik</option>
+          <option value="mesin">Mesin &amp; Presisi</option>
+        </select>
+        <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
+      </div>
+      <div class="relative w-full sm:w-auto min-w-[180px]">
+        <select class="w-full h-10 appearance-none pl-3.5 pr-9 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg cursor-pointer focus:outline-none focus:border-brand-700 transition-colors">
+          <option value="">Semua Status</option>
+          <option value="tersedia">Tersedia</option>
+          <option value="dipinjam">Sedang Dipinjam</option>
+          <option value="perawatan">Perawatan</option>
+        </select>
+        <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Table Container -->
+  <div class="bg-white rounded-xl border border-slate-200/90 shadow-sm overflow-hidden flex flex-col">
+    <div class="w-full overflow-x-auto overflow-y-auto max-h-[440px]">
+      <table class="w-full text-left border-collapse">
+        <thead class="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider text-[11px] font-semibold">
+          <tr>
+            <th class="w-12 px-3 py-3.5 text-center bg-slate-50 whitespace-nowrap" scope="col">NO</th>
+            <th class="w-28 px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">KODE</th>
+            <th class="min-w-[280px] w-[320px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">NAMA ALAT &amp; MERK</th>
+            <th class="min-w-[140px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">KATEGORI</th>
+            <th class="min-w-[160px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">TEMPAT / RUANGAN</th>
+            <th class="min-w-[130px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">LOKASI RAK</th>
+            <th class="min-w-[140px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">TGL DITAMBAHKAN</th>
+            <th class="w-28 px-3.5 py-3.5 text-center bg-slate-50 whitespace-nowrap" scope="col">TERSEDIA</th>
+            <th class="min-w-[90px] w-24 px-4 py-3.5 text-center bg-slate-50 whitespace-nowrap" scope="col">AKSI</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 text-sm bg-white">
+          <!-- Row 1 -->
+          <tr class="hover:bg-slate-50/80 transition-colors duration-150 group">
+            <td class="w-12 px-3 py-3.5 text-center font-mono text-xs text-slate-400">01</td>
+            <td class="w-28 px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">TL-001</td>
+            <td class="min-w-[280px] w-[320px] px-4 py-3.5 whitespace-nowrap">
+              <div class="flex flex-col whitespace-nowrap">
+                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Mikroskop Binokuler CX23</span>
+                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">Olympus</span>
+              </div>
+            </td>
+            <td class="min-w-[140px] px-4 py-3.5 text-slate-600 font-medium text-xs whitespace-nowrap">Lab Biologi</td>
+            <td class="min-w-[160px] px-4 py-3.5 text-slate-800 font-semibold text-xs whitespace-nowrap">Ruang Mikrobiologi</td>
+            <td class="min-w-[130px] px-4 py-3.5 text-slate-600 text-xs whitespace-nowrap">Rak A-02</td>
+            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
+              <div class="font-medium">10 Jan 2024</div>
+              <div class="text-slate-400">08:00 WIB</div>
+            </td>
+            <td class="w-28 px-3.5 py-3.5 text-center font-bold text-emerald-600 text-xs whitespace-nowrap">12 Unit</td>
+            <td class="min-w-[90px] w-24 px-4 py-3.5 text-center">
+              <div class="inline-flex items-center justify-center gap-1.5">
+                <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Edit" type="button">
+                  <span class="material-symbols-outlined text-[18px]">edit</span>
+                </button>
+                <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 2 -->
+          <tr class="hover:bg-slate-50/80 transition-colors duration-150 group">
+            <td class="w-12 px-3 py-3.5 text-center font-mono text-xs text-slate-400">02</td>
+            <td class="w-28 px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">TL-002</td>
+            <td class="min-w-[280px] w-[320px] px-4 py-3.5 whitespace-nowrap">
+              <div class="flex flex-col whitespace-nowrap">
+                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Spektrofotometer UV-Vis 1800</span>
+                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">Shimadzu</span>
+              </div>
+            </td>
+            <td class="min-w-[140px] px-4 py-3.5 text-slate-600 font-medium text-xs whitespace-nowrap">Kimia Analisis</td>
+            <td class="min-w-[160px] px-4 py-3.5 text-slate-800 font-semibold text-xs whitespace-nowrap">Lab Kimia Terpadu</td>
+            <td class="min-w-[130px] px-4 py-3.5 text-slate-600 text-xs whitespace-nowrap">Meja Instrumen 3</td>
+            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
+              <div class="font-medium">14 Feb 2024</div>
+              <div class="text-slate-400">09:30 WIB</div>
+            </td>
+            <td class="w-28 px-3.5 py-3.5 text-center font-bold text-emerald-600 text-xs whitespace-nowrap">2 Unit</td>
+            <td class="min-w-[90px] w-24 px-4 py-3.5 text-center">
+              <div class="inline-flex items-center justify-center gap-1.5">
+                <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Edit" type="button">
+                  <span class="material-symbols-outlined text-[18px]">edit</span>
+                </button>
+                <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 3 -->
+          <tr class="hover:bg-slate-50/80 transition-colors duration-150 group">
+            <td class="w-12 px-3 py-3.5 text-center font-mono text-xs text-slate-400">03</td>
+            <td class="w-28 px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">TL-003</td>
+            <td class="min-w-[280px] w-[320px] px-4 py-3.5 whitespace-nowrap">
+              <div class="flex flex-col whitespace-nowrap">
+                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Oscilloscope Digital 100MHz</span>
+                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">Tektronix TBS1102B</span>
+              </div>
+            </td>
+            <td class="min-w-[140px] px-4 py-3.5 text-slate-600 font-medium text-xs whitespace-nowrap">Elektronik</td>
+            <td class="min-w-[160px] px-4 py-3.5 text-slate-800 font-semibold text-xs whitespace-nowrap">Ruang RPL / IoT</td>
+            <td class="min-w-[130px] px-4 py-3.5 text-slate-600 text-xs whitespace-nowrap">Rak D-05</td>
+            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
+              <div class="font-medium">01 Mar 2024</div>
+              <div class="text-slate-400">10:15 WIB</div>
+            </td>
+            <td class="w-28 px-3.5 py-3.5 text-center font-bold text-brand-600 text-xs whitespace-nowrap">8 Unit</td>
+            <td class="min-w-[90px] w-24 px-4 py-3.5 text-center">
+              <div class="inline-flex items-center justify-center gap-1.5">
+                <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Edit" type="button">
+                  <span class="material-symbols-outlined text-[18px]">edit</span>
+                </button>
+                <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 4 -->
+          <tr class="hover:bg-slate-50/80 transition-colors duration-150 group">
+            <td class="w-12 px-3 py-3.5 text-center font-mono text-xs text-slate-400">04</td>
+            <td class="w-28 px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">TL-004</td>
+            <td class="min-w-[280px] w-[320px] px-4 py-3.5 whitespace-nowrap">
+              <div class="flex flex-col whitespace-nowrap">
+                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Centrifuge Mikro Kecepatan Tinggi</span>
+                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">Eppendorf 5424</span>
+              </div>
+            </td>
+            <td class="min-w-[140px] px-4 py-3.5 text-slate-600 font-medium text-xs whitespace-nowrap">Lab Biologi</td>
+            <td class="min-w-[160px] px-4 py-3.5 text-slate-800 font-semibold text-xs whitespace-nowrap">Ruang Kultur Jaringan</td>
+            <td class="min-w-[130px] px-4 py-3.5 text-slate-600 text-xs whitespace-nowrap">Rak B-01</td>
+            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
+              <div class="font-medium">12 Apr 2024</div>
+              <div class="text-slate-400">11:00 WIB</div>
+            </td>
+            <td class="w-28 px-3.5 py-3.5 text-center font-bold text-amber-600 text-xs whitespace-nowrap">0 Unit</td>
+            <td class="min-w-[90px] w-24 px-4 py-3.5 text-center">
+              <div class="inline-flex items-center justify-center gap-1.5">
+                <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Edit" type="button">
+                  <span class="material-symbols-outlined text-[18px]">edit</span>
+                </button>
+                <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 5 -->
+          <tr class="hover:bg-slate-50/80 transition-colors duration-150 group">
+            <td class="w-12 px-3 py-3.5 text-center font-mono text-xs text-slate-400">05</td>
+            <td class="w-28 px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">TL-005</td>
+            <td class="min-w-[280px] w-[320px] px-4 py-3.5 whitespace-nowrap">
+              <div class="flex flex-col whitespace-nowrap">
+                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Solder Station Digital Soldering</span>
+                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">Hakko FX-888D</span>
+              </div>
+            </td>
+            <td class="min-w-[140px] px-4 py-3.5 text-slate-600 font-medium text-xs whitespace-nowrap">Elektronik</td>
+            <td class="min-w-[160px] px-4 py-3.5 text-slate-800 font-semibold text-xs whitespace-nowrap">Ruang Workshop Teknik</td>
+            <td class="min-w-[130px] px-4 py-3.5 text-slate-600 text-xs whitespace-nowrap">Rak E-03</td>
+            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
+              <div class="font-medium">19 Mei 2024</div>
+              <div class="text-slate-400">13:30 WIB</div>
+            </td>
+            <td class="w-28 px-3.5 py-3.5 text-center font-bold text-emerald-600 text-xs whitespace-nowrap">18 Unit</td>
+            <td class="min-w-[90px] w-24 px-4 py-3.5 text-center">
+              <div class="inline-flex items-center justify-center gap-1.5">
+                <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Edit" type="button">
+                  <span class="material-symbols-outlined text-[18px]">edit</span>
+                </button>
+                <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 6 -->
+          <tr class="hover:bg-slate-50/80 transition-colors duration-150 group">
+            <td class="w-12 px-3 py-3.5 text-center font-mono text-xs text-slate-400">06</td>
+            <td class="w-28 px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">TL-006</td>
+            <td class="min-w-[280px] w-[320px] px-4 py-3.5 whitespace-nowrap">
+              <div class="flex flex-col whitespace-nowrap">
+                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Hotplate Stirrer Keramik</span>
+                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">Corning PC-420D</span>
+              </div>
+            </td>
+            <td class="min-w-[140px] px-4 py-3.5 text-slate-600 font-medium text-xs whitespace-nowrap">Kimia Dasar</td>
+            <td class="min-w-[160px] px-4 py-3.5 text-slate-800 font-semibold text-xs whitespace-nowrap">Lab Kimia Dasar</td>
+            <td class="min-w-[130px] px-4 py-3.5 text-slate-600 text-xs whitespace-nowrap">Rak C-04</td>
+            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
+              <div class="font-medium">25 Jun 2024</div>
+              <div class="text-slate-400">14:00 WIB</div>
+            </td>
+            <td class="w-28 px-3.5 py-3.5 text-center font-bold text-amber-600 text-xs whitespace-nowrap">1 Unit</td>
+            <td class="min-w-[90px] w-24 px-4 py-3.5 text-center">
+              <div class="inline-flex items-center justify-center gap-1.5">
+                <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Edit" type="button">
+                  <span class="material-symbols-outlined text-[18px]">edit</span>
+                </button>
+                <button class="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- Table Pagination Footer -->
+    <div class="px-6 py-4 bg-white border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
+      <div class="text-xs text-slate-500">
+        Menampilkan <span class="font-semibold text-slate-800">1-6</span> dari <span class="font-semibold text-slate-800">1,420</span> alat inventaris
+      </div>
+      <!-- Pagination Navigation -->
+      <div class="flex items-center gap-1.5">
+        <button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:bg-slate-50 transition-colors border border-slate-200/60" disabled="" type="button">
+          <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+          <span class="">Sebelumnya</span>
+        </button>
+        <button class="w-8 h-8 rounded-lg bg-brand-700 text-white font-semibold text-xs flex items-center justify-center shadow-sm" type="button">1</button>
+        <button class="w-8 h-8 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-xs flex items-center justify-center transition-colors border border-slate-200/60" type="button">2</button>
+        <button class="w-8 h-8 rounded-lg text-slate-600 hover:bg-slate-100 font-medium text-xs flex items-center justify-center transition-colors border border-slate-200/60" type="button">3</button>
+        <span class="px-1 text-slate-400 text-xs">...</span>
+        <button class="w-8 h-8 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-xs flex items-center justify-center transition-colors border border-slate-200/60" type="button">10</button>
+        <button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors border border-slate-200/60" type="button">
+          <span class="">Selanjutnya</span>
+          <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

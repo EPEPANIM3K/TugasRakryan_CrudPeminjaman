@@ -1,0 +1,187 @@
+<!-- Main Content Container -->
+<div class="flex flex-col w-full space-y-6">
+  <!-- Dashboard Content Header -->
+  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4" data-purpose="content-header">
+    <div>
+      <span class="text-xs font-semibold text-brand-700 tracking-wider uppercase block mb-1">
+        Ringkasan Sistem &amp; Operasional Lab
+      </span>
+      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">
+        Dashboard Admin
+      </h1>
+      <p class="text-sm text-slate-500 mt-1">
+        Ringkasan statistik keseluruhan inventaris, transaksi peminjaman, dan status pengembalian alat.
+      </p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+      <a href="/admin/alat"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm shadow-sm hover:bg-blue-700 transition-all active:scale-[0.99]">
+        <span class="material-symbols-outlined text-[18px]">add</span>
+        <span>Tambah Alat</span>
+      </a>
+
+      <button type="button"
+        class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm">
+        <span class="material-symbols-outlined text-[18px] text-emerald-600">file_download</span>
+        <span>Excel</span>
+      </button>
+
+      <button type="button"
+        class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm">
+        <span class="material-symbols-outlined text-[18px] text-slate-500">qr_code</span>
+        <span>QR Scanner</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistic Cards -->
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-5" data-purpose="summary-cards">
+
+    <!-- Statistik Alat -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between hover:border-slate-300 transition">
+      <div>
+        <span class="inline-block px-2.5 py-1 bg-slate-100 text-slate-600 rounded-full text-[11px] font-semibold tracking-wide">
+          Statistik Alat
+        </span>
+        <div class="mt-4 flex items-baseline space-x-2">
+          <span class="text-3xl font-extrabold text-slate-900 tracking-tight">1,420</span>
+          <span class="text-xs font-semibold text-slate-700">Total Alat</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-1">Tersebar di 8 Laboratorium Aktif</p>
+      </div>
+      <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 gap-2">
+        <span class="font-medium text-slate-700">Tersedia: 1,180 Unit</span>
+        <span class="text-slate-400">Update: Hari ini</span>
+      </div>
+    </div>
+
+    <!-- Statistik Peminjaman -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between hover:border-slate-300 transition">
+      <div>
+        <span class="inline-block px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-[11px] font-semibold tracking-wide">
+          Statistik Peminjaman
+        </span>
+        <div class="mt-4 flex items-baseline space-x-2">
+          <span class="text-3xl font-extrabold text-slate-900 tracking-tight">48</span>
+          <span class="text-xs font-semibold text-slate-700">Aktif Dipinjam</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-1">12 Menunggu Persetujuan Admin</p>
+      </div>
+      <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 gap-2">
+        <span class="font-medium text-slate-700">Hari ini: 15 Pengajuan</span>
+        <span class="text-slate-400">Update: Realtime</span>
+      </div>
+    </div>
+
+    <!-- Statistik Pengembalian -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between hover:border-slate-300 transition">
+      <div>
+        <span class="inline-block px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full text-[11px] font-semibold tracking-wide">
+          Statistik Pengembalian
+        </span>
+        <div class="mt-4 flex items-baseline space-x-2">
+          <span class="text-3xl font-extrabold text-slate-900 tracking-tight">6</span>
+          <span class="text-xs font-semibold text-slate-700">Terlambat</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-1">Perlu konfirmasi &amp; teguran sistem</p>
+      </div>
+      <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 gap-2">
+        <span class="font-medium text-slate-700">Selesai: 215 Transaksi</span>
+        <span class="text-slate-400">Bulan ini</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Grafik Aktivitas -->
+  <section class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-sm w-full min-w-0 overflow-hidden"
+    data-purpose="analytics-section">
+
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-5 border-b border-slate-100">
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+          <h3 class="text-sm font-bold text-slate-900 tracking-tight">
+            Tren Peminjaman &amp; Pengembalian Alat
+          </h3>
+        </div>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Aktivitas sirkulasi barang selama 7 hari kalender terakhir
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium">
+        <div class="flex items-center space-x-1.5">
+          <span class="w-3 h-3 rounded-md bg-blue-600 inline-block"></span>
+          <span class="text-slate-600">Dipinjam</span>
+        </div>
+        <div class="flex items-center space-x-1.5">
+          <span class="w-3 h-3 rounded-md bg-emerald-500 inline-block"></span>
+          <span class="text-slate-600">Dikembalikan</span>
+        </div>
+        <span class="px-2 py-0.5 bg-slate-100 rounded-md text-[11px] font-semibold text-slate-600">
+          Mingguan
+        </span>
+      </div>
+    </div>
+
+    <!-- Bar Chart -->
+    <div class="pt-9 sm:pt-8 pb-2">
+      <div class="h-56 w-full flex items-end justify-between gap-1.5 sm:gap-3 px-0 sm:px-2">
+
+        <% const chartData = [
+          { day: 'Sen', total: 28, borrowed: 65, returned: 50 },
+          { day: 'Sel', total: 35, borrowed: 80, returned: 60 },
+          { day: 'Rab', total: 46, borrowed: 95, returned: 72 },
+          { day: 'Kam', total: 32, borrowed: 75, returned: 68 },
+          { day: 'Jum', total: 40, borrowed: 88, returned: 84 },
+          { day: 'Sab', total: 18, borrowed: 40, returned: 38 },
+          { day: 'Min', total: 9, borrowed: 20, returned: 18 }
+        ]; %>
+
+        <% chartData.forEach((item, index) => { const peak = index === 2; %>
+          <div class="flex-1 min-w-0 flex flex-col items-center gap-2 group relative">
+            <% if (peak) { %>
+              <div class="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap z-10 bg-slate-800 text-white text-[10px] font-bold py-0.5 px-2 rounded-full shadow-sm">
+                Puncak: <%= item.total %>
+              </div>
+            <% } %>
+
+            <span class="text-[11px] font-semibold <%= peak ? 'text-blue-600' : 'text-slate-400 group-hover:text-blue-600' %>">
+              <%= item.total %>
+            </span>
+
+            <div class="w-full flex items-end justify-center gap-0.5 sm:gap-1.5 h-36 rounded-lg p-1 sm:p-1.5 transition <%= peak ? 'bg-blue-50/60 border border-blue-200' : 'bg-slate-50/80 group-hover:bg-blue-50/50' %>">
+              <div class="flex-1 max-w-[14px] bg-blue-600 rounded-t-md transition-all"
+                style="height: <%= item.borrowed %>%;"></div>
+              <div class="flex-1 max-w-[14px] bg-emerald-500 rounded-t-md transition-all"
+                style="height: <%= item.returned %>%;"></div>
+            </div>
+
+            <span class="text-xs font-semibold <%= peak ? 'text-slate-900' : 'text-slate-600' %>">
+              <%= item.day %>
+            </span>
+          </div>
+        <% }) %>
+
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between text-xs text-slate-500 gap-2.5">
+      <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+        <span class="text-slate-700 font-semibold">Total Dipinjam Minggu Ini:</span>
+        <span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold whitespace-nowrap">
+          208 Alat
+        </span>
+      </div>
+      <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+        <span class="text-slate-700 font-semibold">Total Dikembalikan:</span>
+        <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-bold whitespace-nowrap">
+          186 Alat
+        </span>
+        <span class="text-slate-400 font-medium whitespace-nowrap">(89.4% Siklus Lancar)</span>
+      </div>
+    </div>
+  </section>
+</div>
