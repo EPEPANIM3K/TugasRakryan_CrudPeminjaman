@@ -11,13 +11,13 @@
     </div>
     <!-- Action Buttons Right-Aligned -->
     <div class="flex flex-wrap items-center gap-2.5 shrink-0">
-      <button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm shadow-sm hover:bg-blue-700 transition-all active:scale-[0.99]" type="button">
+      <button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm shadow-sm hover:bg-blue-700 transition-all active:scale-[0.99]" id="btn-open-form-alat" type="button">
         <span class="material-symbols-outlined text-[18px]">add</span>
         <span class="">Tambah Alat</span>
       </button>
       <button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm" type="button">
         <span class="material-symbols-outlined text-[18px] text-slate-500">file_download</span>
-        <span class="">Excel</span>
+        <span class="">Ekspor Excel</span>
       </button>
       <button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm" type="button">
         <span class="material-symbols-outlined text-[18px] text-slate-500">qr_code</span>
@@ -309,3 +309,463 @@
     </div>
   </div>
 </div>
+
+<!-- Modal Tambah Alat & Barang -->
+<div id="modal-tambah-alat" class="fixed inset-0 z-[100] hidden">
+  <!-- Overlay with blur effect -->
+  <div id="modal-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300"></div>
+  
+  <!-- Modal Container -->
+  <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none">
+    <div id="modal-content" class="w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col overflow-visible pointer-events-auto transform transition-all duration-300 scale-95 opacity-0 translate-y-4">
+      <!-- Header Form -->
+      <div class="px-6 py-5 border-b border-slate-100 flex items-start justify-between bg-white shrink-0 rounded-t-2xl">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-lg font-bold text-slate-900 tracking-tight">Tambah Alat &amp; Barang Baru</h2>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">Lengkapi informasi inventaris instrumen laboratorium</p>
+        </div>
+        <button class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors" id="btn-close-modal" title="Tutup" type="button">
+          <svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+        </button>
+      </div>
+
+      <!-- Body Form -->
+      <form class="p-6 space-y-5 text-xs text-slate-700" id="form-tambah-alat">
+        <!-- A. Upload Foto Alat -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="font-semibold text-slate-800 text-xs">Foto / Gambar Alat <span class="text-[11px] font-normal text-slate-400">(Opsional)</span></label>
+            <span class="text-[10px] text-slate-400" id="file-size-info">PNG, JPG hingga 5MB</span>
+          </div>
+          <div class="border-2 border-dashed border-slate-200 hover:border-blue-500 rounded-xl p-4 text-center bg-slate-50/50 transition-colors flex flex-col items-center justify-center relative cursor-pointer group" id="dropzone-container">
+            <input accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" id="foto-input" type="file">
+            <!-- Placeholder State -->
+            <div class="flex flex-col items-center py-2" id="upload-placeholder">
+              <div class="w-12 h-12 rounded-full bg-blue-50 text-brand-700 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
+                <svg class="text-blue-600" fill="none" height="22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg"><rect height="18" rx="2" ry="2" width="18" x="3" y="3"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>
+              </div>
+              <p class="text-xs font-semibold text-slate-800"><span class="text-brand-700 underline">Pilih Foto / Unggah</span> atau seret foto ke sini</p>
+              <p class="text-[10px] text-slate-400 mt-0.5">Rekomendasi rasio 1:1 format bersih</p>
+            </div>
+            <!-- Preview State (Initially Hidden) -->
+            <div class="hidden w-full flex items-center justify-between gap-3 p-1.5 bg-white rounded-lg border border-slate-200" id="upload-preview-wrapper">
+              <div class="flex items-center gap-3 overflow-hidden">
+                <img alt="Preview Foto" class="w-12 h-12 rounded-lg object-cover border border-slate-200 shrink-0" id="foto-preview-img" src="">
+                <div class="text-left truncate">
+                  <p class="text-xs font-semibold text-slate-800 truncate" id="preview-filename">foto-alat.png</p>
+                  <span class="text-[10px] text-slate-400" id="preview-filesize">1.2 MB</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5 z-20 shrink-0">
+                <label class="px-2.5 py-1 text-[11px] font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-md cursor-pointer transition" for="foto-input">Ganti</label>
+                <button class="p-1 text-rose-500 hover:bg-rose-50 rounded-md transition" id="btn-remove-foto" title="Hapus Foto" type="button">
+                  <svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- B. Nama Alat -->
+        <div>
+          <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="input-nama-alat">Nama Alat <span class="text-rose-500">*</span></label>
+          <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="input-nama-alat" placeholder="Masukkan nama alat atau barang" required="" type="text">
+        </div>
+
+        <!-- C. Merek / Brand -->
+        <div>
+          <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="input-merek-alat">Merek <span class="text-rose-500">*</span></label>
+          <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="input-merek-alat" placeholder="Masukkan merek alat (contoh: Olympus, Shimadzu)" required="" type="text">
+        </div>
+
+        <!-- D. Kategori Alat (Dropdown Toggle) -->
+        <div class="relative" id="category-wrapper">
+          <label class="block font-semibold text-slate-800 text-xs mb-1.5">Kategori Alat <span class="text-rose-500">*</span></label>
+
+          <!-- Dropdown Trigger Button -->
+          <button class="w-full flex items-center justify-between px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-left focus:outline-none focus:ring-2 focus:ring-brand-500 transition shadow-2xs" id="btn-category-dropdown" type="button">
+            <span class="font-medium text-slate-900" id="selected-category-text">Pilih Kategori</span>
+            <svg class="text-slate-400 transition-transform duration-200" fill="none" height="16" id="category-chevron" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="m6 9 6 6 6-6"></path></svg>
+          </button>
+
+           <!-- Dropdown Panel (Hidden by default) -->
+           <div class="hidden absolute z-50 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden transition-all" id="category-dropdown-panel">
+             <!-- Option List -->
+             <div class="p-1.5 max-h-40 overflow-y-auto space-y-0.5" id="category-list-container">
+               <!-- Items will be injected via JS -->
+             </div>
+
+             <!-- Divider -->
+             <div class="border-t border-slate-100" id="category-divider"></div>
+
+             <!-- Button: Tambah Kategori (visible by default) -->
+             <div class="p-2 bg-slate-50/60" id="btn-add-category-container">
+               <button class="w-full flex items-center justify-center gap-2 py-1.5 text-slate-700 hover:text-brand-700 hover:bg-blue-50 rounded-lg text-xs font-semibold transition" id="btn-show-add-category-form" type="button">
+                 <svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+                 <span>Tambah Kategori</span>
+               </button>
+             </div>
+
+             <!-- Inline Form: Tambah Kategori (hidden by default) -->
+             <div class="hidden p-2 bg-slate-50/60 border-t border-slate-100" id="form-inline-kategori">
+               <div class="space-y-2">
+                 <div class="relative flex items-center">
+                   <input class="w-full pl-3 pr-8 py-1.5 bg-white border border-slate-300 rounded-lg text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500" id="input-new-category-name" placeholder="Nama kategori baru" type="text">
+                   <button class="absolute right-2 p-1 text-slate-400 hover:text-slate-600 rounded" id="btn-cancel-add-category" title="Batal" type="button">
+                     <svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                   </button>
+                 </div>
+                 <button class="w-full py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-sm transition" id="btn-save-category" type="button">
+                   Simpan
+                 </button>
+               </div>
+             </div>
+           </div>
+        </div>
+
+        <!-- E. Input Opsional Pendukung (Stok & Lokasi Rak) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="input-stok-awal">Jumlah / Stok Awal</label>
+            <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="input-stok-awal" min="0" placeholder="0" type="number" value="1">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="input-lokasi-rak">Lokasi Rak / Lemari</label>
+            <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="input-lokasi-rak" placeholder="Contoh: Rak A-02" type="text">
+          </div>
+        </div>
+      </form>
+
+      <!-- Footer Form -->
+      <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/60 flex items-center justify-end gap-3 shrink-0 rounded-b-2xl">
+        <button class="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 border border-slate-200 bg-white transition shadow-2xs" id="btn-cancel-modal" type="button">
+          Batal
+        </button>
+         <button class="px-6 py-2.5 rounded-xl text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 transition shadow-sm inline-flex items-center gap-2" form="form-tambah-alat" id="btn-submit-alat" type="submit">
+           <span>Simpan Alat</span>
+         </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Script Interactivity Modal Tambah Alat -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // --- Modal Elements ---
+  const modal = document.getElementById('modal-tambah-alat');
+  const modalOverlay = document.getElementById('modal-overlay');
+  const modalContent = document.getElementById('modal-content');
+  const btnOpenModal = document.getElementById('btn-open-form-alat');
+  const btnCloseModal = document.getElementById('btn-close-modal');
+  const btnCancelModal = document.getElementById('btn-cancel-modal');
+
+  // --- Modal Functions ---
+  function openModal() {
+    modal.classList.remove('hidden');
+    // Trigger reflow
+    void modalContent.offsetWidth;
+    // Add visible classes
+    modalContent.classList.remove('scale-95', 'opacity-0', 'translate-y-4');
+    modalContent.classList.add('scale-100', 'opacity-100', 'translate-y-0');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    // Remove visible classes
+    modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
+    modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
+    
+    // Wait for animation to complete
+    setTimeout(() => {
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+      // Reset form if needed
+    }, 300);
+  }
+
+  // --- Modal Event Listeners ---
+  btnOpenModal.addEventListener('click', function(e) {
+    e.preventDefault();
+    openModal();
+  });
+
+  btnCloseModal.addEventListener('click', closeModal);
+  btnCancelModal.addEventListener('click', closeModal);
+
+  // Close on overlay click
+  modalOverlay.addEventListener('click', closeModal);
+
+  // Close on escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+      closeModal();
+    }
+  });
+
+  // --- Category Dropdown Functionality ---
+  const btnCategoryDropdown = document.getElementById('btn-category-dropdown');
+  const categoryDropdownPanel = document.getElementById('category-dropdown-panel');
+  const categoryChevron = document.getElementById('category-chevron');
+  const categoryListContainer = document.getElementById('category-list-container');
+  const selectedCategoryText = document.getElementById('selected-category-text');
+  const inputNewCategory = document.getElementById('input-new-category-name');
+  const btnSaveCategory = document.getElementById('btn-save-category');
+  const btnCancelAddCategory = document.getElementById('btn-cancel-add-category');
+  const btnShowAddCategoryForm = document.getElementById('btn-show-add-category-form');
+  const formInlineKategori = document.getElementById('form-inline-kategori');
+  const btnAddCategoryContainer = document.getElementById('btn-add-category-container');
+  const categoryDivider = document.getElementById('category-divider');
+
+  // --- State Kategori ---
+  let categories = ['Elektronik', 'Perkakas', 'Pengukur'];
+  let selectedCategory = '';
+
+  // --- 1. Toggle Dropdown ---
+  btnCategoryDropdown.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const isHidden = categoryDropdownPanel.classList.contains('hidden');
+
+    if (isHidden) {
+      categoryDropdownPanel.classList.remove('hidden');
+      categoryChevron.classList.add('rotate-180');
+    } else {
+      categoryDropdownPanel.classList.add('hidden');
+      categoryChevron.classList.remove('rotate-180');
+    }
+  });
+
+  // Tutup dropdown jika klik di luar area
+  document.addEventListener('click', function(e) {
+    const wrapper = document.getElementById('category-wrapper');
+    if (!wrapper.contains(e.target)) {
+      hideDropdown();
+    }
+  });
+
+  // --- 2. Render List Kategori ---
+  function renderCategories() {
+    categoryListContainer.innerHTML = '';
+
+    if (categories.length === 0) {
+      // Hide divider and "Tambah Kategori" button when no categories
+      categoryDivider.classList.add('hidden');
+      btnAddCategoryContainer.classList.add('hidden');
+      categoryListContainer.innerHTML = '<div class="px-3 py-2 text-xs text-slate-400 text-center">Belum ada kategori. <button class="text-brand-700 underline ml-1 hover:text-brand-800" id="btn-add-category-empty">Tambah kategori pertama</button></div>';
+      
+      // Add event listener for the empty state button
+      setTimeout(() => {
+        const btnAddCategoryEmpty = document.getElementById('btn-add-category-empty');
+        if (btnAddCategoryEmpty) {
+          btnAddCategoryEmpty.addEventListener('click', showAddCategoryForm);
+        }
+      }, 100);
+      return;
+    } else {
+      // Show divider and "Tambah Kategori" button when there are categories
+      categoryDivider.classList.remove('hidden');
+      btnAddCategoryContainer.classList.remove('hidden');
+    }
+
+    categories.forEach(cat => {
+      const isSelected = cat === selectedCategory;
+      const item = document.createElement('div');
+      item.className = `group flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer text-xs transition ${
+        isSelected
+          ? 'font-semibold text-brand-700 bg-blue-50/70'
+          : 'font-medium text-slate-700 hover:bg-slate-50'
+      }`;
+
+      // Konten Kiri (Nama Kategori & Checkmark)
+      const leftContent = document.createElement('div');
+      leftContent.className = 'flex items-center gap-2';
+      leftContent.innerHTML = `<span>${cat}</span>`;
+      if (isSelected) {
+        leftContent.innerHTML += `<svg class="text-brand-700 ml-1" fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" width="14"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+      }
+
+      // Konten Kanan (Tombol Hapus - hanya tampil saat dropdown terbuka)
+      const rightContent = document.createElement('div');
+      const btnDelete = document.createElement('button');
+      btnDelete.className = 'p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition opacity-0 group-hover:opacity-100 focus:opacity-100';
+      btnDelete.title = "Hapus Kategori";
+      btnDelete.innerHTML = `<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="14"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>`;
+
+      btnDelete.addEventListener('click', function(e) {
+        e.stopPropagation(); // Mencegah trigger pilih kategori
+        if (confirm(`Apakah Anda yakin ingin menghapus kategori "${cat}"?`)) {
+          categories = categories.filter(c => c !== cat);
+          if (selectedCategory === cat) {
+            selectedCategory = '';
+            selectedCategoryText.textContent = 'Pilih Kategori';
+            selectedCategoryText.classList.remove('text-slate-900');
+          }
+          renderCategories();
+        }
+      });
+
+      rightContent.appendChild(btnDelete);
+      item.appendChild(leftContent);
+      item.appendChild(rightContent);
+
+      // Event Pilih Kategori
+      item.addEventListener('click', function() {
+        selectedCategory = cat;
+        selectedCategoryText.textContent = cat;
+        selectedCategoryText.classList.add('text-slate-900');
+        renderCategories();
+        hideDropdown();
+      });
+
+      categoryListContainer.appendChild(item);
+    });
+  }
+
+  // --- Fungsi untuk menampilkan form tambah kategori ---
+  function showAddCategoryForm() {
+    formInlineKategori.classList.remove('hidden');
+    btnAddCategoryContainer.classList.add('hidden');
+    categoryDivider.classList.add('hidden');
+    inputNewCategory.focus();
+  }
+
+  // --- Fungsi untuk menyembunyikan form tambah kategori ---
+  function hideAddCategoryForm() {
+    formInlineKategori.classList.add('hidden');
+    btnAddCategoryContainer.classList.remove('hidden');
+    categoryDivider.classList.remove('hidden');
+    inputNewCategory.value = '';
+  }
+
+  // --- Fungsi untuk menyembunyikan dropdown ---
+  function hideDropdown() {
+    categoryDropdownPanel.classList.add('hidden');
+    categoryChevron.classList.remove('rotate-180');
+    hideAddCategoryForm(); // Pastikan form tambah kategori juga disembunyikan
+  }
+
+  // --- 3. Fitur Tambah Kategori ---
+  
+  // Event listener untuk tombol "Tambah Kategori" yang muncul di dropdown
+  btnShowAddCategoryForm.addEventListener('click', function(e) {
+    e.stopPropagation();
+    showAddCategoryForm();
+  });
+
+  btnSaveCategory.addEventListener('click', function(e) {
+    e.preventDefault();
+    const newCat = inputNewCategory.value.trim();
+
+    if (!newCat) {
+      alert('Nama kategori tidak boleh kosong!');
+      return;
+    }
+
+    if (categories.some(c => c.toLowerCase() === newCat.toLowerCase())) {
+      alert(`Kategori "${newCat}" sudah ada!`);
+      return;
+    }
+
+    categories.push(newCat);
+    selectedCategory = newCat;
+    selectedCategoryText.textContent = newCat;
+    selectedCategoryText.classList.add('text-slate-900');
+    hideAddCategoryForm();
+    renderCategories();
+  });
+
+  btnCancelAddCategory.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    hideAddCategoryForm();
+  });
+
+  // --- 4. Inisialisasi Awal ---
+  renderCategories();
+
+  // --- Image Upload Functionality ---
+  const fotoInput = document.getElementById('foto-input');
+  const uploadPlaceholder = document.getElementById('upload-placeholder');
+  const uploadPreviewWrapper = document.getElementById('upload-preview-wrapper');
+  const fotoPreviewImg = document.getElementById('foto-preview-img');
+  const previewFilename = document.getElementById('preview-filename');
+  const previewFilesize = document.getElementById('preview-filesize');
+  const btnRemoveFoto = document.getElementById('btn-remove-foto');
+
+  fotoInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      // Validasi ukuran file (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Ukuran file terlalu besar! Maksimal 5MB.');
+        fotoInput.value = '';
+        return;
+      }
+
+      // Tampilkan preview
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        fotoPreviewImg.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+
+      // Update info filename dan size
+      previewFilename.textContent = file.name;
+      const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+      previewFilesize.textContent = `${fileSizeMB} MB`;
+
+      // Toggle tampilan
+      uploadPlaceholder.classList.add('hidden');
+      uploadPreviewWrapper.classList.remove('hidden');
+    }
+  });
+
+  btnRemoveFoto.addEventListener('click', function() {
+    fotoInput.value = '';
+    fotoPreviewImg.src = '';
+    uploadPlaceholder.classList.remove('hidden');
+    uploadPreviewWrapper.classList.add('hidden');
+  });
+
+  // --- Form Submit Handler ---
+  const formTambahAlat = document.getElementById('form-tambah-alat');
+  formTambahAlat.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    // Validasi form
+    const namaAlat = document.getElementById('input-nama-alat').value.trim();
+    const merekAlat = document.getElementById('input-merek-alat').value.trim();
+
+    if (!namaAlat) {
+      alert('Nama alat harus diisi!');
+      return;
+    }
+
+    if (!merekAlat) {
+      alert('Merek alat harus diisi!');
+      return;
+    }
+
+    if (!selectedCategory) {
+      alert('Kategori alat harus dipilih!');
+      return;
+    }
+
+    // Di sini bisa ditambahkan AJAX call untuk submit data ke server
+    // const formData = new FormData(formTambahAlat);
+    // formData.append('kategori', selectedCategory);
+
+    alert(`Data alat "${namaAlat}" dari merek ${merekAlat} dengan kategori ${selectedCategory} akan disimpan!`);
+    
+    // Reset form dan tutup modal
+    formTambahAlat.reset();
+    selectedCategory = '';
+    selectedCategoryText.textContent = 'Pilih Kategori';
+    uploadPlaceholder.classList.remove('hidden');
+    uploadPreviewWrapper.classList.add('hidden');
+    closeModal();
+  });
+});
+</script>
