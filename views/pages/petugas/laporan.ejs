@@ -21,6 +21,34 @@
     </div>
   </div>
 
+  <!-- Ringkasan (stats di atas) -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-5 no-print">
+    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-brand-700">Total Peminjaman</span>
+        <span class="material-symbols-outlined text-[20px] text-slate-300">inventory</span>
+      </div>
+      <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="summary-peminjaman">24</div>
+      <p class="text-xs font-medium text-slate-400 mt-1">Transaksi pada periode terpilih</p>
+    </div>
+    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700">Total Pengembalian</span>
+        <span class="material-symbols-outlined text-[20px] text-slate-300">assignment_turned_in</span>
+      </div>
+      <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="summary-pengembalian">19</div>
+      <p class="text-xs font-medium text-slate-400 mt-1">Alat sudah diverifikasi petugas</p>
+    </div>
+    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-rose-50 text-rose-700">Terlambat</span>
+        <span class="material-symbols-outlined text-[20px] text-slate-300">schedule</span>
+      </div>
+      <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="summary-terlambat">3</div>
+      <p class="text-xs font-medium text-slate-400 mt-1">Melewati tenggat pengembalian</p>
+    </div>
+  </div>
+
   <!-- Konfigurasi Laporan -->
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden no-print">
     <div class="px-5 py-4 border-b border-slate-100 flex items-center gap-3">
@@ -82,34 +110,6 @@
           <span>Terapkan &amp; Pratinjau</span>
         </button>
       </div>
-    </div>
-  </div>
-
-  <!-- Ringkasan -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-5 no-print">
-    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm">
-      <div class="flex items-center justify-between mb-3">
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-brand-700">Total Peminjaman</span>
-        <span class="material-symbols-outlined text-[20px] text-slate-300">inventory</span>
-      </div>
-      <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="summary-peminjaman">24</div>
-      <p class="text-xs font-medium text-slate-400 mt-1">Transaksi pada periode terpilih</p>
-    </div>
-    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm">
-      <div class="flex items-center justify-between mb-3">
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700">Total Pengembalian</span>
-        <span class="material-symbols-outlined text-[20px] text-slate-300">assignment_turned_in</span>
-      </div>
-      <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="summary-pengembalian">19</div>
-      <p class="text-xs font-medium text-slate-400 mt-1">Alat sudah diverifikasi petugas</p>
-    </div>
-    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm">
-      <div class="flex items-center justify-between mb-3">
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-rose-50 text-rose-700">Terlambat</span>
-        <span class="material-symbols-outlined text-[20px] text-slate-300">schedule</span>
-      </div>
-      <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="summary-terlambat">3</div>
-      <p class="text-xs font-medium text-slate-400 mt-1">Melewati tenggat pengembalian</p>
     </div>
   </div>
 
@@ -280,15 +280,15 @@ document.addEventListener('DOMContentLoaded', function () {
         { key: 'alat', label: 'Alat', align: 'left' },
         { key: 'lab', label: 'Laboratorium', align: 'left' },
         { key: 'tanggal', label: 'Tanggal', align: 'left' },
-        { key: 'durasi', label: 'Durasi', align: 'right' },
+        { key: 'n', label: 'n', align: 'right' },
         { key: 'status', label: 'Status', align: 'left' }
       ],
       rows: [
-        { kode: 'PJ-2025-0901', peminjam: 'Rina Ayu Lestari', alat: 'Mikroskop Binokuler CX23', lab: 'Lab Biologi', tanggal: '25 Feb 2025', durasi: '3 hari', status: 'Disetujui' },
-        { kode: 'PJ-2025-0902', peminjam: 'Fathur Rahman', alat: 'Oscilloscope Digital 100MHz', lab: 'Laboratorium Instrumentasi', tanggal: '25 Feb 2025', durasi: '2 hari', status: 'Disetujui' },
-        { kode: 'PJ-2025-0903', peminjam: 'Siti Nurhaliza, S.Si.', alat: 'Spektrofotometer UV-Vis 1800', lab: 'Lab Kimia', tanggal: '25 Feb 2025', durasi: '5 hari', status: 'Disetujui' },
-        { kode: 'PJ-2025-0904', peminjam: 'Bima Satria Wicaksono', alat: 'Solder Station Digital', lab: 'Laboratorium Instrumentasi', tanggal: '26 Feb 2025', durasi: '4 hari', status: 'Disetujui' },
-        { kode: 'PJ-2025-0905', peminjam: 'Allya Amanda Putri', alat: 'Autoclave Steam Sterilizer', lab: 'Lab Biologi', tanggal: '26 Feb 2025', durasi: '1 hari', status: 'Ditolak' }
+        { kode: 'PJ-2025-0901', peminjam: 'Rina Ayu Lestari', alat: 'Mikroskop Binokuler CX23', lab: 'Lab Biologi', tanggal: '25 Feb 2025', n: '3 hari', status: 'Disetujui' },
+        { kode: 'PJ-2025-0902', peminjam: 'Fathur Rahman', alat: 'Oscilloscope Digital 100MHz', lab: 'Laboratorium Instrumentasi', tanggal: '25 Feb 2025', n: '2 hari', status: 'Disetujui' },
+        { kode: 'PJ-2025-0903', peminjam: 'Siti Nurhaliza, S.Si.', alat: 'Spektrofotometer UV-Vis 1800', lab: 'Lab Kimia', tanggal: '25 Feb 2025', n: '5 hari', status: 'Disetujui' },
+        { kode: 'PJ-2025-0904', peminjam: 'Bima Satria Wicaksono', alat: 'Solder Station Digital', lab: 'Laboratorium Instrumentasi', tanggal: '26 Feb 2025', n: '4 hari', status: 'Disetujui' },
+        { kode: 'PJ-2025-0905', peminjam: 'Allya Amanda Putri', alat: 'Autoclave Steam Sterilizer', lab: 'Lab Biologi', tanggal: '26 Feb 2025', n: '1 hari', status: 'Ditolak' }
       ],
       note: 'Laporan peminjaman memuat seluruh permohonan yang diajukan pada periode terpilih beserta status keputusannya.'
     },
