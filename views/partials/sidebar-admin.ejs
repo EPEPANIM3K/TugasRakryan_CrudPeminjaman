@@ -17,7 +17,8 @@
             { name: 'Kelola Alat dan Barang', url: '/admin/alat', icon: '⬡' },
             { name: 'Kelola Pengguna', url: '/admin/users', icon: '♙' },
             { name: 'Kelola Peminjaman', url: '/admin/peminjaman', icon: '▤' },
-            { name: 'Kelola Pengembalian', url: '/admin/pengembalian', icon: '↙' }
+            { name: 'Kelola Pengembalian', url: '/admin/pengembalian', icon: '↙' },
+            { name: 'Log Aktivitas', url: '/admin/aktivitas', icon: '◷' }
           ]; %>
 
           <% menus.forEach(menu => { const active = currentPath === menu.url; %>
@@ -39,11 +40,11 @@
         </div>
         <span class="text-[11px] text-slate-400 font-mono">v0.1</span>
       </div>
-      <a href="/logout"
+      <button type="button" id="btn-open-logout"
          class="w-full flex items-center justify-center space-x-2 px-3 py-2 text-xs font-semibold text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-        <span>⇥</span>
+        <span class="material-symbols-outlined text-[18px]">logout</span>
         <span>Keluar / Logout</span>
-      </a>
+      </button>
     </div>
   </div>
 </aside>

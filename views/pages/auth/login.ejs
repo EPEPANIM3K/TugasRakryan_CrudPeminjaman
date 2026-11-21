@@ -216,17 +216,22 @@
   const demoAccounts = {
     admin: {
       user: 'admin1', pass: 'admin123', name: 'Admin Utama Lab',
-      desc: 'Role Administrator Terpilih: Akses penuh inventaris, approval, & kalibrasi.'
+      desc: 'Role Administrator Terpilih: Akses penuh inventaris, approval, & kalibrasi.',
+      redirect: '/admin'
     },
     petugas: {
       user: 'pet01', pass: 'pet01pass', name: 'Petugas Bengkel',
-      desc: 'Role Petugas: Pengembalian, serah terima alat, & log verifikasi fisik.'
+      desc: 'Role Petugas: Pengembalian, serah terima alat, & log verifikasi fisik.',
+      redirect: '/petugas/peminjaman'
     },
     peminjam: {
       user: 'budi_s', pass: 'mhs2026', name: 'Peminjam (Mahasiswa)',
-      desc: 'Role Mahasiswa: Pengajuan pinjam instrumen, riwayat, & kuota unit.'
+      desc: 'Role Mahasiswa: Pengajuan pinjam instrumen, riwayat, & kuota unit.',
+      redirect: '/peminjam/alat'
     }
   };
+
+  let selectedRole = 'admin';
 
   const TAB_BASE = "rounded-lg px-2 py-2 text-center font-headline text-xs transition-all duration-150 ";
   const TAB_ACTIVE = TAB_BASE + "bg-primary text-white shadow-sm font-semibold";
@@ -241,6 +246,7 @@
     const account = demoAccounts[roleKey];
     if (!account) return;
 
+    selectedRole = roleKey;
     document.getElementById('usernameInput').value = account.user;
     document.getElementById('passwordInput').value = account.pass;
 
@@ -277,23 +283,28 @@
     e.preventDefault();
     const btn = document.getElementById('submitLoginBtn');
     const userVal = document.getElementById('usernameInput').value.trim();
+    const passVal = document.getElementById('passwordInput').value;
+
+    let targetRole = selectedRole;
+    if (userVal === demoAccounts.petugas.user || passVal === demoAccounts.petugas.pass) targetRole = 'petugas';
+    if (userVal === demoAccounts.admin.user || passVal === demoAccounts.admin.pass) targetRole = 'admin';
+    if (userVal === demoAccounts.peminjam.user || passVal === demoAccounts.peminjam.pass) targetRole = 'peminjam';
 
     btn.disabled = true;
     btn.classList.add('opacity-80', 'cursor-wait');
     btn.innerHTML = `<span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span><span>Memverifikasi Otoritas...</span>`;
 
     setTimeout(() => {
-      btn.disabled = false;
-      btn.classList.remove('opacity-80', 'cursor-wait');
-      btn.innerHTML = `<span>Masuk ke Sistem</span><span class="material-symbols-outlined text-[18px]">login</span>`;
-
       showToast(
         'Autentikasi Berhasil',
-        `Selamat datang kembali, ${userVal}. Mengarahkan ke Dashboard Operasional...`,
+        `Selamat datang kembali, ${userVal || demoAccounts[targetRole].name}. Mengarahkan ke dashboard...`,
         'verified',
         'green'
       );
-    }, 900);
+      setTimeout(() => {
+        window.location.href = demoAccounts[targetRole].redirect;
+      }, 500);
+    }, 700);
   }
 
   let toastTimer = null;

@@ -1,0 +1,499 @@
+<!-- Main Content -->
+<div class="flex flex-col w-full space-y-6">
+  <!-- Header Section -->
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 no-print">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <span class="text-xs font-semibold text-brand-700 tracking-wider uppercase">Pelaporan Operasional Laboratorium</span>
+      </div>
+      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Mencetak Laporan</h1>
+      <p class="text-sm text-slate-500 mt-1">Susun laporan peminjaman, pengembalian, dan inventaris alat berdasarkan periode tertentu, lalu cetak atau unduh sebagai berkas.</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+      <button id="btn-export-laporan" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm" type="button">
+        <span class="material-symbols-outlined text-[18px] text-slate-500">file_download</span>
+        <span>Unduh CSV</span>
+      </button>
+      <button id="btn-print-laporan" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-700 hover:bg-brand-600 text-white text-sm font-semibold transition-colors shadow-sm shadow-blue-600/20" type="button">
+        <span class="material-symbols-outlined text-[18px]">print</span>
+        <span>Cetak Laporan</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Konfigurasi Laporan -->
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden no-print">
+    <div class="px-5 py-4 border-b border-slate-100 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined text-[20px]">tune</span>
+      </div>
+      <div>
+        <h2 class="text-sm font-bold text-slate-900 leading-tight">Konfigurasi Laporan</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Tentukan jenis laporan, laboratorium, dan rentang tanggal.</p>
+      </div>
+    </div>
+
+    <div class="p-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div>
+          <label for="jenis-laporan" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-2">Jenis Laporan</label>
+          <div class="relative">
+            <select id="jenis-laporan" class="w-full h-10 appearance-none pl-3.5 pr-9 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg cursor-pointer focus:outline-none focus:border-brand-700 transition-colors">
+              <option value="peminjaman">Laporan Peminjaman Alat</option>
+              <option value="pengembalian">Laporan Pengembalian Alat</option>
+              <option value="inventaris">Laporan Inventaris Alat</option>
+            </select>
+            <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
+          </div>
+        </div>
+
+        <div>
+          <label for="lab-laporan" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-2">Laboratorium</label>
+          <div class="relative">
+            <select id="lab-laporan" class="w-full h-10 appearance-none pl-3.5 pr-9 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg cursor-pointer focus:outline-none focus:border-brand-700 transition-colors">
+              <option value="Semua Laboratorium">Semua Laboratorium</option>
+              <option value="Lab Biologi">Lab Biologi</option>
+              <option value="Lab Kimia">Lab Kimia</option>
+              <option value="Laboratorium Instrumentasi">Laboratorium Instrumentasi</option>
+              <option value="Lab Biokimia">Lab Biokimia</option>
+            </select>
+            <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
+          </div>
+        </div>
+
+        <div>
+          <label for="tanggal-mulai" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-2">Dari Tanggal</label>
+          <input id="tanggal-mulai" type="date" value="2025-02-01" class="w-full h-10 px-3.5 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg focus:outline-none focus:border-brand-700 transition-colors">
+        </div>
+
+        <div>
+          <label for="tanggal-akhir" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-2">Sampai Tanggal</label>
+          <input id="tanggal-akhir" type="date" value="2025-02-28" class="w-full h-10 px-3.5 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg focus:outline-none focus:border-brand-700 transition-colors">
+        </div>
+      </div>
+
+      <div class="mt-5 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <p class="text-xs text-slate-500 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px] text-slate-400">info</span>
+          <span>Pratinjau di bawah akan diperbarui sesuai konfigurasi yang dipilih.</span>
+        </p>
+        <button id="btn-terapkan-laporan" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition-colors shadow-sm" type="button">
+          <span class="material-symbols-outlined text-[16px]">sync</span>
+          <span>Terapkan &amp; Pratinjau</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ringkasan -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-5 no-print">
+    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-brand-700">Total Peminjaman</span>
+        <span class="material-symbols-outlined text-[20px] text-slate-300">inventory</span>
+      </div>
+      <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="summary-peminjaman">24</div>
+      <p class="text-xs font-medium text-slate-400 mt-1">Transaksi pada periode terpilih</p>
+    </div>
+    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700">Total Pengembalian</span>
+        <span class="material-symbols-outlined text-[20px] text-slate-300">assignment_turned_in</span>
+      </div>
+      <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="summary-pengembalian">19</div>
+      <p class="text-xs font-medium text-slate-400 mt-1">Alat sudah diverifikasi petugas</p>
+    </div>
+    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-rose-50 text-rose-700">Terlambat</span>
+        <span class="material-symbols-outlined text-[20px] text-slate-300">schedule</span>
+      </div>
+      <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="summary-terlambat">3</div>
+      <p class="text-xs font-medium text-slate-400 mt-1">Melewati tenggat pengembalian</p>
+    </div>
+  </div>
+
+  <!-- Pratinjau Laporan (Printable) -->
+  <div id="laporan-print-area" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+    <!-- Kop Laporan -->
+    <div class="px-6 sm:px-8 py-6 border-b-2 border-slate-900">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-3.5">
+          <div class="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-2xl shrink-0">S</div>
+          <div>
+            <h2 class="text-lg font-extrabold tracking-tight text-slate-900 leading-none">SIPAT</h2>
+            <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mt-1">Sistem Peminjaman Alat Terpadu</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Laboratorium Terpadu &bull; Universitas Nusantara</p>
+          </div>
+        </div>
+        <div class="text-left sm:text-right">
+          <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Dokumen</p>
+          <p class="text-sm font-bold text-slate-900 mt-0.5" id="print-doc-code">LAP/PMJ/2025/02</p>
+          <p class="text-[11px] text-slate-500 mt-0.5">Dicetak: <span id="print-date">20 Nov 2026</span></p>
+        </div>
+      </div>
+
+      <div class="mt-5">
+        <h3 class="text-base font-bold text-slate-900" id="print-title">Laporan Peminjaman Alat</h3>
+        <p class="text-xs text-slate-500 mt-1">
+          Periode <span id="print-period" class="font-semibold text-slate-700">01 Feb 2025 &ndash; 28 Feb 2025</span>
+          &bull; <span id="print-lab" class="font-semibold text-slate-700">Semua Laboratorium</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Ringkasan cetak -->
+    <div class="px-6 sm:px-8 py-4 border-b border-slate-200 grid grid-cols-3 gap-4 bg-slate-50/60">
+      <div>
+        <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Total Data</p>
+        <p class="text-lg font-extrabold text-slate-900" id="print-total">5</p>
+      </div>
+      <div>
+        <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Disetujui / Selesai</p>
+        <p class="text-lg font-extrabold text-emerald-600" id="print-approved">4</p>
+      </div>
+      <div>
+        <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Ditolak / Terlambat</p>
+        <p class="text-lg font-extrabold text-rose-600" id="print-rejected">1</p>
+      </div>
+    </div>
+
+    <!-- Tabel Pratinjau -->
+    <div class="w-full overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead class="bg-white border-b border-slate-200 text-slate-500 uppercase tracking-wider text-[10px] font-bold">
+          <tr id="preview-head"></tr>
+        </thead>
+        <tbody id="preview-body" class="divide-y divide-slate-100 text-xs text-slate-700"></tbody>
+        <tfoot id="preview-foot" class="bg-slate-50/60"></tfoot>
+      </table>
+    </div>
+
+    <!-- Tanda Tangan -->
+    <div class="px-6 sm:px-8 py-8 border-t border-slate-200">
+      <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-8">
+        <div class="text-xs text-slate-500 max-w-md leading-relaxed">
+          <p class="font-bold text-slate-700 mb-1">Catatan:</p>
+          <p id="print-note">Laporan ini dihasilkan otomatis oleh SIPAT berdasarkan data transaksi yang tercatat pada periode terpilih. Dokumen digunakan untuk keperluan administrasi laboratorium.</p>
+        </div>
+        <div class="text-center shrink-0 sm:mr-8">
+          <p class="text-xs text-slate-500">Petugas Laboratorium</p>
+          <div class="h-16"></div>
+          <p class="text-sm font-bold text-slate-900 underline decoration-slate-300 underline-offset-4">Petugas Bengkel</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">NIP. 19870412 201903 1 002</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  @media print {
+    @page { size: A4 landscape; margin: 12mm; }
+
+    body { background: #ffffff !important; }
+
+    #sidebar,
+    #sidebar-backdrop,
+    header,
+    #modal-logout,
+    #laporan-toast,
+    .no-print {
+      display: none !important;
+    }
+
+    .flex.min-h-screen.w-full > .flex-1 {
+      width: 100% !important;
+    }
+
+    main {
+      padding: 0 !important;
+      overflow: visible !important;
+    }
+
+    #laporan-print-area {
+      border: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      overflow: visible !important;
+    }
+
+    #laporan-print-area table {
+      font-size: 10px;
+    }
+
+    #laporan-print-area thead {
+      display: table-header-group;
+    }
+
+    #laporan-print-area tr {
+      page-break-inside: avoid;
+    }
+  }
+</style>
+
+<!-- Toast -->
+<div id="laporan-toast" class="fixed bottom-6 right-6 z-[110] hidden max-w-sm w-[calc(100%-3rem)] sm:w-auto no-print">
+  <div id="laporan-toast-inner" class="bg-white border border-emerald-200 rounded-xl shadow-lg shadow-slate-900/10 p-4 flex items-start gap-3">
+    <div id="laporan-toast-icon-wrap" class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+      <span id="laporan-toast-icon" class="material-symbols-outlined text-[20px]">check_circle</span>
+    </div>
+    <div class="min-w-0">
+      <p id="laporan-toast-title" class="text-sm font-bold text-slate-900">Berhasil</p>
+      <p id="laporan-toast-message" class="text-xs text-slate-500 mt-0.5 leading-relaxed">Pratinjau laporan diperbarui.</p>
+    </div>
+    <button id="btn-close-laporan-toast" type="button" class="p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors shrink-0" aria-label="Tutup notifikasi">
+      <span class="material-symbols-outlined text-[16px]">close</span>
+    </button>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const jenisSelect = document.getElementById('jenis-laporan');
+  const labSelect = document.getElementById('lab-laporan');
+  const startInput = document.getElementById('tanggal-mulai');
+  const endInput = document.getElementById('tanggal-akhir');
+  const btnTerapkan = document.getElementById('btn-terapkan-laporan');
+  const btnPrint = document.getElementById('btn-print-laporan');
+  const btnExport = document.getElementById('btn-export-laporan');
+
+  const headEl = document.getElementById('preview-head');
+  const bodyEl = document.getElementById('preview-body');
+  const footEl = document.getElementById('preview-foot');
+
+  const toast = document.getElementById('laporan-toast');
+  const toastInner = document.getElementById('laporan-toast-inner');
+  const toastIconWrap = document.getElementById('laporan-toast-icon-wrap');
+  const toastIcon = document.getElementById('laporan-toast-icon');
+  const toastTitle = document.getElementById('laporan-toast-title');
+  const toastMessage = document.getElementById('laporan-toast-message');
+  const btnCloseToast = document.getElementById('btn-close-laporan-toast');
+
+  const REPORTS = {
+    peminjaman: {
+      title: 'Laporan Peminjaman Alat',
+      codePrefix: 'LAP/PMJ',
+      columns: [
+        { key: 'kode', label: 'Kode', align: 'left' },
+        { key: 'peminjam', label: 'Peminjam', align: 'left' },
+        { key: 'alat', label: 'Alat', align: 'left' },
+        { key: 'lab', label: 'Laboratorium', align: 'left' },
+        { key: 'tanggal', label: 'Tanggal', align: 'left' },
+        { key: 'durasi', label: 'Durasi', align: 'right' },
+        { key: 'status', label: 'Status', align: 'left' }
+      ],
+      rows: [
+        { kode: 'PJ-2025-0901', peminjam: 'Rina Ayu Lestari', alat: 'Mikroskop Binokuler CX23', lab: 'Lab Biologi', tanggal: '25 Feb 2025', durasi: '3 hari', status: 'Disetujui' },
+        { kode: 'PJ-2025-0902', peminjam: 'Fathur Rahman', alat: 'Oscilloscope Digital 100MHz', lab: 'Laboratorium Instrumentasi', tanggal: '25 Feb 2025', durasi: '2 hari', status: 'Disetujui' },
+        { kode: 'PJ-2025-0903', peminjam: 'Siti Nurhaliza, S.Si.', alat: 'Spektrofotometer UV-Vis 1800', lab: 'Lab Kimia', tanggal: '25 Feb 2025', durasi: '5 hari', status: 'Disetujui' },
+        { kode: 'PJ-2025-0904', peminjam: 'Bima Satria Wicaksono', alat: 'Solder Station Digital', lab: 'Laboratorium Instrumentasi', tanggal: '26 Feb 2025', durasi: '4 hari', status: 'Disetujui' },
+        { kode: 'PJ-2025-0905', peminjam: 'Allya Amanda Putri', alat: 'Autoclave Steam Sterilizer', lab: 'Lab Biologi', tanggal: '26 Feb 2025', durasi: '1 hari', status: 'Ditolak' }
+      ],
+      note: 'Laporan peminjaman memuat seluruh permohonan yang diajukan pada periode terpilih beserta status keputusannya.'
+    },
+    pengembalian: {
+      title: 'Laporan Pengembalian Alat',
+      codePrefix: 'LAP/KMB',
+      columns: [
+        { key: 'kode', label: 'Kode', align: 'left' },
+        { key: 'peminjam', label: 'Peminjam', align: 'left' },
+        { key: 'alat', label: 'Alat', align: 'left' },
+        { key: 'lab', label: 'Laboratorium', align: 'left' },
+        { key: 'tenggat', label: 'Tenggat', align: 'left' },
+        { key: 'terlambat', label: 'Keterlambatan', align: 'right' },
+        { key: 'status', label: 'Status', align: 'left' }
+      ],
+      rows: [
+        { kode: 'PJ-2025-0812', peminjam: 'Rina Ayu Lestari', alat: 'Mikroskop Binokuler CX23', lab: 'Lab Biologi', tenggat: '28 Feb 2025', terlambat: '0 hari', status: 'Dipinjam' },
+        { kode: 'PJ-2025-0805', peminjam: 'Fathur Rahman', alat: 'Oscilloscope Digital 100MHz', lab: 'Laboratorium Instrumentasi', tenggat: '20 Feb 2025', terlambat: '+5 hari', status: 'Terlambat' },
+        { kode: 'PJ-2025-0818', peminjam: 'Siti Nurhaliza, S.Si.', alat: 'Spektrofotometer UV-Vis 1800', lab: 'Lab Kimia', tenggat: '25 Feb 2025', terlambat: '0 hari', status: 'Selesai' },
+        { kode: 'PJ-2025-0791', peminjam: 'Bima Satria Wicaksono', alat: 'Solder Station Digital', lab: 'Laboratorium Instrumentasi', tenggat: '18 Feb 2025', terlambat: '+7 hari', status: 'Terlambat' },
+        { kode: 'PJ-2025-0760', peminjam: 'Nadia Puspita', alat: 'Neraca Analitik Digital', lab: 'Lab Kimia', tenggat: '15 Feb 2025', terlambat: '0 hari', status: 'Selesai' }
+      ],
+      note: 'Laporan pengembalian memuat status serah terima alat serta keterlambatan yang tercatat pada periode terpilih.'
+    },
+    inventaris: {
+      title: 'Laporan Inventaris Alat',
+      codePrefix: 'LAP/INV',
+      columns: [
+        { key: 'kode', label: 'Kode Alat', align: 'left' },
+        { key: 'alat', label: 'Nama Alat', align: 'left' },
+        { key: 'merk', label: 'Merk', align: 'left' },
+        { key: 'lab', label: 'Laboratorium', align: 'left' },
+        { key: 'total', label: 'Total Unit', align: 'right' },
+        { key: 'dipinjam', label: 'Dipinjam', align: 'right' },
+        { key: 'status', label: 'Kondisi', align: 'left' }
+      ],
+      rows: [
+        { kode: 'ALT-0012', alat: 'Mikroskop Binokuler CX23', merk: 'Olympus', lab: 'Lab Biologi', total: '8', dipinjam: '2', status: 'Baik' },
+        { kode: 'ALT-0034', alat: 'Oscilloscope Digital 100MHz', merk: 'Tektronix', lab: 'Laboratorium Instrumentasi', total: '6', dipinjam: '1', status: 'Baik' },
+        { kode: 'ALT-0021', alat: 'Spektrofotometer UV-Vis 1800', merk: 'Shimadzu', lab: 'Lab Kimia', total: '3', dipinjam: '1', status: 'Baik' },
+        { kode: 'ALT-0045', alat: 'Solder Station Digital', merk: 'Hakko', lab: 'Laboratorium Instrumentasi', total: '10', dipinjam: '3', status: 'Baik' },
+        { kode: 'ALT-0008', alat: 'Centrifuge Mikro Kecepatan Tinggi', merk: 'Eppendorf', lab: 'Lab Biokimia', total: '2', dipinjam: '1', status: 'Perawatan' }
+      ],
+      note: 'Laporan inventaris memuat jumlah unit, unit yang sedang dipinjam, dan kondisi alat per laboratorium.'
+    }
+  };
+
+  let toastTimer = null;
+
+  function showToast(title, message) {
+    if (!toast) return;
+    toastInner.className = 'bg-white border border-emerald-200 rounded-xl shadow-lg shadow-slate-900/10 p-4 flex items-start gap-3';
+    toastIconWrap.className = 'w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0';
+    toastIcon.textContent = 'check_circle';
+    toastTitle.textContent = title;
+    toastMessage.textContent = message;
+    toast.classList.remove('hidden');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toast.classList.add('hidden'); }, 4200);
+  }
+
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+  function formatDate(value) {
+    if (!value) return '-';
+    const parts = value.split('-');
+    if (parts.length !== 3) return value;
+    const day = String(parseInt(parts[2], 10)).padStart(2, '0');
+    const month = MONTHS[parseInt(parts[1], 10) - 1] || parts[1];
+    return day + ' ' + month + ' ' + parts[0];
+  }
+
+  function fullToday() {
+    const now = new Date();
+    return String(now.getDate()).padStart(2, '0') + ' ' + MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+  }
+
+  function statusClass(status) {
+    const value = (status || '').toLowerCase();
+    if (['disetujui', 'selesai', 'baik'].indexOf(value) !== -1) return 'text-emerald-700 bg-emerald-50 border border-emerald-200';
+    if (['ditolak', 'terlambat', 'perawatan'].indexOf(value) !== -1) return 'text-rose-700 bg-rose-50 border border-rose-200';
+    return 'text-blue-700 bg-blue-50 border border-blue-200';
+  }
+
+  function currentReport() {
+    return REPORTS[jenisSelect.value] || REPORTS.peminjaman;
+  }
+
+  function filteredRows(report) {
+    const lab = labSelect.value;
+    if (!lab || lab === 'Semua Laboratorium') return report.rows;
+    return report.rows.filter(function (row) { return row.lab === lab; });
+  }
+
+  function render() {
+    const report = currentReport();
+    const rows = filteredRows(report);
+
+    document.getElementById('print-title').textContent = report.title;
+    document.getElementById('print-period').textContent = formatDate(startInput.value) + ' \u2013 ' + formatDate(endInput.value);
+    document.getElementById('print-lab').textContent = labSelect.value || 'Semua Laboratorium';
+    document.getElementById('print-date').textContent = fullToday();
+
+    const period = (startInput.value || '').slice(0, 7).replace('-', '/');
+    document.getElementById('print-doc-code').textContent = report.codePrefix + '/' + (period || '2025/02');
+    document.getElementById('print-note').textContent = report.note;
+
+    const successKeys = ['Disetujui', 'Selesai', 'Baik'];
+    const failKeys = ['Ditolak', 'Terlambat', 'Perawatan'];
+    const success = rows.filter(function (row) { return successKeys.indexOf(row.status) !== -1; }).length;
+    const failed = rows.filter(function (row) { return failKeys.indexOf(row.status) !== -1; }).length;
+
+    document.getElementById('print-total').textContent = String(rows.length);
+    document.getElementById('print-approved').textContent = String(success);
+    document.getElementById('print-rejected').textContent = String(failed);
+
+    headEl.innerHTML = report.columns.map(function (column) {
+      return '<th class="px-4 py-3 whitespace-nowrap ' + (column.align === 'right' ? 'text-right' : 'text-left') + '">' + column.label.toUpperCase() + '</th>';
+    }).join('');
+
+    if (rows.length === 0) {
+      bodyEl.innerHTML = '<tr><td colspan="' + report.columns.length + '" class="px-4 py-10 text-center text-slate-500">' +
+        'Tidak ada data pada laboratorium dan periode yang dipilih.</td></tr>';
+    } else {
+      bodyEl.innerHTML = rows.map(function (row, index) {
+        return '<tr class="hover:bg-slate-50/70 transition-colors">' + report.columns.map(function (column) {
+          const value = row[column.key] || '-';
+          if (column.key === 'status') {
+            return '<td class="px-4 py-3 whitespace-nowrap"><span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold ' + statusClass(value) + '">' + value + '</span></td>';
+          }
+          if (column.key === 'kode') {
+            return '<td class="px-4 py-3 whitespace-nowrap font-mono text-[11px] font-semibold text-brand-700">' + value + '</td>';
+          }
+          if (column.align === 'right') {
+            return '<td class="px-4 py-3 whitespace-nowrap text-right font-mono">' + value + '</td>';
+          }
+          return '<td class="px-4 py-3 whitespace-nowrap">' + value + '</td>';
+        }).join('') + '</tr>';
+      }).join('');
+    }
+
+    footEl.innerHTML = '<tr class="border-t-2 border-slate-200 font-semibold text-slate-700">' +
+      report.columns.map(function (column, index) {
+        if (index === 0) return '<td class="px-4 py-3">Jumlah</td>';
+        if (index === report.columns.length - 1) return '<td class="px-4 py-3">' + rows.length + ' data</td>';
+        return '<td class="px-4 py-3"></td>';
+      }).join('') + '</tr>';
+
+    const peminjamanCount = REPORTS.peminjaman.rows.length;
+    const pengembalianCount = REPORTS.pengembalian.rows.length;
+    document.getElementById('summary-peminjaman').textContent = String(peminjamanCount * 4 + 4);
+    document.getElementById('summary-pengembalian').textContent = String(pengembalianCount * 4 - 1);
+    document.getElementById('summary-terlambat').textContent = String(REPORTS.pengembalian.rows.filter(function (row) { return row.status === 'Terlambat'; }).length);
+  }
+
+  if (btnTerapkan) {
+    btnTerapkan.addEventListener('click', function () {
+      if (startInput.value && endInput.value && startInput.value > endInput.value) {
+        showToast('Periode Tidak Valid', 'Tanggal mulai tidak boleh melebihi tanggal akhir.');
+        return;
+      }
+      render();
+      showToast('Pratinjau Diperbarui', 'Laporan ' + currentReport().title.toLowerCase() + ' berhasil disusun.');
+    });
+  }
+
+  [jenisSelect, labSelect, startInput, endInput].forEach(function (el) {
+    if (!el) return;
+    el.addEventListener('change', render);
+  });
+
+  if (btnPrint) {
+    btnPrint.addEventListener('click', function () {
+      render();
+      window.print();
+    });
+  }
+
+  if (btnExport) {
+    btnExport.addEventListener('click', function () {
+      const report = currentReport();
+      const rows = filteredRows(report);
+      const lines = [report.columns.map(function (column) { return '"' + column.label + '"'; }).join(',')];
+
+      rows.forEach(function (row) {
+        lines.push(report.columns.map(function (column) {
+          return '"' + String(row[column.key] || '').replace(/"/g, '""') + '"';
+        }).join(','));
+      });
+
+      const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.download = jenisSelect.value + '-laporan-petugas.csv';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      showToast('Ekspor Berhasil', 'Laporan berhasil diunduh sebagai berkas CSV.');
+    });
+  }
+
+  if (btnCloseToast) btnCloseToast.addEventListener('click', function () { toast.classList.add('hidden'); });
+
+  render();
+});
+</script>

@@ -1,0 +1,720 @@
+<!-- Main Content -->
+<div class="flex flex-col w-full space-y-6">
+  <!-- Header Section -->
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <span class="text-xs font-semibold text-brand-700 tracking-wider uppercase">Pengembalian Instrumen Laboratorium</span>
+      </div>
+      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Pengembalian Alat</h1>
+      <p class="text-sm text-slate-500 mt-1">Ajukan pengembalian alat yang masih Anda pinjam, lalu serahkan langsung ke petugas laboratorium untuk diverifikasi.</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+      <a href="/peminjam/riwayat" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm">
+        <span class="material-symbols-outlined text-[18px] text-slate-500">history</span>
+        <span>Riwayat Pengembalian</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between hover:border-blue-400 transition-colors cursor-default group">
+      <div class="space-y-1">
+        <p class="text-sm font-medium text-slate-500 group-hover:text-blue-600 transition-colors">Peminjaman Aktif</p>
+        <h3 id="stat-aktif" class="text-2xl font-bold text-slate-800">3</h3>
+        <p class="text-[11px] text-slate-400">Alat yang masih ada di tangan Anda</p>
+      </div>
+      <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 group-hover:scale-110 transition-transform shrink-0">
+        <span class="material-symbols-outlined text-[28px]">assignment_return</span>
+      </div>
+    </div>
+    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between hover:border-amber-400 transition-colors cursor-default group">
+      <div class="space-y-1">
+        <p class="text-sm font-medium text-slate-500 group-hover:text-amber-600 transition-colors">Jatuh Tempo</p>
+        <h3 id="stat-jatuh-tempo" class="text-2xl font-bold text-slate-800">2</h3>
+        <p id="stat-jatuh-tempo-note" class="text-[11px] text-slate-400">1 hari ini &middot; 1 terlambat 2 hari</p>
+      </div>
+      <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100 group-hover:scale-110 transition-transform shrink-0">
+        <span class="material-symbols-outlined text-[28px]">schedule</span>
+      </div>
+    </div>
+    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between hover:border-violet-400 transition-colors cursor-default group">
+      <div class="space-y-1">
+        <p class="text-sm font-medium text-slate-500 group-hover:text-violet-600 transition-colors">Menunggu Verifikasi</p>
+        <h3 id="stat-menunggu" class="text-2xl font-bold text-slate-800">1</h3>
+        <p class="text-[11px] text-slate-400">Sudah diajukan, menunggu cek petugas</p>
+      </div>
+      <div class="w-12 h-12 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center border border-violet-100 group-hover:scale-110 transition-transform shrink-0">
+        <span class="material-symbols-outlined text-[28px]">pending_actions</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overdue Alert -->
+  <div id="overdue-alert" class="bg-rose-50 border border-rose-200 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+    <div class="w-11 h-11 rounded-xl bg-white text-rose-600 border border-rose-200 flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-[24px]">notification_important</span>
+    </div>
+    <div class="flex-1 min-w-0">
+      <h3 class="text-sm font-bold text-rose-900">1 alat melewati batas pengembalian</h3>
+      <p class="text-xs text-rose-700 mt-0.5 leading-relaxed">
+        <span class="font-semibold">Spektrofotometer UV-Vis 1800</span> terlambat 2 hari. Denda berjalan
+        <span class="font-semibold">Rp 10.000</span> (Rp 5.000/hari). Segera kembalikan ke petugas lab.
+      </p>
+    </div>
+    <button type="button" data-target="card-spektro" class="overdue-return-btn shrink-0 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold transition-colors shadow-sm">
+      <span class="material-symbols-outlined text-[18px]">assignment_return</span>
+      <span>Kembalikan Sekarang</span>
+    </button>
+  </div>
+
+  <!-- Filter Toolbar -->
+  <div class="flex flex-col lg:flex-row lg:items-center gap-4">
+    <div class="flex-1 flex flex-col md:flex-row gap-3 w-full">
+      <div class="flex-1 min-w-[240px] relative">
+        <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] pointer-events-none select-none">search</span>
+        <input id="search-loan" class="w-full h-10 pl-10 pr-4 bg-white border border-slate-200 text-slate-900 text-sm rounded-lg focus:outline-none focus:border-blue-600 transition-colors placeholder:text-slate-400" placeholder="Cari nama alat, kode pinjam, atau lab..." type="text">
+      </div>
+      <div class="relative w-full sm:w-auto min-w-[200px]">
+        <select id="filter-status" class="w-full h-10 appearance-none pl-3.5 pr-9 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg cursor-pointer focus:outline-none focus:border-blue-600 transition-colors">
+          <option value="">Semua Status</option>
+          <option value="Sedang Dipinjam">Sedang Dipinjam</option>
+          <option value="Jatuh Tempo">Jatuh Tempo</option>
+          <option value="Terlambat">Terlambat</option>
+          <option value="Menunggu Verifikasi">Menunggu Verifikasi</option>
+        </select>
+        <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loan List -->
+  <div class="space-y-4">
+    <div class="flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5">
+        <h2 class="text-base font-bold text-slate-900">Peminjaman Saya</h2>
+        <span id="loan-count" class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-semibold">4 transaksi</span>
+      </div>
+      <span class="text-xs text-slate-400 hidden sm:block">Pilih alat lalu ajukan pengembalian</span>
+    </div>
+
+    <div id="loan-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <!-- Card 1 -->
+      <article id="card-mikroskop" class="return-card bg-white rounded-xl overflow-hidden flex flex-col border border-slate-100 shadow-sm" data-nama="Mikroskop Binokuler CX23" data-kode="PJ-2025-0891" data-status="Sedang Dipinjam" data-lab="Lab Biologi" data-tempo="25 Feb 2025" data-jumlah="1" data-icon="biotech">
+        <div class="relative aspect-[4/3] bg-slate-100 rounded-lg m-3 mb-0 overflow-hidden">
+          <img class="w-full h-full object-cover rounded-lg" alt="Mikroskop Binokuler CX23" src="/images/alat/placeholder.svg" onerror="this.onerror=null;this.src='/images/alat/placeholder.svg';">
+          <div class="absolute top-3 left-3">
+            <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-sm text-slate-800 border border-slate-200 text-xs font-semibold shadow-sm inline-flex items-center gap-1">1 Unit</span>
+          </div>
+          <div class="absolute bottom-3 left-3">
+            <span class="status-badge px-2.5 py-1 rounded-md bg-blue-50/95 backdrop-blur-sm text-blue-700 border border-blue-200 text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Sedang Dipinjam
+            </span>
+          </div>
+        </div>
+        <div class="p-4 flex flex-col flex-1">
+          <div class="space-y-2 flex-1">
+            <div class="flex items-center gap-1 text-slate-500 text-xs truncate">
+              <span class="material-symbols-outlined text-[15px] shrink-0">room</span>
+              <span class="truncate">Lab Biologi</span>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold text-slate-900 line-clamp-1">Mikroskop Binokuler CX23</h3>
+              <p class="text-xs text-slate-500 truncate mt-0.5">PJ-2025-0891 &middot; Olympus</p>
+            </div>
+            <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2.5 space-y-1.5">
+              <div class="flex items-center justify-between gap-2 text-[11px]">
+                <span class="text-slate-500">Tgl Pinjam</span>
+                <span class="font-semibold text-slate-800">18 Feb 2025</span>
+              </div>
+              <div class="flex items-center justify-between gap-2 text-[11px]">
+                <span class="text-slate-500">Jatuh Tempo</span>
+                <span class="font-semibold text-slate-800">25 Feb 2025</span>
+              </div>
+              <div class="flex items-center justify-end pt-0.5">
+                <span class="due-note text-[11px] font-semibold text-emerald-600 inline-flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 2 hari lagi
+                </span>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn-return mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors">
+            <span class="material-symbols-outlined text-[18px]">assignment_return</span>
+            <span>Kembalikan</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- Card 2 -->
+      <article id="card-hotplate" class="return-card bg-white rounded-xl overflow-hidden flex flex-col border border-slate-100 shadow-sm" data-nama="Hotplate Stirrer Keramik" data-kode="PJ-2025-0884" data-status="Jatuh Tempo" data-lab="Lab Kimia" data-tempo="22 Feb 2025" data-jumlah="1" data-icon="science">
+        <div class="relative aspect-[4/3] bg-slate-100 rounded-lg m-3 mb-0 overflow-hidden">
+          <img class="w-full h-full object-cover rounded-lg" alt="Hotplate Stirrer Keramik" src="/images/alat/placeholder.svg" onerror="this.onerror=null;this.src='/images/alat/placeholder.svg';">
+          <div class="absolute top-3 left-3">
+            <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-sm text-slate-800 border border-slate-200 text-xs font-semibold shadow-sm inline-flex items-center gap-1">1 Unit</span>
+          </div>
+          <div class="absolute bottom-3 left-3">
+            <span class="status-badge px-2.5 py-1 rounded-md bg-amber-50/95 backdrop-blur-sm text-amber-700 border border-amber-200 text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Jatuh Tempo
+            </span>
+          </div>
+        </div>
+        <div class="p-4 flex flex-col flex-1">
+          <div class="space-y-2 flex-1">
+            <div class="flex items-center gap-1 text-slate-500 text-xs truncate">
+              <span class="material-symbols-outlined text-[15px] shrink-0">room</span>
+              <span class="truncate">Lab Kimia</span>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold text-slate-900 line-clamp-1">Hotplate Stirrer Keramik</h3>
+              <p class="text-xs text-slate-500 truncate mt-0.5">PJ-2025-0884 &middot; Corning PC-420D</p>
+            </div>
+            <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2.5 space-y-1.5">
+              <div class="flex items-center justify-between gap-2 text-[11px]">
+                <span class="text-slate-500">Tgl Pinjam</span>
+                <span class="font-semibold text-slate-800">15 Feb 2025</span>
+              </div>
+              <div class="flex items-center justify-between gap-2 text-[11px]">
+                <span class="text-slate-500">Jatuh Tempo</span>
+                <span class="font-semibold text-slate-800">22 Feb 2025</span>
+              </div>
+              <div class="flex items-center justify-end pt-0.5">
+                <span class="due-note text-[11px] font-semibold text-amber-600 inline-flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Hari ini
+                </span>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn-return mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors">
+            <span class="material-symbols-outlined text-[18px]">assignment_return</span>
+            <span>Kembalikan</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- Card 3 -->
+      <article id="card-spektro" class="return-card bg-white rounded-xl overflow-hidden flex flex-col border border-slate-100 shadow-sm" data-nama="Spektrofotometer UV-Vis 1800" data-kode="PJ-2025-0870" data-status="Terlambat" data-lab="Lab Kimia" data-tempo="20 Feb 2025" data-jumlah="1" data-icon="experiment" data-denda="Rp 10.000">
+        <div class="relative aspect-[4/3] bg-slate-100 rounded-lg m-3 mb-0 overflow-hidden">
+          <img class="w-full h-full object-cover rounded-lg" alt="Spektrofotometer UV-Vis 1800" src="/images/alat/placeholder.svg" onerror="this.onerror=null;this.src='/images/alat/placeholder.svg';">
+          <div class="absolute top-3 left-3">
+            <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-sm text-slate-800 border border-slate-200 text-xs font-semibold shadow-sm inline-flex items-center gap-1">1 Unit</span>
+          </div>
+          <div class="absolute bottom-3 left-3">
+            <span class="status-badge px-2.5 py-1 rounded-md bg-rose-50/95 backdrop-blur-sm text-rose-700 border border-rose-200 text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm">
+              <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Terlambat
+            </span>
+          </div>
+        </div>
+        <div class="p-4 flex flex-col flex-1">
+          <div class="space-y-2 flex-1">
+            <div class="flex items-center gap-1 text-slate-500 text-xs truncate">
+              <span class="material-symbols-outlined text-[15px] shrink-0">room</span>
+              <span class="truncate">Lab Kimia</span>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold text-slate-900 line-clamp-1">Spektrofotometer UV-Vis 1800</h3>
+              <p class="text-xs text-slate-500 truncate mt-0.5">PJ-2025-0870 &middot; Shimadzu</p>
+            </div>
+            <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2.5 space-y-1.5">
+              <div class="flex items-center justify-between gap-2 text-[11px]">
+                <span class="text-slate-500">Tgl Pinjam</span>
+                <span class="font-semibold text-slate-800">08 Feb 2025</span>
+              </div>
+              <div class="flex items-center justify-between gap-2 text-[11px]">
+                <span class="text-slate-500">Jatuh Tempo</span>
+                <span class="font-semibold text-slate-800">20 Feb 2025</span>
+              </div>
+              <div class="flex items-center justify-end pt-0.5">
+                <span class="due-note text-[11px] font-semibold text-rose-600 inline-flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Terlambat 2 hari
+                </span>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn-return mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors">
+            <span class="material-symbols-outlined text-[18px]">assignment_return</span>
+            <span>Kembalikan</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- Card 4 -->
+      <article id="card-solder" class="return-card bg-white rounded-xl overflow-hidden flex flex-col border border-slate-100 shadow-sm" data-nama="Solder Station Digital" data-kode="PJ-2025-0865" data-status="Menunggu Verifikasi" data-lab="Lab Instrumentasi" data-tempo="19 Feb 2025" data-jumlah="1" data-icon="handyman">
+        <div class="relative aspect-[4/3] bg-slate-100 rounded-lg m-3 mb-0 overflow-hidden">
+          <img class="w-full h-full object-cover rounded-lg" alt="Solder Station Digital" src="/images/alat/placeholder.svg" onerror="this.onerror=null;this.src='/images/alat/placeholder.svg';">
+          <div class="absolute top-3 left-3">
+            <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-sm text-slate-800 border border-slate-200 text-xs font-semibold shadow-sm inline-flex items-center gap-1">1 Unit</span>
+          </div>
+          <div class="absolute bottom-3 left-3">
+            <span class="status-badge px-2.5 py-1 rounded-md bg-violet-50/95 backdrop-blur-sm text-violet-700 border border-violet-200 text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm">
+              <span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span> Menunggu Verifikasi
+            </span>
+          </div>
+        </div>
+        <div class="p-4 flex flex-col flex-1">
+          <div class="space-y-2 flex-1">
+            <div class="flex items-center gap-1 text-slate-500 text-xs truncate">
+              <span class="material-symbols-outlined text-[15px] shrink-0">room</span>
+              <span class="truncate">Lab Instrumentasi</span>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold text-slate-900 line-clamp-1">Solder Station Digital</h3>
+              <p class="text-xs text-slate-500 truncate mt-0.5">PJ-2025-0865 &middot; Hakko FX-888D</p>
+            </div>
+            <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2.5 space-y-1.5">
+              <div class="flex items-center justify-between gap-2 text-[11px]">
+                <span class="text-slate-500">Tgl Pinjam</span>
+                <span class="font-semibold text-slate-800">12 Feb 2025</span>
+              </div>
+              <div class="flex items-center justify-between gap-2 text-[11px]">
+                <span class="text-slate-500">Jatuh Tempo</span>
+                <span class="font-semibold text-slate-800">19 Feb 2025</span>
+              </div>
+              <div class="flex items-center justify-end pt-0.5">
+                <span class="due-note text-[11px] font-semibold text-violet-600 inline-flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span> Menunggu cek petugas
+                </span>
+              </div>
+            </div>
+          </div>
+          <button type="button" disabled class="btn-return mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-100 text-slate-500 text-sm font-semibold cursor-not-allowed">
+            <span class="material-symbols-outlined text-[18px]">hourglass_top</span>
+            <span>Menunggu Verifikasi</span>
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <!-- Empty State -->
+    <div id="loan-empty-state" class="hidden bg-white border border-slate-200 rounded-xl p-10 text-center">
+      <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center">
+        <span class="material-symbols-outlined text-[28px]">search_off</span>
+      </div>
+      <h3 class="text-base font-semibold text-slate-800">Tidak ada transaksi ditemukan</h3>
+      <p class="text-sm text-slate-500 mt-1">Coba ubah kata kunci pencarian atau filter status.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Ajukan Pengembalian -->
+<div id="modal-return" class="fixed inset-0 z-[100] hidden">
+  <div id="modal-return-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"></div>
+  <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none">
+    <div id="modal-return-content" class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col overflow-hidden pointer-events-auto transform transition-all duration-300 scale-95 opacity-0 translate-y-4 max-h-[92vh]">
+      <div class="px-6 py-5 border-b border-slate-100 flex items-start justify-between bg-white shrink-0 gap-4">
+        <div class="flex items-start gap-3.5">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-[22px]">assignment_return</span>
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-slate-900 leading-tight">Ajukan Pengembalian</h2>
+            <p class="text-xs text-slate-500 mt-1">Pastikan kondisi alat sesuai sebelum diserahkan ke petugas lab.</p>
+          </div>
+        </div>
+        <button id="btn-close-return" type="button" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors shrink-0" aria-label="Tutup modal">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <form id="form-return" class="flex flex-col min-h-0 flex-1" novalidate>
+        <div class="p-6 space-y-5 overflow-y-auto">
+          <!-- Item Summary -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-start gap-3.5">
+            <div class="w-11 h-11 rounded-xl bg-white text-blue-600 border border-slate-200 flex items-center justify-center shrink-0">
+              <span id="modal-item-icon" class="material-symbols-outlined text-[24px]">biotech</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 id="modal-item-name" class="text-sm font-bold text-slate-900 leading-tight truncate">Mikroskop Binokuler CX23</h3>
+              <p id="modal-item-code" class="text-xs text-slate-500 mt-0.5 truncate">PJ-2025-0891 &middot; Lab Biologi</p>
+              <p class="text-xs text-slate-500 mt-1.5">
+                Jatuh tempo: <span id="modal-item-tempo" class="font-semibold text-slate-700">25 Feb 2025</span>
+              </p>
+            </div>
+          </div>
+
+          <div id="modal-denda-box" class="hidden bg-rose-50 border border-rose-200 rounded-xl px-4 py-3 flex items-start gap-2.5">
+            <span class="material-symbols-outlined text-[18px] text-rose-600 shrink-0 mt-0.5">payments</span>
+            <p class="text-xs text-rose-700 leading-relaxed">Estimasi denda keterlambatan: <span id="modal-denda" class="font-bold">Rp 10.000</span>. Denda final ditentukan petugas saat verifikasi.</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="input-jumlah" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Jumlah Unit</label>
+              <div class="relative">
+                <input id="input-jumlah" name="jumlah" type="number" min="1" value="1" class="w-full h-10 pl-3.5 pr-14 bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:outline-none focus:border-blue-600 transition-colors">
+                <span class="absolute inset-y-0 right-3 flex items-center text-xs font-medium text-slate-400 pointer-events-none">unit</span>
+              </div>
+            </div>
+            <div>
+              <label for="input-metode" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Metode Serah Terima</label>
+              <div class="relative">
+                <select id="input-metode" name="metode" class="w-full h-10 appearance-none pl-3.5 pr-9 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg cursor-pointer focus:outline-none focus:border-blue-600 transition-colors">
+                  <option value="Serah langsung ke petugas lab">Serah langsung ke petugas lab</option>
+                  <option value="Titipkan di loker pengembalian">Titipkan di loker pengembalian</option>
+                </select>
+                <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <span class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Kondisi Alat Saat Dikembalikan</span>
+            <div id="condition-group" class="space-y-2.5">
+              <label class="condition-option flex items-start gap-3 p-3 rounded-xl border border-slate-200 bg-white cursor-pointer transition-all hover:border-slate-300">
+                <input class="sr-only" name="kondisi" type="radio" value="Baik &amp; Lengkap">
+                <span class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-[20px]">check_circle</span>
+                </span>
+                <span class="min-w-0">
+                  <span class="block text-sm font-semibold text-slate-800">Baik &amp; Lengkap</span>
+                  <span class="block text-xs text-slate-500 mt-0.5">Tidak ada kerusakan, seluruh aksesori lengkap.</span>
+                </span>
+              </label>
+              <label class="condition-option flex items-start gap-3 p-3 rounded-xl border border-slate-200 bg-white cursor-pointer transition-all hover:border-slate-300">
+                <input class="sr-only" name="kondisi" type="radio" value="Rusak Ringan">
+                <span class="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-[20px]">build</span>
+                </span>
+                <span class="min-w-0">
+                  <span class="block text-sm font-semibold text-slate-800">Rusak Ringan</span>
+                  <span class="block text-xs text-slate-500 mt-0.5">Ada lecet, komponen longgar, atau perlu kalibrasi ulang.</span>
+                </span>
+              </label>
+              <label class="condition-option flex items-start gap-3 p-3 rounded-xl border border-slate-200 bg-white cursor-pointer transition-all hover:border-slate-300">
+                <input class="sr-only" name="kondisi" type="radio" value="Hilang / Tidak Lengkap">
+                <span class="w-9 h-9 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-[20px]">report</span>
+                </span>
+                <span class="min-w-0">
+                  <span class="block text-sm font-semibold text-slate-800">Hilang / Tidak Lengkap</span>
+                  <span class="block text-xs text-slate-500 mt-0.5">Ada komponen atau unit yang tidak ikut dikembalikan.</span>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label for="input-catatan" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Catatan Tambahan <span class="text-slate-400 font-medium normal-case tracking-normal">(opsional)</span></label>
+            <textarea id="input-catatan" name="catatan" rows="3" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:outline-none focus:border-blue-600 transition-colors resize-none placeholder:text-slate-400" placeholder="Contoh: alat diserahkan bersama kabel dan kotak penyimpanan."></textarea>
+          </div>
+
+          <label class="flex items-start gap-2.5 cursor-pointer select-none">
+            <input id="agree-return" type="checkbox" class="mt-0.5 w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+            <span class="text-xs text-slate-600 leading-relaxed">Saya menyatakan data pengembalian di atas benar dan bersedia menanggung denda apabila terdapat kerusakan atau kekurangan sesuai ketentuan laboratorium.</span>
+          </label>
+
+          <p id="form-error" class="hidden text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-200 rounded-lg px-3.5 py-2.5"></p>
+        </div>
+
+        <div class="px-6 py-4 bg-slate-50/70 border-t border-slate-100 flex flex-col-reverse sm:flex-row items-center justify-end gap-2.5 shrink-0">
+          <button id="btn-cancel-return" type="button" class="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 border border-slate-200 bg-white transition shadow-2xs">Batal</button>
+          <button type="submit" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm shadow-blue-500/25 inline-flex items-center justify-center gap-2 transition-all active:scale-[0.99]">
+            <span class="material-symbols-outlined text-[16px]">send</span>
+            <span>Kirim Pengembalian</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="return-toast" class="fixed bottom-6 right-6 z-[110] hidden max-w-sm w-[calc(100%-3rem)] sm:w-auto">
+  <div class="bg-white border border-emerald-200 rounded-xl shadow-lg shadow-slate-900/10 p-4 flex items-start gap-3">
+    <div class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-[20px]">check_circle</span>
+    </div>
+    <div class="min-w-0">
+      <p class="text-sm font-bold text-slate-900">Pengembalian diajukan</p>
+      <p id="toast-message" class="text-xs text-slate-500 mt-0.5 leading-relaxed">Menunggu verifikasi petugas laboratorium.</p>
+    </div>
+    <button id="btn-close-toast" type="button" class="p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors shrink-0" aria-label="Tutup notifikasi">
+      <span class="material-symbols-outlined text-[16px]">close</span>
+    </button>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const cards = Array.from(document.querySelectorAll('.return-card'));
+  const grid = document.getElementById('loan-grid');
+  const emptyState = document.getElementById('loan-empty-state');
+  const searchInput = document.getElementById('search-loan');
+  const statusFilter = document.getElementById('filter-status');
+  const loanCount = document.getElementById('loan-count');
+
+  const modal = document.getElementById('modal-return');
+  const modalContent = document.getElementById('modal-return-content');
+  const modalOverlay = document.getElementById('modal-return-overlay');
+  const form = document.getElementById('form-return');
+  const formError = document.getElementById('form-error');
+  const btnCloseModal = document.getElementById('btn-close-return');
+  const btnCancelModal = document.getElementById('btn-cancel-return');
+  const conditionOptions = Array.from(document.querySelectorAll('.condition-option'));
+  const dendaBox = document.getElementById('modal-denda-box');
+  const dendaText = document.getElementById('modal-denda');
+  const toast = document.getElementById('return-toast');
+  const toastMessage = document.getElementById('toast-message');
+  const btnCloseToast = document.getElementById('btn-close-toast');
+
+  let activeCard = null;
+  let toastTimer = null;
+
+  const ACTIVE_STATUSES = ['Sedang Dipinjam', 'Jatuh Tempo', 'Terlambat'];
+
+  function refreshStats() {
+    const active = cards.filter(function (card) {
+      return ACTIVE_STATUSES.indexOf(card.dataset.status) !== -1;
+    }).length;
+    const due = cards.filter(function (card) {
+      return card.dataset.status === 'Jatuh Tempo' || card.dataset.status === 'Terlambat';
+    }).length;
+    const waiting = cards.filter(function (card) {
+      return card.dataset.status === 'Menunggu Verifikasi';
+    }).length;
+
+    const statAktif = document.getElementById('stat-aktif');
+    const statJatuhTempo = document.getElementById('stat-jatuh-tempo');
+    const statMenunggu = document.getElementById('stat-menunggu');
+    if (statAktif) statAktif.textContent = String(active);
+    if (statJatuhTempo) statJatuhTempo.textContent = String(due);
+    if (statMenunggu) statMenunggu.textContent = String(waiting);
+    if (loanCount) loanCount.textContent = cards.length + ' transaksi';
+
+    const dueToday = cards.filter(function (card) {
+      return card.dataset.status === 'Jatuh Tempo';
+    }).length;
+    const late = cards.filter(function (card) {
+      return card.dataset.status === 'Terlambat';
+    }).length;
+    const dueNote = document.getElementById('stat-jatuh-tempo-note');
+    if (dueNote) {
+      const parts = [];
+      if (dueToday) parts.push(dueToday + ' hari ini');
+      if (late) parts.push(late + ' terlambat');
+      dueNote.textContent = parts.length ? parts.join(' \u00b7 ') : 'Semua pengembalian sesuai jadwal';
+    }
+
+    const alertBox = document.getElementById('overdue-alert');
+    const hasOverdue = cards.some(function (card) {
+      return card.dataset.status === 'Terlambat';
+    });
+    if (alertBox) alertBox.classList.toggle('hidden', !hasOverdue);
+  }
+
+  function applyFilters() {
+    const query = (searchInput && searchInput.value ? searchInput.value : '').trim().toLowerCase();
+    const status = statusFilter ? statusFilter.value : '';
+    let visibleCount = 0;
+
+    cards.forEach(function (card) {
+      const nama = (card.dataset.nama || '').toLowerCase();
+      const kode = (card.dataset.kode || '').toLowerCase();
+      const lab = (card.dataset.lab || '').toLowerCase();
+      const cardStatus = card.dataset.status || '';
+      const matchesQuery = !query || nama.indexOf(query) !== -1 || kode.indexOf(query) !== -1 || lab.indexOf(query) !== -1;
+      const matchesStatus = !status || cardStatus === status;
+      const visible = matchesQuery && matchesStatus;
+
+      card.classList.toggle('hidden', !visible);
+      if (visible) visibleCount++;
+    });
+
+    if (emptyState) emptyState.classList.toggle('hidden', visibleCount !== 0);
+    if (grid) grid.classList.toggle('hidden', visibleCount === 0);
+  }
+
+  function openModal(card) {
+    if (!modal || !modalContent || !form || !card) return;
+    activeCard = card;
+
+    const name = card.dataset.nama || '-';
+    const code = card.dataset.kode || '-';
+    const lab = card.dataset.lab || '-';
+    const tempo = card.dataset.tempo || '-';
+    const jumlah = parseInt(card.dataset.jumlah || '1', 10);
+    const iconName = card.dataset.icon || 'science';
+
+    const nameEl = document.getElementById('modal-item-name');
+    const codeEl = document.getElementById('modal-item-code');
+    const tempoEl = document.getElementById('modal-item-tempo');
+    const iconEl = document.getElementById('modal-item-icon');
+    const jumlahInput = document.getElementById('input-jumlah');
+
+    if (nameEl) nameEl.textContent = name;
+    if (codeEl) codeEl.textContent = code + ' \u00b7 ' + lab;
+    if (tempoEl) tempoEl.textContent = tempo;
+    if (iconEl) iconEl.textContent = iconName;
+    if (jumlahInput) {
+      jumlahInput.max = String(jumlah);
+      jumlahInput.value = '1';
+    }
+
+    if (dendaBox && dendaText) {
+      const denda = card.dataset.denda || '';
+      dendaText.textContent = denda;
+      dendaBox.classList.toggle('hidden', !denda);
+    }
+
+    form.reset();
+    if (jumlahInput) {
+      jumlahInput.max = String(jumlah);
+      jumlahInput.value = '1';
+    }
+    conditionOptions.forEach(function (option) {
+      option.classList.remove('border-blue-600', 'bg-blue-50/40', 'ring-1', 'ring-blue-600');
+      option.classList.add('border-slate-200', 'bg-white');
+    });
+    hideError();
+
+    modal.classList.remove('hidden');
+    void modalContent.offsetWidth;
+    modalContent.classList.remove('scale-95', 'opacity-0', 'translate-y-4');
+    modalContent.classList.add('scale-100', 'opacity-100', 'translate-y-0');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    if (!modal || !modalContent) return;
+    modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
+    modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
+    setTimeout(function () {
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }, 300);
+  }
+
+  function showError(message) {
+    if (!formError) return;
+    formError.textContent = message;
+    formError.classList.remove('hidden');
+  }
+
+  function hideError() {
+    if (!formError) return;
+    formError.textContent = '';
+    formError.classList.add('hidden');
+  }
+
+  function showToast(message) {
+    if (!toast || !toastMessage) return;
+    toastMessage.textContent = message;
+    toast.classList.remove('hidden');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      toast.classList.add('hidden');
+    }, 4500);
+  }
+
+  function markAsWaiting(card) {
+    card.dataset.status = 'Menunggu Verifikasi';
+
+    const badge = card.querySelector('.status-badge');
+    if (badge) {
+      badge.className = 'status-badge px-2.5 py-1 rounded-md bg-violet-50/95 backdrop-blur-sm text-violet-700 border border-violet-200 text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm';
+      badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span> Menunggu Verifikasi';
+    }
+
+    const dueNote = card.querySelector('.due-note');
+    if (dueNote) {
+      dueNote.className = 'due-note text-[11px] font-semibold text-violet-600 inline-flex items-center gap-1';
+      dueNote.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span> Menunggu cek petugas';
+    }
+
+    const button = card.querySelector('.btn-return');
+    if (button) {
+      button.disabled = true;
+      button.className = 'btn-return mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-100 text-slate-500 text-sm font-semibold cursor-not-allowed';
+      button.innerHTML = '<span class="material-symbols-outlined text-[18px]">hourglass_top</span><span>Menunggu Verifikasi</span>';
+    }
+  }
+
+  cards.forEach(function (card) {
+    const button = card.querySelector('.btn-return');
+    if (button && !button.disabled) {
+      button.addEventListener('click', function () {
+        openModal(card);
+      });
+    }
+  });
+
+  document.querySelectorAll('.overdue-return-btn').forEach(function (button) {
+    button.addEventListener('click', function () {
+      const target = document.getElementById(button.dataset.target);
+      if (target) openModal(target);
+    });
+  });
+
+  conditionOptions.forEach(function (option) {
+    const radio = option.querySelector('input[type="radio"]');
+    if (!radio) return;
+    radio.addEventListener('change', function () {
+      conditionOptions.forEach(function (item) {
+        item.classList.remove('border-blue-600', 'bg-blue-50/40', 'ring-1', 'ring-blue-600');
+        item.classList.add('border-slate-200', 'bg-white');
+      });
+      option.classList.remove('border-slate-200', 'bg-white');
+      option.classList.add('border-blue-600', 'bg-blue-50/40', 'ring-1', 'ring-blue-600');
+      hideError();
+    });
+  });
+
+  [searchInput, statusFilter].forEach(function (el) {
+    if (!el) return;
+    el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', applyFilters);
+  });
+
+  if (btnCloseModal) btnCloseModal.addEventListener('click', closeModal);
+  if (btnCancelModal) btnCancelModal.addEventListener('click', closeModal);
+  if (modalOverlay) modalOverlay.addEventListener('click', closeModal);
+
+  if (btnCloseToast) {
+    btnCloseToast.addEventListener('click', function () {
+      toast.classList.add('hidden');
+    });
+  }
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+      closeModal();
+    }
+  });
+
+  if (form) {
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      if (!activeCard) return;
+
+      const jumlahInput = document.getElementById('input-jumlah');
+      const amount = jumlahInput ? parseInt(jumlahInput.value, 10) : 1;
+      const maxAmount = jumlahInput ? parseInt(jumlahInput.max, 10) : 1;
+      const condition = form.querySelector('input[name="kondisi"]:checked');
+      const agree = document.getElementById('agree-return');
+
+      if (!amount || amount < 1 || (maxAmount && amount > maxAmount)) {
+        showError('Jumlah unit tidak valid. Masukkan 1 sampai ' + maxAmount + ' unit.');
+        return;
+      }
+      if (!condition) {
+        showError('Silakan pilih kondisi alat sebelum mengajukan pengembalian.');
+        return;
+      }
+      if (agree && !agree.checked) {
+        showError('Centang pernyataan persetujuan untuk melanjutkan.');
+        return;
+      }
+
+      const name = activeCard.dataset.nama || 'alat';
+      markAsWaiting(activeCard);
+      closeModal();
+      refreshStats();
+      applyFilters();
+      showToast('Pengembalian ' + name + ' berhasil diajukan. Menunggu verifikasi petugas lab.');
+      activeCard = null;
+    });
+  }
+
+  refreshStats();
+  applyFilters();
+});
+</script>

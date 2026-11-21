@@ -1,0 +1,862 @@
+<!-- Main Content -->
+<div class="flex flex-col w-full space-y-6">
+  <!-- Header Section -->
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <span class="text-xs font-semibold text-brand-700 tracking-wider uppercase">Pemantauan Sirkulasi Alat</span>
+      </div>
+      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Memantau Pengembalian</h1>
+      <p class="text-sm text-slate-500 mt-1">Pantau alat yang masih dipinjam, deteksi keterlambatan, dan verifikasi kondisi alat saat dikembalikan ke laboratorium.</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+      <button id="btn-refresh-pengembalian" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm" type="button">
+        <span class="material-symbols-outlined text-[18px] text-slate-500">refresh</span>
+        <span>Muat Ulang</span>
+      </button>
+      <button id="btn-export-pengembalian" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm" type="button">
+        <span class="material-symbols-outlined text-[18px] text-slate-500">file_download</span>
+        <span>Ekspor Data</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
+      <div class="flex items-center justify-between mb-3">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-brand-700">Sedang Dipinjam</span>
+        <span class="material-symbols-outlined text-[20px] text-slate-300">inventory_2</span>
+      </div>
+      <div class="my-2">
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-dipinjam">6</div>
+        <div class="text-xs font-medium text-slate-400 mt-1">Alat belum dikembalikan</div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
+      <div class="flex items-center justify-between mb-3">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-rose-50 text-rose-700">Terlambat</span>
+        <span class="material-symbols-outlined text-[20px] text-slate-300">schedule</span>
+      </div>
+      <div class="my-2">
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-terlambat">2</div>
+        <div class="text-xs font-medium text-slate-400 mt-1">Melewati tenggat pengembalian</div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
+      <div class="flex items-center justify-between mb-3">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700">Selesai Hari Ini</span>
+        <span class="material-symbols-outlined text-[20px] text-slate-300">task_alt</span>
+      </div>
+      <div class="my-2">
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-selesai">1</div>
+        <div class="text-xs font-medium text-slate-400 mt-1">Sudah diverifikasi petugas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & Filter Toolbar -->
+  <div class="rounded-xl flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+    <div class="relative flex-1">
+      <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] pointer-events-none select-none">search</span>
+      <input id="search-pengembalian" class="w-full pl-10 pr-4 h-10 border border-slate-200 text-slate-700 text-sm rounded-lg placeholder-slate-400 focus:outline-none focus:bg-white focus:border-brand-700 transition-colors bg-white" placeholder="Cari kode pinjam, nama peminjam, atau nama alat..." type="text">
+    </div>
+    <div class="flex flex-col sm:flex-row items-center gap-3">
+      <div class="relative w-full sm:w-auto min-w-[210px]">
+        <select id="filter-lab-pengembalian" class="w-full h-10 appearance-none pl-3.5 pr-9 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg cursor-pointer focus:outline-none focus:border-brand-700 transition-colors">
+          <option value="">Semua Laboratorium</option>
+          <option value="Lab Biologi">Lab Biologi</option>
+          <option value="Lab Kimia">Lab Kimia</option>
+          <option value="Laboratorium Instrumentasi">Laboratorium Instrumentasi</option>
+          <option value="Lab Biokimia">Lab Biokimia</option>
+        </select>
+        <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
+      </div>
+      <div class="relative w-full sm:w-auto min-w-[200px]">
+        <select id="filter-status-pengembalian" class="w-full h-10 appearance-none pl-3.5 pr-9 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg cursor-pointer focus:outline-none focus:border-brand-700 transition-colors">
+          <option value="">Semua Status</option>
+          <option value="Dipinjam">Dipinjam</option>
+          <option value="Terlambat">Terlambat</option>
+          <option value="Menunggu Verifikasi">Menunggu Verifikasi</option>
+          <option value="Selesai">Selesai</option>
+        </select>
+        <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Table -->
+  <div class="bg-white rounded-xl border border-slate-200/90 shadow-sm overflow-hidden flex flex-col">
+    <div class="w-full overflow-x-auto overflow-y-auto max-h-[480px]">
+      <table class="w-full text-left border-collapse">
+        <thead class="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider text-[11px] font-semibold">
+          <tr>
+            <th class="w-12 px-3.5 py-3.5 text-center bg-slate-50 whitespace-nowrap" scope="col">NO</th>
+            <th class="min-w-[130px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">KODE PINJAM</th>
+            <th class="min-w-[210px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">PEMINJAM</th>
+            <th class="min-w-[220px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">ALAT &amp; LAB</th>
+            <th class="min-w-[160px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">TANGGAL PINJAM</th>
+            <th class="min-w-[160px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">TENGGAT KEMBALI</th>
+            <th class="min-w-[140px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">KETERLAMBATAN</th>
+            <th class="min-w-[140px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">STATUS</th>
+            <th class="w-28 px-4 py-3.5 text-center bg-slate-50 whitespace-nowrap" scope="col">AKSI</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 text-sm bg-white">
+          <tr class="return-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Rina Ayu Lestari" data-username="@rina.ayu" data-email="rina@mhs.univ.ac.id" data-kode="PJ-2025-0812" data-alat="Mikroskop Binokuler CX23" data-merk="Olympus" data-lab="Lab Biologi" data-status="Dipinjam" data-tglpinjam="26 Feb 2025" data-jam-pinjam="09:00 WIB" data-tenggat="28 Feb 2025" data-jam="16:00 WIB" data-terlambat="-2 hari" data-kondisi="Baik" data-icon="biotech">
+            <td class="w-12 px-3.5 py-3.5 text-center font-mono text-xs text-slate-400">01</td>
+            <td class="px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">PJ-2025-0812</td>
+            <td class="px-4 py-3.5">
+              <div class="flex flex-col">
+                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Rina Ayu Lestari</span>
+                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@rina.ayu &bull; rina@mhs.univ.ac.id</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="flex flex-col">
+                <span class="font-medium text-slate-800 leading-tight">Mikroskop Binokuler CX23</span>
+                <span class="text-xs text-slate-400 mt-0.5">Lab Biologi &bull; Olympus</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">26 Feb 2025</div>
+              <div class="text-slate-400">09:00 WIB</div>
+            </td>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">28 Feb 2025</div>
+              <div class="text-slate-400">16:00 WIB</div>
+            </td>
+            <td class="px-4 py-3.5 whitespace-nowrap">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 text-slate-500 border border-slate-200 text-[11px] font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Tepat waktu
+              </span>
+            </td>
+            <td class="px-4 py-3.5 whitespace-nowrap">
+              <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Dipinjam
+              </span>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="inline-flex items-center justify-center gap-1">
+                <button type="button" class="btn-detail p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail">
+                  <span class="material-symbols-outlined text-[18px]">visibility</span>
+                </button>
+                <button type="button" class="btn-terima p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors" title="Verifikasi Pengembalian">
+                  <span class="material-symbols-outlined text-[18px]">assignment_turned_in</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr class="return-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Fathur Rahman" data-username="@fathur.r" data-email="fathur@mhs.univ.ac.id" data-kode="PJ-2025-0805" data-alat="Oscilloscope Digital 100MHz" data-merk="Tektronix" data-lab="Laboratorium Instrumentasi" data-status="Terlambat" data-tglpinjam="14 Feb 2025" data-jam-pinjam="10:00 WIB" data-tenggat="20 Feb 2025" data-jam="16:00 WIB" data-terlambat="+5 hari" data-kondisi="Baik" data-icon="monitor_heart">
+            <td class="w-12 px-3.5 py-3.5 text-center font-mono text-xs text-slate-400">02</td>
+            <td class="px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">PJ-2025-0805</td>
+            <td class="px-4 py-3.5">
+              <div class="flex flex-col">
+                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Fathur Rahman</span>
+                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@fathur.r &bull; fathur@mhs.univ.ac.id</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="flex flex-col">
+                <span class="font-medium text-slate-800 leading-tight">Oscilloscope Digital 100MHz</span>
+                <span class="text-xs text-slate-400 mt-0.5">Laboratorium Instrumentasi &bull; Tektronix</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">14 Feb 2025</div>
+              <div class="text-slate-400">10:00 WIB</div>
+            </td>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">20 Feb 2025</div>
+              <div class="text-slate-400">16:00 WIB</div>
+            </td>
+            <td class="px-4 py-3.5 whitespace-nowrap">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> +5 hari
+              </span>
+            </td>
+            <td class="px-4 py-3.5 whitespace-nowrap">
+              <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Terlambat
+              </span>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="inline-flex items-center justify-center gap-1">
+                <button type="button" class="btn-detail p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail">
+                  <span class="material-symbols-outlined text-[18px]">visibility</span>
+                </button>
+                <button type="button" class="btn-terima p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors" title="Verifikasi Pengembalian">
+                  <span class="material-symbols-outlined text-[18px]">assignment_turned_in</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr class="return-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Siti Nurhaliza, S.Si." data-username="@siti.lab" data-email="siti.lab@univ.ac.id" data-kode="PJ-2025-0818" data-alat="Spektrofotometer UV-Vis 1800" data-merk="Shimadzu" data-lab="Lab Kimia" data-status="Menunggu Verifikasi" data-tglpinjam="22 Feb 2025" data-jam-pinjam="08:30 WIB" data-tenggat="25 Feb 2025" data-jam="16:00 WIB" data-terlambat="0 hari" data-kondisi="Baik" data-icon="experiment">
+            <td class="w-12 px-3.5 py-3.5 text-center font-mono text-xs text-slate-400">03</td>
+            <td class="px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">PJ-2025-0818</td>
+            <td class="px-4 py-3.5">
+              <div class="flex flex-col">
+                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Siti Nurhaliza, S.Si.</span>
+                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@siti.lab &bull; siti.lab@univ.ac.id</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="flex flex-col">
+                <span class="font-medium text-slate-800 leading-tight">Spektrofotometer UV-Vis 1800</span>
+                <span class="text-xs text-slate-400 mt-0.5">Lab Kimia &bull; Shimadzu</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">22 Feb 2025</div>
+              <div class="text-slate-400">08:30 WIB</div>
+            </td>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">25 Feb 2025</div>
+              <div class="text-slate-400">16:00 WIB</div>
+            </td>
+            <td class="px-4 py-3.5 whitespace-nowrap">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 text-slate-500 border border-slate-200 text-[11px] font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> 0 hari
+              </span>
+            </td>
+            <td class="px-4 py-3.5 whitespace-nowrap">
+              <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Menunggu Verifikasi
+              </span>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="inline-flex items-center justify-center gap-1">
+                <button type="button" class="btn-detail p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail">
+                  <span class="material-symbols-outlined text-[18px]">visibility</span>
+                </button>
+                <button type="button" class="btn-terima p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors" title="Verifikasi Pengembalian">
+                  <span class="material-symbols-outlined text-[18px]">assignment_turned_in</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr class="return-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Bima Satria Wicaksono" data-username="@bimasatria" data-email="bima@mhs.univ.ac.id" data-kode="PJ-2025-0791" data-alat="Solder Station Digital" data-merk="Hakko" data-lab="Laboratorium Instrumentasi" data-status="Terlambat" data-tglpinjam="12 Feb 2025" data-jam-pinjam="13:00 WIB" data-tenggat="18 Feb 2025" data-jam="16:00 WIB" data-terlambat="+7 hari" data-kondisi="Baik" data-icon="handyman">
+            <td class="w-12 px-3.5 py-3.5 text-center font-mono text-xs text-slate-400">04</td>
+            <td class="px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">PJ-2025-0791</td>
+            <td class="px-4 py-3.5">
+              <div class="flex flex-col">
+                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Bima Satria Wicaksono</span>
+                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@bimasatria &bull; bima@mhs.univ.ac.id</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="flex flex-col">
+                <span class="font-medium text-slate-800 leading-tight">Solder Station Digital</span>
+                <span class="text-xs text-slate-400 mt-0.5">Laboratorium Instrumentasi &bull; Hakko</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">12 Feb 2025</div>
+              <div class="text-slate-400">13:00 WIB</div>
+            </td>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">18 Feb 2025</div>
+              <div class="text-slate-400">16:00 WIB</div>
+            </td>
+            <td class="px-4 py-3.5 whitespace-nowrap">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> +7 hari
+              </span>
+            </td>
+            <td class="px-4 py-3.5 whitespace-nowrap">
+              <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Terlambat
+              </span>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="inline-flex items-center justify-center gap-1">
+                <button type="button" class="btn-detail p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail">
+                  <span class="material-symbols-outlined text-[18px]">visibility</span>
+                </button>
+                <button type="button" class="btn-terima p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors" title="Verifikasi Pengembalian">
+                  <span class="material-symbols-outlined text-[18px]">assignment_turned_in</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr class="return-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Allya Amanda Putri" data-username="@allya.p" data-email="allya@mhs.univ.ac.id" data-kode="PJ-2025-0822" data-alat="Autoclave Steam Sterilizer" data-merk="Hirayama" data-lab="Lab Biologi" data-status="Dipinjam" data-tglpinjam="27 Feb 2025" data-jam-pinjam="11:00 WIB" data-tenggat="01 Mar 2025" data-jam="16:00 WIB" data-terlambat="-1 hari" data-kondisi="Baik" data-icon="science">
+            <td class="w-12 px-3.5 py-3.5 text-center font-mono text-xs text-slate-400">05</td>
+            <td class="px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">PJ-2025-0822</td>
+            <td class="px-4 py-3.5">
+              <div class="flex flex-col">
+                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Allya Amanda Putri</span>
+                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@allya.p &bull; allya@mhs.univ.ac.id</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="flex flex-col">
+                <span class="font-medium text-slate-800 leading-tight">Autoclave Steam Sterilizer</span>
+                <span class="text-xs text-slate-400 mt-0.5">Lab Biologi &bull; Hirayama</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">27 Feb 2025</div>
+              <div class="text-slate-400">11:00 WIB</div>
+            </td>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">01 Mar 2025</div>
+              <div class="text-slate-400">16:00 WIB</div>
+            </td>
+            <td class="px-4 py-3.5 whitespace-nowrap">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 text-slate-500 border border-slate-200 text-[11px] font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Tepat waktu
+              </span>
+            </td>
+            <td class="px-4 py-3.5 whitespace-nowrap">
+              <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Dipinjam
+              </span>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="inline-flex items-center justify-center gap-1">
+                <button type="button" class="btn-detail p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail">
+                  <span class="material-symbols-outlined text-[18px]">visibility</span>
+                </button>
+                <button type="button" class="btn-terima p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors" title="Verifikasi Pengembalian">
+                  <span class="material-symbols-outlined text-[18px]">assignment_turned_in</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr class="return-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Dr. Ir. Hendra Wijaya, M.T." data-username="@hendrawijaya" data-email="hendra@univ.ac.id" data-kode="PJ-2025-0778" data-alat="Centrifuge Mikro Kecepatan Tinggi" data-merk="Eppendorf" data-lab="Lab Biokimia" data-status="Menunggu Verifikasi" data-tglpinjam="18 Feb 2025" data-jam-pinjam="09:30 WIB" data-tenggat="22 Feb 2025" data-jam="16:00 WIB" data-terlambat="+3 hari" data-kondisi="Baik" data-icon="biotech">
+            <td class="w-12 px-3.5 py-3.5 text-center font-mono text-xs text-slate-400">06</td>
+            <td class="px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">PJ-2025-0778</td>
+            <td class="px-4 py-3.5">
+              <div class="flex flex-col">
+                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Dr. Ir. Hendra Wijaya, M.T.</span>
+                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@hendrawijaya &bull; hendra@univ.ac.id</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="flex flex-col">
+                <span class="font-medium text-slate-800 leading-tight">Centrifuge Mikro Kecepatan Tinggi</span>
+                <span class="text-xs text-slate-400 mt-0.5">Lab Biokimia &bull; Eppendorf</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">18 Feb 2025</div>
+              <div class="text-slate-400">09:30 WIB</div>
+            </td>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">22 Feb 2025</div>
+              <div class="text-slate-400">16:00 WIB</div>
+            </td>
+            <td class="px-4 py-3.5 whitespace-nowrap">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> +3 hari
+              </span>
+            </td>
+            <td class="px-4 py-3.5 whitespace-nowrap">
+              <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Menunggu Verifikasi
+              </span>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="inline-flex items-center justify-center gap-1">
+                <button type="button" class="btn-detail p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail">
+                  <span class="material-symbols-outlined text-[18px]">visibility</span>
+                </button>
+                <button type="button" class="btn-terima p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors" title="Verifikasi Pengembalian">
+                  <span class="material-symbols-outlined text-[18px]">assignment_turned_in</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr class="return-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Nadia Puspita" data-username="@nadia.p" data-email="nadia@mhs.univ.ac.id" data-kode="PJ-2025-0760" data-alat="Neraca Analitik Digital" data-merk="Sartorius" data-lab="Lab Kimia" data-status="Selesai" data-tglpinjam="09 Feb 2025" data-jam-pinjam="14:00 WIB" data-tenggat="15 Feb 2025" data-jam="16:00 WIB" data-terlambat="0 hari" data-kondisi="Baik" data-icon="science">
+            <td class="w-12 px-3.5 py-3.5 text-center font-mono text-xs text-slate-400">07</td>
+            <td class="px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">PJ-2025-0760</td>
+            <td class="px-4 py-3.5">
+              <div class="flex flex-col">
+                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Nadia Puspita</span>
+                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@nadia.p &bull; nadia@mhs.univ.ac.id</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="flex flex-col">
+                <span class="font-medium text-slate-800 leading-tight">Neraca Analitik Digital</span>
+                <span class="text-xs text-slate-400 mt-0.5">Lab Kimia &bull; Sartorius</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">09 Feb 2025</div>
+              <div class="text-slate-400">14:00 WIB</div>
+            </td>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">15 Feb 2025</div>
+              <div class="text-slate-400">16:00 WIB</div>
+            </td>
+            <td class="px-4 py-3.5 whitespace-nowrap">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Diverifikasi
+              </span>
+            </td>
+            <td class="px-4 py-3.5 whitespace-nowrap">
+              <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Selesai
+              </span>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="inline-flex items-center justify-center gap-1">
+                <button type="button" class="btn-detail p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail">
+                  <span class="material-symbols-outlined text-[18px]">visibility</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr id="return-empty-row" class="hidden">
+            <td colspan="9" class="px-4 py-10 text-center">
+              <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[24px]">search_off</span>
+              </div>
+              <p class="text-sm font-semibold text-slate-800">Tidak ada data pengembalian</p>
+              <p class="text-xs text-slate-500 mt-1">Coba ubah kata kunci atau filter yang dipilih.</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="px-6 py-4 bg-white border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
+      <div class="text-xs text-slate-500">
+        Menampilkan <span id="return-summary" class="font-semibold text-slate-800 font-mono">1-7</span> dari <span class="font-semibold text-slate-800 font-mono">7</span> peminjaman
+      </div>
+      <div class="flex items-center gap-1.5">
+        <button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 border border-slate-200/60 cursor-not-allowed" type="button" disabled>
+          <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+          <span>Sebelumnya</span>
+        </button>
+        <button class="w-8 h-8 rounded-lg bg-brand-700 text-white text-xs font-semibold shadow-sm flex items-center justify-center" type="button">1</button>
+        <button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 border border-slate-200/60 cursor-not-allowed" type="button" disabled>
+          <span>Selanjutnya</span>
+          <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Detail Pengembalian -->
+<div id="modal-return" class="fixed inset-0 z-[100] hidden">
+  <div id="modal-return-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"></div>
+  <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none">
+    <div id="modal-return-content" class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col overflow-hidden pointer-events-auto transform transition-all duration-300 scale-95 opacity-0 translate-y-4 max-h-[92vh]">
+      <div class="px-6 py-5 border-b border-slate-100 flex items-start justify-between bg-white shrink-0 gap-4">
+        <div class="flex items-start gap-3.5">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-[22px]">assignment_turned_in</span>
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-slate-900 leading-tight">Verifikasi Pengembalian</h2>
+            <p class="text-xs text-slate-500 mt-1">Periksa kondisi fisik alat sebelum menyatakan pengembalian selesai.</p>
+          </div>
+        </div>
+        <button id="btn-close-return" type="button" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors shrink-0" aria-label="Tutup modal">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-5 overflow-y-auto">
+        <div class="flex items-start gap-3.5">
+          <div id="modal-return-initials" class="w-11 h-11 rounded-full bg-blue-100 border border-blue-200 text-blue-700 font-bold text-sm flex items-center justify-center shrink-0">RA</div>
+          <div class="min-w-0">
+            <h3 id="modal-return-name" class="text-sm font-bold text-slate-900 leading-tight">Rina Ayu Lestari</h3>
+            <p id="modal-return-contact" class="text-xs text-slate-500 mt-0.5">@rina.ayu &bull; rina@mhs.univ.ac.id</p>
+          </div>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-start gap-3.5">
+          <div class="w-11 h-11 rounded-xl bg-white text-blue-600 border border-slate-200 flex items-center justify-center shrink-0">
+            <span id="modal-return-icon" class="material-symbols-outlined text-[24px]">biotech</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h3 id="modal-return-item" class="text-sm font-bold text-slate-900 leading-tight truncate">Mikroskop Binokuler CX23</h3>
+            <p id="modal-return-item-meta" class="text-xs text-slate-500 mt-0.5 truncate">PJ-2025-0812 &bull; Olympus</p>
+            <div class="flex items-center gap-1 text-xs text-slate-500 mt-1.5">
+              <span class="material-symbols-outlined text-[15px] shrink-0">room</span>
+              <span id="modal-return-lab" class="truncate">Lab Biologi</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="rounded-xl border border-slate-200 p-3">
+            <p class="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Tanggal Pinjam</p>
+            <p id="modal-return-borrow-date" class="text-xs font-semibold text-slate-800 mt-1">-</p>
+            <p id="modal-return-borrow-time" class="text-[11px] text-slate-400 mt-0.5">-</p>
+          </div>
+          <div class="rounded-xl border border-slate-200 p-3">
+            <p class="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Tenggat Kembali</p>
+            <p id="modal-return-deadline" class="text-xs font-semibold text-slate-800 mt-1">28 Feb 2025</p>
+            <p id="modal-return-deadline-time" class="text-[11px] text-slate-400 mt-0.5">16:00 WIB</p>
+          </div>
+          <div class="rounded-xl border border-slate-200 p-3">
+            <p class="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Keterlambatan</p>
+            <p id="modal-return-late" class="text-xs font-semibold text-slate-800 mt-1">Tepat waktu</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Dihitung otomatis</p>
+          </div>
+          <div class="rounded-xl border border-slate-200 p-3">
+            <p class="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Status</p>
+            <p id="modal-return-status" class="text-xs font-semibold text-blue-600 mt-1">Dipinjam</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Belum diverifikasi</p>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-[10px] uppercase tracking-wider font-semibold text-slate-400 mb-2">Checklist Inspeksi Fisik</p>
+          <div class="space-y-2">
+            <label class="check-item flex items-start gap-2.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 cursor-pointer hover:border-slate-300 transition-colors">
+              <input type="checkbox" class="check-fisik mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" checked>
+              <span class="text-xs text-slate-700 leading-relaxed">Kondisi fisik alat baik, tidak ada retak atau kerusakan bodi.</span>
+            </label>
+            <label class="check-item flex items-start gap-2.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 cursor-pointer hover:border-slate-300 transition-colors">
+              <input type="checkbox" class="check-fisik mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" checked>
+              <span class="text-xs text-slate-700 leading-relaxed">Aksesoris dan kabel kelengkapan lengkap sesuai daftar serah terima.</span>
+            </label>
+            <label class="check-item flex items-start gap-2.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 cursor-pointer hover:border-slate-300 transition-colors">
+              <input type="checkbox" class="check-fisik mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" checked>
+              <span class="text-xs text-slate-700 leading-relaxed">Fungsi alat sudah diuji dan berjalan normal.</span>
+            </label>
+            <label class="check-item flex items-start gap-2.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 cursor-pointer hover:border-slate-300 transition-colors">
+              <input type="checkbox" class="check-fisik mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+              <span class="text-xs text-slate-700 leading-relaxed">Alat dibersihkan dan disimpan kembali ke lokasi penyimpanan.</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label for="return-note" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Catatan Petugas <span class="text-slate-400 font-medium normal-case tracking-normal">(opsional)</span></label>
+          <textarea id="return-note" rows="2" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:outline-none focus:border-blue-600 transition-colors resize-none placeholder:text-slate-400" placeholder="Contoh: alat dikembalikan terlambat 3 hari, denda dicatat pada berita acara."></textarea>
+        </div>
+
+        <p id="return-decision-result" class="hidden text-xs font-semibold rounded-lg px-3.5 py-2.5"></p>
+      </div>
+
+      <div class="px-6 py-4 bg-slate-50/70 border-t border-slate-100 flex flex-col-reverse sm:flex-row items-center justify-end gap-2.5 shrink-0">
+        <button id="btn-modal-return-cancel" type="button" class="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 border border-slate-200 bg-white transition shadow-2xs">Tutup</button>
+        <button id="btn-modal-return-confirm" type="button" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm shadow-emerald-500/25 inline-flex items-center justify-center gap-2 transition-all active:scale-[0.99]">
+          <span class="material-symbols-outlined text-[16px]">task_alt</span>
+          <span>Verifikasi Pengembalian</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="return-toast" class="fixed bottom-6 right-6 z-[110] hidden max-w-sm w-[calc(100%-3rem)] sm:w-auto">
+  <div id="return-toast-inner" class="bg-white border border-emerald-200 rounded-xl shadow-lg shadow-slate-900/10 p-4 flex items-start gap-3">
+    <div id="return-toast-icon-wrap" class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+      <span id="return-toast-icon" class="material-symbols-outlined text-[20px]">check_circle</span>
+    </div>
+    <div class="min-w-0">
+      <p id="return-toast-title" class="text-sm font-bold text-slate-900">Berhasil</p>
+      <p id="return-toast-message" class="text-xs text-slate-500 mt-0.5 leading-relaxed">Pengembalian telah diverifikasi.</p>
+    </div>
+    <button id="btn-close-return-toast" type="button" class="p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors shrink-0" aria-label="Tutup notifikasi">
+      <span class="material-symbols-outlined text-[16px]">close</span>
+    </button>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const rows = Array.from(document.querySelectorAll('.return-row'));
+  const searchInput = document.getElementById('search-pengembalian');
+  const labFilter = document.getElementById('filter-lab-pengembalian');
+  const statusFilter = document.getElementById('filter-status-pengembalian');
+  const emptyRow = document.getElementById('return-empty-row');
+  const summary = document.getElementById('return-summary');
+
+  const statDipinjam = document.getElementById('stat-dipinjam');
+  const statTerlambat = document.getElementById('stat-terlambat');
+  const statSelesai = document.getElementById('stat-selesai');
+
+  const modal = document.getElementById('modal-return');
+  const modalContent = document.getElementById('modal-return-content');
+  const modalOverlay = document.getElementById('modal-return-overlay');
+  const btnCloseModal = document.getElementById('btn-close-return');
+  const btnCancelModal = document.getElementById('btn-modal-return-cancel');
+  const btnConfirm = document.getElementById('btn-modal-return-confirm');
+  const decisionResult = document.getElementById('return-decision-result');
+  const checkboxes = Array.from(document.querySelectorAll('.check-fisik'));
+
+  const toast = document.getElementById('return-toast');
+  const toastInner = document.getElementById('return-toast-inner');
+  const toastIconWrap = document.getElementById('return-toast-icon-wrap');
+  const toastIcon = document.getElementById('return-toast-icon');
+  const toastTitle = document.getElementById('return-toast-title');
+  const toastMessage = document.getElementById('return-toast-message');
+  const btnCloseToast = document.getElementById('btn-close-return-toast');
+
+  let activeRow = null;
+  let toastTimer = null;
+
+  function statusBadge(status) {
+    if (status === 'Selesai') return 'row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold';
+    if (status === 'Terlambat') return 'row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-semibold';
+    if (status === 'Menunggu Verifikasi') return 'row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-semibold';
+    return 'row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-semibold';
+  }
+
+  function statusDot(status) {
+    if (status === 'Selesai') return 'bg-emerald-500';
+    if (status === 'Terlambat') return 'bg-rose-500';
+    if (status === 'Menunggu Verifikasi') return 'bg-amber-500';
+    return 'bg-blue-500';
+  }
+
+  function updateStats() {
+    const dipinjam = rows.filter(function (row) {
+      return row.dataset.status === 'Dipinjam' || row.dataset.status === 'Terlambat' || row.dataset.status === 'Menunggu Verifikasi';
+    }).length;
+    const terlambat = rows.filter(function (row) { return row.dataset.status === 'Terlambat'; }).length;
+    const selesai = rows.filter(function (row) { return row.dataset.status === 'Selesai'; }).length;
+
+    if (statDipinjam) statDipinjam.textContent = String(dipinjam);
+    if (statTerlambat) statTerlambat.textContent = String(terlambat);
+    if (statSelesai) statSelesai.textContent = String(selesai);
+  }
+
+  function refreshSummary(visibleCount) {
+    if (summary) summary.textContent = visibleCount === 0 ? '0' : '1-' + visibleCount;
+  }
+
+  function applyFilters() {
+    const query = (searchInput && searchInput.value ? searchInput.value : '').trim().toLowerCase();
+    const lab = labFilter ? labFilter.value : '';
+    const status = statusFilter ? statusFilter.value : '';
+    let visibleCount = 0;
+
+    rows.forEach(function (row) {
+      const matchesQuery = !query ||
+        (row.dataset.nama || '').toLowerCase().indexOf(query) !== -1 ||
+        (row.dataset.kode || '').toLowerCase().indexOf(query) !== -1 ||
+        (row.dataset.alat || '').toLowerCase().indexOf(query) !== -1;
+      const matchesLab = !lab || row.dataset.lab === lab;
+      const matchesStatus = !status || row.dataset.status === status;
+      const visible = matchesQuery && matchesLab && matchesStatus;
+
+      row.classList.toggle('hidden', !visible);
+      if (visible) visibleCount++;
+    });
+
+    if (emptyRow) emptyRow.classList.toggle('hidden', visibleCount !== 0);
+    refreshSummary(visibleCount);
+  }
+
+  function openModal(row) {
+    if (!modal || !modalContent || !row) return;
+    activeRow = row;
+
+    const name = row.dataset.nama || '-';
+    const initials = name.split(' ').filter(Boolean).slice(0, 2).map(function (part) {
+      return part.charAt(0);
+    }).join('').toUpperCase();
+
+    document.getElementById('modal-return-initials').textContent = initials || 'PM';
+    document.getElementById('modal-return-name').textContent = name;
+    document.getElementById('modal-return-contact').textContent = (row.dataset.username || '-') + ' \u00b7 ' + (row.dataset.email || '-');
+    document.getElementById('modal-return-icon').textContent = row.dataset.icon || 'science';
+    document.getElementById('modal-return-item').textContent = row.dataset.alat || '-';
+    document.getElementById('modal-return-item-meta').textContent = (row.dataset.kode || '-') + ' \u00b7 ' + (row.dataset.merk || '-');
+    document.getElementById('modal-return-lab').textContent = row.dataset.lab || '-';
+    document.getElementById('modal-return-borrow-date').textContent = row.dataset.tglpinjam || '-';
+    document.getElementById('modal-return-borrow-time').textContent = row.dataset.jamPinjam || '-';
+    document.getElementById('modal-return-deadline').textContent = row.dataset.tenggat || '-';
+    document.getElementById('modal-return-deadline-time').textContent = row.dataset.jam || '-';
+
+    const late = row.dataset.terlambat || '-';
+    const lateEl = document.getElementById('modal-return-late');
+    lateEl.textContent = late.indexOf('+') === 0 ? late.replace('+', 'Terlambat ') : 'Tepat waktu';
+    lateEl.className = late.indexOf('+') === 0 ? 'text-xs font-semibold text-rose-600 mt-1' : 'text-xs font-semibold text-emerald-600 mt-1';
+
+    const statusEl = document.getElementById('modal-return-status');
+    statusEl.textContent = row.dataset.status || '-';
+    statusEl.className = row.dataset.status === 'Selesai'
+      ? 'text-xs font-semibold text-emerald-600 mt-1'
+      : row.dataset.status === 'Terlambat'
+        ? 'text-xs font-semibold text-rose-600 mt-1'
+        : row.dataset.status === 'Menunggu Verifikasi'
+          ? 'text-xs font-semibold text-amber-600 mt-1'
+          : 'text-xs font-semibold text-blue-600 mt-1';
+
+    document.getElementById('return-note').value = '';
+    decisionResult.classList.add('hidden');
+    decisionResult.textContent = '';
+    checkboxes.forEach(function (cb) { cb.checked = true; });
+
+    const isDone = row.dataset.status === 'Selesai';
+    btnConfirm.disabled = isDone;
+    btnConfirm.classList.toggle('opacity-50', isDone);
+    btnConfirm.classList.toggle('cursor-not-allowed', isDone);
+
+    modal.classList.remove('hidden');
+    void modalContent.offsetWidth;
+    modalContent.classList.remove('scale-95', 'opacity-0', 'translate-y-4');
+    modalContent.classList.add('scale-100', 'opacity-100', 'translate-y-0');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    if (!modal || !modalContent) return;
+    modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
+    modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
+    setTimeout(function () {
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }, 300);
+  }
+
+  function showToast(type, title, message) {
+    if (!toast) return;
+    const palette = type === 'reject'
+      ? { border: 'border-rose-200', iconWrap: 'bg-rose-50 text-rose-600', icon: 'cancel' }
+      : { border: 'border-emerald-200', iconWrap: 'bg-emerald-50 text-emerald-600', icon: 'check_circle' };
+
+    toastInner.className = 'bg-white border ' + palette.border + ' rounded-xl shadow-lg shadow-slate-900/10 p-4 flex items-start gap-3';
+    toastIconWrap.className = 'w-9 h-9 rounded-lg ' + palette.iconWrap + ' flex items-center justify-center shrink-0';
+    toastIcon.textContent = palette.icon;
+    toastTitle.textContent = title;
+    toastMessage.textContent = message;
+
+    toast.classList.remove('hidden');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toast.classList.add('hidden'); }, 4500);
+  }
+
+  function verifyReturn(row) {
+    if (!row || row.dataset.status === 'Selesai') return;
+
+    const unchecked = checkboxes.filter(function (cb) { return !cb.checked; }).length;
+    if (unchecked > 0) {
+      decisionResult.textContent = 'Lengkapi seluruh checklist inspeksi fisik sebelum memverifikasi pengembalian.';
+      decisionResult.className = 'text-xs font-semibold rounded-lg px-3.5 py-2.5 bg-amber-50 text-amber-700 border border-amber-200';
+      return;
+    }
+
+    row.dataset.status = 'Selesai';
+    const badge = row.querySelector('.row-status');
+    if (badge) {
+      badge.className = statusBadge('Selesai');
+      badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' + statusDot('Selesai') + '"></span> Selesai';
+    }
+
+    const lateCell = row.children[5];
+    if (lateCell) {
+      lateCell.innerHTML = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold">' +
+        '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Diverifikasi</span>';
+    }
+
+    const actionCell = row.lastElementChild;
+    if (actionCell) {
+      actionCell.innerHTML = '<div class="inline-flex items-center justify-center gap-1">' +
+        '<button type="button" class="btn-detail p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail">' +
+        '<span class="material-symbols-outlined text-[18px]">visibility</span></button></div>';
+      bindDetail(actionCell.querySelector('.btn-detail'));
+    }
+
+    updateStats();
+    applyFilters();
+    closeModal();
+    showToast('approve', 'Pengembalian Diverifikasi', 'Pengembalian ' + (row.dataset.alat || 'alat') + ' oleh ' + (row.dataset.nama || 'peminjam') + ' telah selesai.');
+    activeRow = null;
+  }
+
+  function bindDetail(button) {
+    if (!button) return;
+    button.addEventListener('click', function () {
+      openModal(button.closest('.return-row'));
+    });
+  }
+
+  rows.forEach(function (row) {
+    bindDetail(row.querySelector('.btn-detail'));
+    const btnTerima = row.querySelector('.btn-terima');
+    if (btnTerima) {
+      btnTerima.addEventListener('click', function () { openModal(row); });
+    }
+  });
+
+  if (btnConfirm) {
+    btnConfirm.addEventListener('click', function () { verifyReturn(activeRow); });
+  }
+  if (btnCloseModal) btnCloseModal.addEventListener('click', closeModal);
+  if (btnCancelModal) btnCancelModal.addEventListener('click', closeModal);
+  if (modalOverlay) modalOverlay.addEventListener('click', closeModal);
+  if (btnCloseToast) btnCloseToast.addEventListener('click', function () { toast.classList.add('hidden'); });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeModal();
+  });
+
+  [searchInput, labFilter, statusFilter].forEach(function (el) {
+    if (!el) return;
+    el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', applyFilters);
+  });
+
+  const btnRefresh = document.getElementById('btn-refresh-pengembalian');
+  if (btnRefresh) {
+    btnRefresh.addEventListener('click', function () {
+      rows.forEach(function (row) { row.classList.remove('hidden'); });
+      if (searchInput) searchInput.value = '';
+      if (labFilter) labFilter.value = '';
+      if (statusFilter) statusFilter.value = '';
+      applyFilters();
+      showToast('approve', 'Data Diperbarui', 'Daftar pemantauan pengembalian berhasil dimuat ulang.');
+    });
+  }
+
+  const btnExport = document.getElementById('btn-export-pengembalian');
+  if (btnExport) {
+    btnExport.addEventListener('click', function () {
+      const header = ['No', 'Kode Pinjam', 'Peminjam', 'Username', 'Email', 'Alat', 'Merk', 'Lab', 'Tenggat', 'Jam', 'Keterlambatan', 'Status'];
+      const lines = [header.join(',')];
+
+      rows.filter(function (row) { return !row.classList.contains('hidden'); }).forEach(function (row, index) {
+        const values = [
+          String(index + 1),
+          row.dataset.kode || '',
+          row.dataset.nama || '',
+          row.dataset.username || '',
+          row.dataset.email || '',
+          row.dataset.alat || '',
+          row.dataset.merk || '',
+          row.dataset.lab || '',
+          row.dataset.tenggat || '',
+          row.dataset.jam || '',
+          row.dataset.terlambat || '',
+          row.dataset.status || ''
+        ].map(function (value) { return '"' + String(value).replace(/"/g, '""') + '"'; });
+        lines.push(values.join(','));
+      });
+
+      const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.download = 'pemantauan-pengembalian-petugas.csv';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      showToast('approve', 'Ekspor Berhasil', 'Data pemantauan pengembalian berhasil diunduh sebagai CSV.');
+    });
+  }
+
+  updateStats();
+  applyFilters();
+});
+</script>

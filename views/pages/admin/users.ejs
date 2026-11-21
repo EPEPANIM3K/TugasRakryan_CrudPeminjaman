@@ -11,18 +11,15 @@
     </div>
     <!-- Action Buttons Right-Aligned -->
     <div class="flex flex-wrap items-center gap-2.5 shrink-0">
-      <button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm shadow-sm hover:bg-blue-700 transition-all active:scale-[0.99]" type="button">
+      <button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm shadow-sm hover:bg-blue-700 transition-all active:scale-[0.99]" id="btn-open-form-user" type="button">
         <span class="material-symbols-outlined text-[18px]">add</span>
         <span class="">Tambah User</span>
       </button>
-      <button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm" type="button">
+      <button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm" id="btn-open-export" type="button">
         <span class="material-symbols-outlined text-[18px] text-slate-500">file_download</span>
         <span class="">Ekspor Excel</span>
       </button>
-      <button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm" type="button">
-        <span class="material-symbols-outlined text-[18px] text-slate-500">history</span>
-        <span class="">Audit Log</span>
-      </button>
+
     </div>
   </div>
 
@@ -307,7 +304,7 @@
         </tbody>
       </table>
     </div>
-    <!-- Table Pagination Footer -->
+        <!-- Table Pagination Footer -->
     <div class="px-6 py-4 bg-white border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
       <div class="text-xs text-slate-500">
         Menampilkan <span class="font-semibold text-slate-800">1-6</span> dari <span class="font-semibold text-slate-800">348</span> akun pengguna
@@ -331,3 +328,503 @@
     </div>
   </div>
 </div>
+
+<!-- Modal Tambah Akun Pengguna -->
+<div id="modal-tambah-user" class="fixed inset-0 z-[100] hidden">
+  <!-- Overlay with blur effect -->
+  <div id="modal-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300"></div>
+  
+  <!-- Modal Container -->
+  <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none">
+    <div id="modal-content" class="w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col overflow-visible pointer-events-auto transform transition-all duration-300 scale-95 opacity-0 translate-y-4">
+      <!-- Header Form -->
+      <div class="px-6 py-5 border-b border-slate-100 flex items-start justify-between bg-white shrink-0 rounded-t-2xl">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-lg font-bold text-slate-900 tracking-tight">Tambah Akun Pengguna Baru</h2>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">Lengkapi informasi kredensial dan hak akses civitas laboratorium</p>
+        </div>
+        <button class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors" id="btn-close-modal" title="Tutup" type="button">
+          <svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+        </button>
+      </div>
+
+      <!-- Body Form -->
+      <form class="p-6 space-y-4 text-xs text-slate-700 max-h-[70vh] overflow-y-auto" id="form-tambah-user">
+        <!-- A. Upload Foto Profile -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="font-semibold text-slate-800 text-xs">Foto Profil <span class="text-[11px] font-normal text-slate-400">(Opsional)</span></label>
+            <span class="text-[10px] text-slate-400" id="file-size-info">PNG, JPG hingga 5MB</span>
+          </div>
+          <div class="border-2 border-dashed border-slate-200 hover:border-blue-500 rounded-xl p-3 text-center bg-slate-50/50 transition-colors flex flex-col items-center justify-center relative cursor-pointer group" id="dropzone-container">
+            <input accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" id="foto-input" type="file">
+            <!-- Placeholder State -->
+            <div class="flex flex-col items-center py-1" id="upload-placeholder">
+              <div class="w-10 h-10 rounded-full bg-blue-50 text-brand-700 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform">
+                <svg class="text-blue-600" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              </div>
+              <p class="text-xs font-semibold text-slate-800"><span class="text-brand-700 underline">Pilih Foto / Unggah</span> atau seret foto ke sini</p>
+            </div>
+            <!-- Preview State (Initially Hidden) -->
+            <div class="hidden w-full flex items-center justify-between gap-3 p-1.5 bg-white rounded-lg border border-slate-200" id="upload-preview-wrapper">
+              <div class="flex items-center gap-3 overflow-hidden">
+                <img alt="Preview Foto" class="w-10 h-10 rounded-full object-cover border border-slate-200 shrink-0" id="foto-preview-img" src="">
+                <div class="text-left truncate">
+                  <p class="text-xs font-semibold text-slate-800 truncate" id="preview-filename">profil.png</p>
+                  <span class="text-[10px] text-slate-400" id="preview-filesize">1.2 MB</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5 z-20 shrink-0">
+                <label class="px-2.5 py-1 text-[11px] font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-md cursor-pointer transition" for="foto-input">Ganti</label>
+                <button class="p-1 text-rose-500 hover:bg-rose-50 rounded-md transition" id="btn-remove-foto" title="Hapus Foto" type="button">
+                  <svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- B. Nama Lengkap -->
+        <div>
+          <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="input-nama-lengkap">Nama Lengkap <span class="text-rose-500">*</span></label>
+          <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="input-nama-lengkap" placeholder="Masukkan nama lengkap beserta gelar" required="" type="text">
+        </div>
+
+        <!-- C. Username & Email (Grid 2 cols) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="input-username">Username <span class="text-rose-500">*</span></label>
+            <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="input-username" placeholder="Contoh: hendrawijaya" required="" type="text">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="input-email">Email <span class="text-rose-500">*</span></label>
+            <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="input-email" placeholder="Contoh: hendra@univ.ac.id" required="" type="email">
+          </div>
+        </div>
+
+        <!-- D. Role & Status (Grid 2 cols) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="select-role">Role <span class="text-rose-500">*</span></label>
+            <div class="relative">
+              <select class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 appearance-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs cursor-pointer pr-8" id="select-role" required>
+                <option value="" disabled selected>Pilih Role Akun</option>
+                <option value="admin">Admin</option>
+                <option value="pengguna">Pengguna</option>
+                <option value="user">User</option>
+              </select>
+              <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
+            </div>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="select-status">Status Akun <span class="text-rose-500">*</span></label>
+            <div class="relative">
+              <select class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 appearance-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs cursor-pointer pr-8" id="select-status" required>
+                <option value="" disabled selected>Pilih Status Akun</option>
+                <option value="aktif">Aktif</option>
+                <option value="nonaktif">Non-Aktif</option>
+                <option value="suspend">Suspend</option>
+              </select>
+              <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- E. Fakultas / Unit -->
+        <div>
+          <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="input-fakultas-unit">Fakultas / Unit <span class="text-rose-500">*</span></label>
+          <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="input-fakultas-unit" placeholder="Contoh: Fakultas Teknik / Lab Komputasi" required="" type="text">
+        </div>
+      </form>
+
+      <!-- Footer Form -->
+      <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/60 flex items-center justify-end gap-3 shrink-0 rounded-b-2xl">
+        <button class="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 border border-slate-200 bg-white transition shadow-2xs" id="btn-cancel-modal" type="button">
+          Batal
+        </button>
+        <button class="px-6 py-2.5 rounded-xl text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 transition shadow-sm inline-flex items-center gap-2" form="form-tambah-user" id="btn-submit-user" type="submit">
+          <span>Simpan User</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Ekspor Data -->
+<div id="modal-export" class="fixed inset-0 z-[100] hidden">
+  <!-- Overlay with blur effect -->
+  <div id="modal-export-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"></div>
+
+  <!-- Modal Container -->
+  <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none">
+    <div id="modal-export-content" class="bg-white rounded-2xl shadow-2xl max-w-lg w-full border border-slate-100 overflow-hidden flex flex-col transition-all pointer-events-auto transform duration-300 scale-95 opacity-0 translate-y-4">
+
+      <!-- Header Modal -->
+      <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
+        <div class="flex items-center gap-3.5">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 leading-tight">Ekspor Data Pengguna &amp; Inventaris</h3>
+            <p class="text-xs text-slate-500 mt-0.5 leading-normal">Pilih format berkas, rentang tanggal, dan parameter data yang ingin diunduh.</p>
+          </div>
+        </div>
+        <button aria-label="Tutup Modal" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors ml-2" id="btn-close-export" type="button">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <!-- Content Form Modal Body -->
+      <div class="p-6 space-y-5 max-h-[72vh] overflow-y-auto">
+
+        <!-- Pilihan Format Berkas (Format File) -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2.5">
+            Format Berkas Ekspor
+          </label>
+          <div class="grid grid-cols-3 gap-2.5" id="export-format-group">
+
+            <!-- Option 1: Excel (Selected) -->
+            <label class="export-format-option relative flex flex-col p-3 rounded-xl border-2 border-blue-600 bg-blue-50/40 cursor-pointer shadow-xs transition-all" data-format="xlsx">
+              <input checked="" class="sr-only" name="export_format" type="radio" value="xlsx"/>
+              <div class="flex items-center justify-between mb-2">
+                <div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">
+                  <span class="material-symbols-outlined text-[18px]">table_chart</span>
+                </div>
+              </div>
+              <span class="text-xs font-bold text-slate-900 leading-tight">Microsoft Excel</span>
+              <span class="text-[10px] text-slate-500 mt-0.5">Format .xlsx</span>
+            </label>
+
+            <!-- Option 2: PDF -->
+            <label class="export-format-option relative flex flex-col p-3 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50/70 bg-white cursor-pointer transition-all" data-format="pdf">
+              <input class="sr-only" name="export_format" type="radio" value="pdf"/>
+              <div class="flex items-center justify-between mb-2">
+                <div class="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-xs">
+                  <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+                </div>
+              </div>
+              <span class="text-xs font-bold text-slate-800 leading-tight">Dokumen PDF</span>
+              <span class="text-[10px] text-slate-400 mt-0.5">Format .pdf</span>
+            </label>
+
+            <!-- Option 3: CSV -->
+            <label class="export-format-option relative flex flex-col p-3 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50/70 bg-white cursor-pointer transition-all" data-format="csv">
+              <input class="sr-only" name="export_format" type="radio" value="csv"/>
+              <div class="flex items-center justify-between mb-2">
+                <div class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-xs">
+                  <span class="material-symbols-outlined text-[18px]">description</span>
+                </div>
+              </div>
+              <span class="text-xs font-bold text-slate-800 leading-tight">File CSV</span>
+              <span class="text-[10px] text-slate-400 mt-0.5">Format .csv</span>
+            </label>
+
+          </div>
+        </div>
+
+        <!-- Cakupan Data -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">
+              Cakupan Data Ekspor
+            </label>
+          </div>
+          <div class="relative">
+
+            <!-- Trigger Input State -->
+            <button class="w-full h-10 pl-3.5 pr-9 rounded-xl bg-white border-2 border-blue-600 text-slate-800 text-xs font-semibold flex items-center justify-between shadow-xs transition-all" id="btn-toggle-export-scope" type="button">
+              <span class="flex items-center gap-2 text-slate-800 truncate">
+                <span class="">Pilih Data Baris Spesifik (Kustom)</span>
+              </span>
+              <span class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-blue-600">
+                <span class="material-symbols-outlined text-[18px]" id="export-scope-arrow">keyboard_arrow_up</span>
+              </span>
+            </button>
+
+            <!-- Dropdown Popover / Multi-select Menu List -->
+            <div class="mt-2 bg-white rounded-xl border border-slate-200 shadow-xl overflow-hidden divide-y divide-slate-100 transition-all duration-150" id="export-scope-dropdown">
+
+              <!-- Search & Quick Action Header -->
+              <div class="p-2.5 bg-slate-50/90 flex items-center justify-between gap-2">
+                <label class="inline-flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer select-none">
+                  <input class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" id="export-select-all" type="checkbox"/>
+                  <span class="">Pilih Semua (348 Data)</span>
+                </label>
+                <button class="text-[11px] font-semibold text-blue-600 hover:text-brand-700 transition-colors" id="export-reset-selection" type="button">
+                  Reset Pilihan
+                </button>
+              </div>
+
+              <!-- Scrollable Checklist Rows -->
+              <div class="max-h-48 overflow-y-auto divide-y divide-slate-100/80 p-1">
+
+                <!-- Item 1 (Selected) -->
+                <label class="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-50/50 hover:bg-blue-50 cursor-pointer transition-colors">
+                  <input checked="" class="export-row-check rounded border-blue-600 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" type="checkbox"/>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-2">
+                      <p class="text-xs font-bold text-slate-900 truncate">Dr. Ir. Hendra Wijaya, M.T.</p>
+                    </div>
+                    <p class="text-[11px] text-slate-400 font-mono mt-0.5 truncate">198503142010121001 • Teknik Elektro</p>
+                  </div>
+                </label>
+
+                <!-- Item 2 (Selected) -->
+                <label class="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-50/50 hover:bg-blue-50 cursor-pointer transition-colors">
+                  <input checked="" class="export-row-check rounded border-blue-600 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" type="checkbox"/>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-2">
+                      <p class="text-xs font-bold text-slate-900 truncate">Fathur Rahman</p>
+                    </div>
+                    <p class="text-[11px] text-slate-400 font-mono mt-0.5 truncate">21060120140023 • Fisika Instrumentasi</p>
+                  </div>
+                </label>
+
+                <!-- Item 3 (Selected) -->
+                <label class="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-50/50 hover:bg-blue-50 cursor-pointer transition-colors">
+                  <input checked="" class="export-row-check rounded border-blue-600 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" type="checkbox"/>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-2">
+                      <p class="text-xs font-bold text-slate-900 truncate">Siti Nurhaliza, S.Si.</p>
+                    </div>
+                    <p class="text-[11px] text-slate-400 font-mono mt-0.5 truncate">199107222019032008 • Lab Biologi Terpadu</p>
+                  </div>
+                </label>
+
+                <!-- Item 4 (Unselected) -->
+                <label class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
+                  <input class="export-row-check rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" type="checkbox"/>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-2">
+                      <p class="text-xs font-medium text-slate-700 truncate">Bima Satria Wicaksono</p>
+                      <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-600 shrink-0">Suspend</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 font-mono mt-0.5 truncate">20060119130045 • Teknik Kimia</p>
+                  </div>
+                </label>
+
+                <!-- Item 5 (Unselected) -->
+                <label class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
+                  <input class="export-row-check rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" type="checkbox"/>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-2">
+                      <p class="text-xs font-medium text-slate-700 truncate">Prof. Dr. Bambang Sudiro</p>
+                      <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-600 shrink-0">Dosen</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 font-mono mt-0.5 truncate">197011082005011003 • Teknik Mesin</p>
+                  </div>
+                </label>
+
+                <!-- Item 6 (Unselected) -->
+                <label class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
+                  <input class="export-row-check rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" type="checkbox"/>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-2">
+                      <p class="text-xs font-medium text-slate-700 truncate">Allya Amanda Putri</p>
+                      <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-600 shrink-0">Mahasiswa</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 font-mono mt-0.5 truncate">21080121120019 • Farmasi Klinis</p>
+                  </div>
+                </label>
+
+              </div>
+
+              <!-- Dropdown Bottom Tip / Note -->
+              <div class="px-3 py-2 bg-slate-50 flex items-center justify-between text-[11px] text-slate-500">
+                <span class="font-mono font-medium text-slate-400">Hal 1 dari 58</span>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer Modal Actions -->
+      <div class="px-6 py-4 bg-slate-50/90 border-t border-slate-100 flex items-center justify-end gap-2.5 shrink-0">
+        <button class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-semibold text-xs shadow-2xs transition-colors" id="btn-cancel-export" type="button">
+          Batal
+        </button>
+        <button class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-sm shadow-blue-500/25 flex items-center gap-2 transition-all active:scale-[0.99]" type="button">
+          <span class="material-symbols-outlined text-[16px]">file_download</span>
+          <span class="">Unduh &amp; Ekspor Sekarang</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Script Interactivity Modal Tambah User -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('modal-tambah-user');
+  const modalOverlay = document.getElementById('modal-overlay');
+  const modalContent = document.getElementById('modal-content');
+  const btnOpenModal = document.getElementById('btn-open-form-user');
+  const btnCloseModal = document.getElementById('btn-close-modal');
+  const btnCancelModal = document.getElementById('btn-cancel-modal');
+
+  function openModal() {
+    modal.classList.remove('hidden');
+    void modalContent.offsetWidth;
+    modalContent.classList.remove('scale-95', 'opacity-0', 'translate-y-4');
+    modalContent.classList.add('scale-100', 'opacity-100', 'translate-y-0');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
+    modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
+    setTimeout(() => {
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }, 300);
+  }
+
+  if (btnOpenModal) {
+    btnOpenModal.addEventListener('click', function(e) {
+      e.preventDefault();
+      openModal();
+    });
+  }
+
+  if (btnCloseModal) btnCloseModal.addEventListener('click', closeModal);
+  if (btnCancelModal) btnCancelModal.addEventListener('click', closeModal);
+  if (modalOverlay) modalOverlay.addEventListener('click', closeModal);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+      closeModal();
+    }
+  });
+
+  // Foto upload preview interactivity
+  const fotoInput = document.getElementById('foto-input');
+  const uploadPlaceholder = document.getElementById('upload-placeholder');
+  const uploadPreviewWrapper = document.getElementById('upload-preview-wrapper');
+  const fotoPreviewImg = document.getElementById('foto-preview-img');
+  const previewFilename = document.getElementById('preview-filename');
+  const previewFilesize = document.getElementById('preview-filesize');
+  const btnRemoveFoto = document.getElementById('btn-remove-foto');
+
+  if (fotoInput) {
+    fotoInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          fotoPreviewImg.src = e.target.result;
+          previewFilename.textContent = file.name;
+          previewFilesize.textContent = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
+          uploadPlaceholder.classList.add('hidden');
+          uploadPreviewWrapper.classList.remove('hidden');
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  if (btnRemoveFoto) {
+    btnRemoveFoto.addEventListener('click', function() {
+      fotoInput.value = '';
+      fotoPreviewImg.src = '';
+      uploadPreviewWrapper.classList.add('hidden');
+      uploadPlaceholder.classList.remove('hidden');
+    });
+  }
+
+  // =============================================
+  // Modal Ekspor Data
+  // =============================================
+  const exportModal = document.getElementById('modal-export');
+  const exportModalOverlay = document.getElementById('modal-export-overlay');
+  const exportModalContent = document.getElementById('modal-export-content');
+  const btnOpenExport = document.getElementById('btn-open-export');
+  const btnCloseExport = document.getElementById('btn-close-export');
+  const btnCancelExport = document.getElementById('btn-cancel-export');
+
+  function openExportModal() {
+    exportModal.classList.remove('hidden');
+    void exportModalContent.offsetWidth;
+    exportModalContent.classList.remove('scale-95', 'opacity-0', 'translate-y-4');
+    exportModalContent.classList.add('scale-100', 'opacity-100', 'translate-y-0');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeExportModal() {
+    exportModalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
+    exportModalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
+    setTimeout(() => {
+      exportModal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }, 300);
+  }
+
+  if (btnOpenExport) {
+    btnOpenExport.addEventListener('click', function(e) {
+      e.preventDefault();
+      openExportModal();
+    });
+  }
+
+  if (btnCloseExport) btnCloseExport.addEventListener('click', closeExportModal);
+  if (btnCancelExport) btnCancelExport.addEventListener('click', closeExportModal);
+  if (exportModalOverlay) exportModalOverlay.addEventListener('click', closeExportModal);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && exportModal && !exportModal.classList.contains('hidden')) {
+      closeExportModal();
+    }
+  });
+
+  // Format pilihan ekspor (highlight kartu terpilih)
+  const formatOptions = document.querySelectorAll('.export-format-option');
+  formatOptions.forEach(function(option) {
+    const radio = option.querySelector('input[type="radio"]');
+    if (radio) {
+      radio.addEventListener('change', function() {
+        formatOptions.forEach(function(opt) {
+          opt.classList.remove('border-2', 'border-blue-600', 'bg-blue-50/40', 'shadow-xs');
+          opt.classList.add('border', 'border-slate-200', 'bg-white');
+        });
+        option.classList.remove('border', 'border-slate-200', 'bg-white');
+        option.classList.add('border-2', 'border-blue-600', 'bg-blue-50/40', 'shadow-xs');
+      });
+    }
+  });
+
+  // Toggle dropdown cakupan data
+  const btnToggleExportScope = document.getElementById('btn-toggle-export-scope');
+  const exportScopeDropdown = document.getElementById('export-scope-dropdown');
+  const exportScopeArrow = document.getElementById('export-scope-arrow');
+
+  if (btnToggleExportScope && exportScopeDropdown) {
+    btnToggleExportScope.addEventListener('click', function() {
+      const isHidden = exportScopeDropdown.classList.toggle('hidden');
+      if (exportScopeArrow) {
+        exportScopeArrow.textContent = isHidden ? 'keyboard_arrow_down' : 'keyboard_arrow_up';
+      }
+    });
+  }
+
+  // Pilih semua / reset pilihan baris
+  const exportSelectAll = document.getElementById('export-select-all');
+  const exportRowChecks = document.querySelectorAll('.export-row-check');
+  const exportResetSelection = document.getElementById('export-reset-selection');
+
+  if (exportSelectAll) {
+    exportSelectAll.addEventListener('change', function() {
+      exportRowChecks.forEach(function(cb) { cb.checked = exportSelectAll.checked; });
+    });
+  }
+
+  if (exportResetSelection) {
+    exportResetSelection.addEventListener('click', function() {
+      exportRowChecks.forEach(function(cb) { cb.checked = false; });
+      if (exportSelectAll) exportSelectAll.checked = false;
+    });
+  }
+});
+</script>

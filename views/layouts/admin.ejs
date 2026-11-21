@@ -110,6 +110,36 @@
 
   </div>
 
+  <!-- Modal Konfirmasi Logout -->
+  <div id="modal-logout" class="fixed inset-0 z-[100] hidden">
+    <div id="modal-logout-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"></div>
+    <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none">
+      <div id="modal-logout-content" class="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col overflow-hidden pointer-events-auto transform transition-all duration-300 scale-95 opacity-0 translate-y-4">
+        <div class="px-6 py-5 border-b border-slate-100 flex items-start justify-between bg-white shrink-0">
+          <div class="flex items-start gap-3.5">
+            <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-[22px]">logout</span>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-slate-900 leading-tight">Konfirmasi Keluar</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">Apakah Anda yakin ingin keluar dari sesi SIPAT? Anda perlu masuk kembali untuk mengakses sistem.</p>
+            </div>
+          </div>
+          <button id="btn-close-logout" type="button" aria-label="Tutup" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors ml-2">
+            <span class="material-symbols-outlined text-[20px]">close</span>
+          </button>
+        </div>
+        <div class="px-6 py-4 bg-slate-50/60 border-t border-slate-100 flex items-center justify-end gap-3 shrink-0">
+          <button id="btn-cancel-logout" type="button" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 border border-slate-200 bg-white transition shadow-2xs">Batal</button>
+          <button id="btn-confirm-logout" type="button" class="px-6 py-2.5 rounded-xl text-xs font-semibold text-white bg-red-600 hover:bg-red-700 transition shadow-sm inline-flex items-center gap-2">
+            <span class="material-symbols-outlined text-[16px]">logout</span>
+            <span>Ya, Keluar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="/js/admin-layout.js"></script>
 </body>
 </html>
