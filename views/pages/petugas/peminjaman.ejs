@@ -87,15 +87,15 @@
             <th class="min-w-[130px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">KODE PINJAM</th>
             <th class="min-w-[220px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">PEMINJAM</th>
             <th class="min-w-[220px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">ALAT &amp; LAB</th>
-            <th class="min-w-[160px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">JADWAL PAKAI</th>
-            <th class="min-w-[170px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">TUJUAN</th>
+            <th class="min-w-[160px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">TANGGAL PINJAM</th>
+            <th class="min-w-[160px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">TENGGAT KEMBALI</th>
             <th class="min-w-[140px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">STATUS</th>
             <th class="w-28 px-4 py-3.5 text-center bg-slate-50 whitespace-nowrap" scope="col">AKSI</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100 text-sm bg-white">
           <!-- Row 1 -->
-          <tr class="request-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Rina Ayu Lestari" data-username="@rina.ayu" data-email="rina@mhs.univ.ac.id" data-kode="PJ-2025-0901" data-alat="Mikroskop Binokuler CX23" data-merk="Olympus" data-lab="Lab Biologi" data-status="Menunggu Persetujuan" data-jadwal="25 Feb 2025" data-jam="09:00 WIB" data-durasi="3 hari" data-tujuan="Praktikum Biologi Sel" data-jumlah="1" data-icon="biotech">
+          <tr class="request-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Rina Ayu Lestari" data-username="@rina.ayu" data-email="rina@mhs.univ.ac.id" data-kode="PJ-2025-0901" data-alat="Mikroskop Binokuler CX23" data-merk="Olympus" data-lab="Lab Biologi" data-status="Menunggu Persetujuan" data-jadwal="25 Feb 2025" data-jam="09:00 WIB" data-durasi="3 hari" data-tenggat="28 Feb 2025" data-jamkembali="16:00 WIB" data-tujuan="Praktikum Biologi Sel" data-jumlah="1" data-icon="biotech">
             <td class="w-12 px-3.5 py-3.5 text-center font-mono text-xs text-slate-400">01</td>
             <td class="px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">PJ-2025-0901</td>
             <td class="px-4 py-3.5">
@@ -112,33 +112,28 @@
             </td>
             <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
               <div class="font-medium">25 Feb 2025</div>
-              <div class="text-slate-400">09:00 WIB &bull; 3 hari</div>
+              <div class="text-slate-400">09:00 WIB</div>
             </td>
-            <td class="px-4 py-3.5">
-              <span class="text-xs text-slate-600 line-clamp-2 leading-relaxed">Praktikum Biologi Sel</span>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">28 Feb 2025</div>
+              <div class="text-slate-400">16:00 WIB</div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
               <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-semibold">
                 <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Menunggu
               </span>
             </td>
-            <td class="px-4 py-3.5">
+            <td class="px-4 py-3.5 text-center">
               <div class="inline-flex items-center justify-center gap-1">
                 <button type="button" class="btn-detail p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail">
                   <span class="material-symbols-outlined text-[18px]">visibility</span>
-                </button>
-                <button type="button" class="btn-approve p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors" title="Setujui">
-                  <span class="material-symbols-outlined text-[18px]">check_circle</span>
-                </button>
-                <button type="button" class="btn-reject p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Tolak">
-                  <span class="material-symbols-outlined text-[18px]">cancel</span>
                 </button>
               </div>
             </td>
           </tr>
 
           <!-- Row 2 -->
-          <tr class="request-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Fathur Rahman" data-username="@fathur.r" data-email="fathur@mhs.univ.ac.id" data-kode="PJ-2025-0902" data-alat="Oscilloscope Digital 100MHz" data-merk="Tektronix TBS1102B" data-lab="Laboratorium Instrumentasi" data-status="Menunggu Persetujuan" data-jadwal="25 Feb 2025" data-jam="10:30 WIB" data-durasi="2 hari" data-tujuan="Praktikum Elektronika" data-jumlah="1" data-icon="monitor_heart">
+          <tr class="request-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Fathur Rahman" data-username="@fathur.r" data-email="fathur@mhs.univ.ac.id" data-kode="PJ-2025-0902" data-alat="Oscilloscope Digital 100MHz" data-merk="Tektronix TBS1102B" data-lab="Laboratorium Instrumentasi" data-status="Menunggu Persetujuan" data-jadwal="25 Feb 2025" data-jam="10:30 WIB" data-durasi="2 hari" data-tenggat="27 Feb 2025" data-jamkembali="16:00 WIB" data-tujuan="Praktikum Elektronika" data-jumlah="1" data-icon="monitor_heart">
             <td class="w-12 px-3.5 py-3.5 text-center font-mono text-xs text-slate-400">02</td>
             <td class="px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">PJ-2025-0902</td>
             <td class="px-4 py-3.5">
@@ -155,33 +150,28 @@
             </td>
             <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
               <div class="font-medium">25 Feb 2025</div>
-              <div class="text-slate-400">10:30 WIB &bull; 2 hari</div>
+              <div class="text-slate-400">10:30 WIB</div>
             </td>
-            <td class="px-4 py-3.5">
-              <span class="text-xs text-slate-600 line-clamp-2 leading-relaxed">Praktikum Elektronika</span>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">27 Feb 2025</div>
+              <div class="text-slate-400">16:00 WIB</div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
               <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-semibold">
                 <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Menunggu
               </span>
             </td>
-            <td class="px-4 py-3.5">
+            <td class="px-4 py-3.5 text-center">
               <div class="inline-flex items-center justify-center gap-1">
                 <button type="button" class="btn-detail p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail">
                   <span class="material-symbols-outlined text-[18px]">visibility</span>
-                </button>
-                <button type="button" class="btn-approve p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors" title="Setujui">
-                  <span class="material-symbols-outlined text-[18px]">check_circle</span>
-                </button>
-                <button type="button" class="btn-reject p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Tolak">
-                  <span class="material-symbols-outlined text-[18px]">cancel</span>
                 </button>
               </div>
             </td>
           </tr>
 
           <!-- Row 3 -->
-          <tr class="request-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Siti Nurhaliza, S.Si." data-username="@siti.lab" data-email="siti.lab@univ.ac.id" data-kode="PJ-2025-0903" data-alat="Spektrofotometer UV-Vis 1800" data-merk="Shimadzu" data-lab="Lab Kimia" data-status="Menunggu Persetujuan" data-jadwal="25 Feb 2025" data-jam="13:00 WIB" data-durasi="5 hari" data-tujuan="Penelitian skripsi" data-jumlah="1" data-icon="experiment">
+          <tr class="request-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Siti Nurhaliza, S.Si." data-username="@siti.lab" data-email="siti.lab@univ.ac.id" data-kode="PJ-2025-0903" data-alat="Spektrofotometer UV-Vis 1800" data-merk="Shimadzu" data-lab="Lab Kimia" data-status="Menunggu Persetujuan" data-jadwal="25 Feb 2025" data-jam="13:00 WIB" data-durasi="5 hari" data-tenggat="2 Mar 2025" data-jamkembali="16:00 WIB" data-tujuan="Penelitian skripsi" data-jumlah="1" data-icon="experiment">
             <td class="w-12 px-3.5 py-3.5 text-center font-mono text-xs text-slate-400">03</td>
             <td class="px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">PJ-2025-0903</td>
             <td class="px-4 py-3.5">
@@ -198,33 +188,28 @@
             </td>
             <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
               <div class="font-medium">25 Feb 2025</div>
-              <div class="text-slate-400">13:00 WIB &bull; 5 hari</div>
+              <div class="text-slate-400">13:00 WIB</div>
             </td>
-            <td class="px-4 py-3.5">
-              <span class="text-xs text-slate-600 line-clamp-2 leading-relaxed">Penelitian skripsi</span>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">2 Mar 2025</div>
+              <div class="text-slate-400">16:00 WIB</div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
               <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-semibold">
                 <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Menunggu
               </span>
             </td>
-            <td class="px-4 py-3.5">
+            <td class="px-4 py-3.5 text-center">
               <div class="inline-flex items-center justify-center gap-1">
                 <button type="button" class="btn-detail p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail">
                   <span class="material-symbols-outlined text-[18px]">visibility</span>
-                </button>
-                <button type="button" class="btn-approve p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors" title="Setujui">
-                  <span class="material-symbols-outlined text-[18px]">check_circle</span>
-                </button>
-                <button type="button" class="btn-reject p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Tolak">
-                  <span class="material-symbols-outlined text-[18px]">cancel</span>
                 </button>
               </div>
             </td>
           </tr>
 
           <!-- Row 4 -->
-          <tr class="request-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Bima Satria Wicaksono" data-username="@bimasatria" data-email="bima@mhs.univ.ac.id" data-kode="PJ-2025-0904" data-alat="Solder Station Digital" data-merk="Hakko FX-888D" data-lab="Laboratorium Instrumentasi" data-status="Menunggu Persetujuan" data-jadwal="26 Feb 2025" data-jam="08:00 WIB" data-durasi="4 hari" data-tujuan="Proyek akhir" data-jumlah="1" data-icon="handyman">
+          <tr class="request-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Bima Satria Wicaksono" data-username="@bimasatria" data-email="bima@mhs.univ.ac.id" data-kode="PJ-2025-0904" data-alat="Solder Station Digital" data-merk="Hakko FX-888D" data-lab="Laboratorium Instrumentasi" data-status="Menunggu Persetujuan" data-jadwal="26 Feb 2025" data-jam="08:00 WIB" data-durasi="4 hari" data-tenggat="2 Mar 2025" data-jamkembali="16:00 WIB" data-tujuan="Proyek akhir" data-jumlah="1" data-icon="handyman">
             <td class="w-12 px-3.5 py-3.5 text-center font-mono text-xs text-slate-400">04</td>
             <td class="px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">PJ-2025-0904</td>
             <td class="px-4 py-3.5">
@@ -241,33 +226,28 @@
             </td>
             <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
               <div class="font-medium">26 Feb 2025</div>
-              <div class="text-slate-400">08:00 WIB &bull; 4 hari</div>
+              <div class="text-slate-400">08:00 WIB</div>
             </td>
-            <td class="px-4 py-3.5">
-              <span class="text-xs text-slate-600 line-clamp-2 leading-relaxed">Proyek akhir</span>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">2 Mar 2025</div>
+              <div class="text-slate-400">16:00 WIB</div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
               <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-semibold">
                 <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Menunggu
               </span>
             </td>
-            <td class="px-4 py-3.5">
+            <td class="px-4 py-3.5 text-center">
               <div class="inline-flex items-center justify-center gap-1">
                 <button type="button" class="btn-detail p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail">
                   <span class="material-symbols-outlined text-[18px]">visibility</span>
-                </button>
-                <button type="button" class="btn-approve p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors" title="Setujui">
-                  <span class="material-symbols-outlined text-[18px]">check_circle</span>
-                </button>
-                <button type="button" class="btn-reject p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Tolak">
-                  <span class="material-symbols-outlined text-[18px]">cancel</span>
                 </button>
               </div>
             </td>
           </tr>
 
           <!-- Row 5 -->
-          <tr class="request-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Allya Amanda Putri" data-username="@allya.p" data-email="allya@mhs.univ.ac.id" data-kode="PJ-2025-0905" data-alat="Autoclave Steam Sterilizer" data-merk="Hirayama" data-lab="Lab Biologi" data-status="Menunggu Persetujuan" data-jadwal="26 Feb 2025" data-jam="11:00 WIB" data-durasi="1 hari" data-tujuan="Sterilisasi media" data-jumlah="1" data-icon="science">
+          <tr class="request-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Allya Amanda Putri" data-username="@allya.p" data-email="allya@mhs.univ.ac.id" data-kode="PJ-2025-0905" data-alat="Autoclave Steam Sterilizer" data-merk="Hirayama" data-lab="Lab Biologi" data-status="Menunggu Persetujuan" data-jadwal="26 Feb 2025" data-jam="11:00 WIB" data-durasi="1 hari" data-tenggat="27 Feb 2025" data-jamkembali="16:00 WIB" data-tujuan="Sterilisasi media" data-jumlah="1" data-icon="science">
             <td class="w-12 px-3.5 py-3.5 text-center font-mono text-xs text-slate-400">05</td>
             <td class="px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">PJ-2025-0905</td>
             <td class="px-4 py-3.5">
@@ -284,33 +264,28 @@
             </td>
             <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
               <div class="font-medium">26 Feb 2025</div>
-              <div class="text-slate-400">11:00 WIB &bull; 1 hari</div>
+              <div class="text-slate-400">11:00 WIB</div>
             </td>
-            <td class="px-4 py-3.5">
-              <span class="text-xs text-slate-600 line-clamp-2 leading-relaxed">Sterilisasi media</span>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">27 Feb 2025</div>
+              <div class="text-slate-400">16:00 WIB</div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
               <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-semibold">
                 <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Menunggu
               </span>
             </td>
-            <td class="px-4 py-3.5">
+            <td class="px-4 py-3.5 text-center">
               <div class="inline-flex items-center justify-center gap-1">
                 <button type="button" class="btn-detail p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail">
                   <span class="material-symbols-outlined text-[18px]">visibility</span>
-                </button>
-                <button type="button" class="btn-approve p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors" title="Setujui">
-                  <span class="material-symbols-outlined text-[18px]">check_circle</span>
-                </button>
-                <button type="button" class="btn-reject p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Tolak">
-                  <span class="material-symbols-outlined text-[18px]">cancel</span>
                 </button>
               </div>
             </td>
           </tr>
 
           <!-- Row 6 -->
-          <tr class="request-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Dr. Ir. Hendra Wijaya, M.T." data-username="@hendrawijaya" data-email="hendra@univ.ac.id" data-kode="PJ-2025-0906" data-alat="Centrifuge Mikro Kecepatan Tinggi" data-merk="Eppendorf 5424" data-lab="Lab Biokimia" data-status="Menunggu Persetujuan" data-jadwal="27 Feb 2025" data-jam="09:30 WIB" data-durasi="7 hari" data-tujuan="Riset dosen" data-jumlah="1" data-icon="biotech">
+          <tr class="request-row hover:bg-slate-50/80 transition-colors duration-150" data-nama="Dr. Ir. Hendra Wijaya, M.T." data-username="@hendrawijaya" data-email="hendra@univ.ac.id" data-kode="PJ-2025-0906" data-alat="Centrifuge Mikro Kecepatan Tinggi" data-merk="Eppendorf 5424" data-lab="Lab Biokimia" data-status="Menunggu Persetujuan" data-jadwal="27 Feb 2025" data-jam="09:30 WIB" data-durasi="7 hari" data-tenggat="6 Mar 2025" data-jamkembali="16:00 WIB" data-tujuan="Riset dosen" data-jumlah="1" data-icon="biotech">
             <td class="w-12 px-3.5 py-3.5 text-center font-mono text-xs text-slate-400">06</td>
             <td class="px-4 py-3.5 font-mono text-xs font-semibold text-brand-700 whitespace-nowrap">PJ-2025-0906</td>
             <td class="px-4 py-3.5">
@@ -327,26 +302,21 @@
             </td>
             <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
               <div class="font-medium">27 Feb 2025</div>
-              <div class="text-slate-400">09:30 WIB &bull; 7 hari</div>
+              <div class="text-slate-400">09:30 WIB</div>
             </td>
-            <td class="px-4 py-3.5">
-              <span class="text-xs text-slate-600 line-clamp-2 leading-relaxed">Riset dosen</span>
+            <td class="px-4 py-3.5 text-xs font-mono text-slate-700 whitespace-nowrap">
+              <div class="font-medium">6 Mar 2025</div>
+              <div class="text-slate-400">16:00 WIB</div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
               <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-semibold">
                 <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Menunggu
               </span>
             </td>
-            <td class="px-4 py-3.5">
+            <td class="px-4 py-3.5 text-center">
               <div class="inline-flex items-center justify-center gap-1">
                 <button type="button" class="btn-detail p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail">
                   <span class="material-symbols-outlined text-[18px]">visibility</span>
-                </button>
-                <button type="button" class="btn-approve p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors" title="Setujui">
-                  <span class="material-symbols-outlined text-[18px]">check_circle</span>
-                </button>
-                <button type="button" class="btn-reject p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Tolak">
-                  <span class="material-symbols-outlined text-[18px]">cancel</span>
                 </button>
               </div>
             </td>
@@ -433,14 +403,14 @@
         <!-- Detail grid -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div class="rounded-xl border border-slate-200 p-3">
-            <p class="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Jadwal Pakai</p>
-            <p id="modal-request-date" class="text-xs font-semibold text-slate-800 mt-1">25 Feb 2025</p>
-            <p id="modal-request-time" class="text-[11px] text-slate-400 mt-0.5">09:00 WIB</p>
+            <p class="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Tanggal Pinjam</p>
+            <p id="modal-request-return-deadline" class="text-xs font-semibold text-slate-800 mt-1">-</p>
+            <p id="modal-request-return-deadline-time" class="text-[11px] text-slate-400 mt-0.5">-</p>
           </div>
           <div class="rounded-xl border border-slate-200 p-3">
-            <p class="text-[10px] uppercase tracking-wider font-semibold text-slate-400">n</p>
-            <p id="modal-request-duration" class="text-xs font-semibold text-slate-800 mt-1">3 hari</p>
-            <p class="text-[11px] text-slate-400 mt-0.5">Maks. 7 hari</p>
+            <p class="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Tenggat Kembali</p>
+            <p id="modal-request-deadline" class="text-xs font-semibold text-slate-800 mt-1">-</p>
+            <p id="modal-request-deadline-time" class="text-[11px] text-slate-400 mt-0.5">-</p>
           </div>
           <div class="rounded-xl border border-slate-200 p-3">
             <p class="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Jumlah</p>
@@ -489,8 +459,34 @@
   </div>
 </div>
 
+<!-- Modal Konfirmasi Aksi -->
+<div id="modal-confirm-action" class="fixed inset-0 z-[110] hidden">
+  <div id="modal-confirm-action-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-200"></div>
+  <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none">
+    <div id="modal-confirm-action-content" class="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden pointer-events-auto transform transition-all duration-200 scale-95 opacity-0">
+      <div class="p-5 sm:p-6">
+        <div class="flex items-start gap-4">
+          <div id="modal-confirm-action-iconwrap" class="w-11 h-11 rounded-full flex items-center justify-center shrink-0 bg-emerald-50 text-emerald-600">
+            <span class="material-symbols-outlined text-[24px]" id="modal-confirm-action-icon">check_circle</span>
+          </div>
+          <div class="min-w-0 flex-1">
+            <h3 id="modal-confirm-action-title" class="text-base font-bold text-slate-900 leading-tight">Setujui Permohonan?</h3>
+            <p id="modal-confirm-action-desc" class="text-sm text-slate-600 mt-2 leading-relaxed">Apakah Anda yakin ingin menyetujui permohonan peminjaman alat ini? Pastikan data permohonan sudah diperiksa.</p>
+          </div>
+        </div>
+      </div>
+      <div class="px-5 sm:px-6 py-4 bg-slate-50 border-t border-slate-100 flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5">
+        <button id="btn-confirm-action-cancel" type="button" class="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 border border-slate-200 bg-white transition shadow-2xs">Batal</button>
+        <button id="btn-confirm-action-ok" type="button" class="w-full sm:w-auto px-5 py-2.5 rounded-xl text-white text-xs font-semibold shadow-sm inline-flex items-center justify-center gap-2 transition-all active:scale-[0.99] bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 disabled:cursor-not-allowed disabled:pointer-events-none">
+          <span id="modal-confirm-action-oktext">Ya, Setujui</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Toast -->
-<div id="request-toast" class="fixed bottom-6 right-6 z-[110] hidden max-w-sm w-[calc(100%-3rem)] sm:w-auto">
+<div id="request-toast" class="fixed bottom-6 right-6 z-[120] hidden max-w-sm w-[calc(100%-3rem)] sm:w-auto">
   <div id="request-toast-inner" class="bg-white border border-emerald-200 rounded-xl shadow-lg shadow-slate-900/10 p-4 flex items-start gap-3">
     <div id="request-toast-icon-wrap" class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
       <span id="request-toast-icon" class="material-symbols-outlined text-[20px]">check_circle</span>
@@ -527,6 +523,18 @@ document.addEventListener('DOMContentLoaded', function () {
   const btnModalReject = document.getElementById('btn-modal-reject');
   const decisionResult = document.getElementById('request-decision-result');
 
+  // Confirm modal
+  const confirmModal = document.getElementById('modal-confirm-action');
+  const confirmModalContent = document.getElementById('modal-confirm-action-content');
+  const confirmModalOverlay = document.getElementById('modal-confirm-action-overlay');
+  const btnConfirmCancel = document.getElementById('btn-confirm-action-cancel');
+  const btnConfirmOk = document.getElementById('btn-confirm-action-ok');
+  const confirmTitle = document.getElementById('modal-confirm-action-title');
+  const confirmDesc = document.getElementById('modal-confirm-action-desc');
+  const confirmOkText = document.getElementById('modal-confirm-action-oktext');
+  const confirmIconWrap = document.getElementById('modal-confirm-action-iconwrap');
+  const confirmIcon = document.getElementById('modal-confirm-action-icon');
+
   const toast = document.getElementById('request-toast');
   const toastInner = document.getElementById('request-toast-inner');
   const toastIconWrap = document.getElementById('request-toast-icon-wrap');
@@ -537,6 +545,47 @@ document.addEventListener('DOMContentLoaded', function () {
 
   let activeRow = null;
   let toastTimer = null;
+  let confirmAction = null;
+  let confirmProcessing = false;
+
+  function openConfirmModal(mode, row) {
+    if (!confirmModal || !confirmModalContent) return;
+    confirmAction = { mode, row };
+    confirmProcessing = false;
+    btnConfirmOk.disabled = false;
+    if (mode === 'approve') {
+      confirmTitle.textContent = 'Setujui Permohonan?';
+      confirmDesc.textContent = 'Apakah Anda yakin ingin menyetujui permohonan peminjaman alat ini? Pastikan data permohonan sudah diperiksa.';
+      confirmOkText.textContent = 'Ya, Setujui';
+      confirmIcon.textContent = 'check_circle';
+      confirmIconWrap.className = 'w-11 h-11 rounded-full flex items-center justify-center shrink-0 bg-emerald-50 text-emerald-600';
+      btnConfirmOk.className = 'w-full sm:w-auto px-5 py-2.5 rounded-xl text-white text-xs font-semibold shadow-sm inline-flex items-center justify-center gap-2 transition-all active:scale-[0.99] bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 disabled:cursor-not-allowed disabled:pointer-events-none';
+    } else {
+      confirmTitle.textContent = 'Tolak Permohonan?';
+      confirmDesc.textContent = 'Apakah Anda yakin ingin menolak permohonan peminjaman alat ini? Tindakan ini akan mengubah status permohonan.';
+      confirmOkText.textContent = 'Ya, Tolak';
+      confirmIcon.textContent = 'cancel';
+      confirmIconWrap.className = 'w-11 h-11 rounded-full flex items-center justify-center shrink-0 bg-rose-50 text-rose-600';
+      btnConfirmOk.className = 'w-full sm:w-auto px-5 py-2.5 rounded-xl text-white text-xs font-semibold shadow-sm inline-flex items-center justify-center gap-2 transition-all active:scale-[0.99] bg-rose-600 hover:bg-rose-700 disabled:opacity-60 disabled:cursor-not-allowed disabled:pointer-events-none';
+    }
+    confirmModal.classList.remove('hidden');
+    requestAnimationFrame(function () {
+      confirmModalContent.classList.remove('scale-95', 'opacity-0');
+      confirmModalContent.classList.add('scale-100', 'opacity-100');
+    });
+  }
+
+  function closeConfirmModal() {
+    if (!confirmModal || !confirmModalContent) return;
+    confirmModalContent.classList.remove('scale-100', 'opacity-100');
+    confirmModalContent.classList.add('scale-95', 'opacity-0');
+    setTimeout(function () {
+      confirmModal.classList.add('hidden');
+      confirmAction = null;
+      confirmProcessing = false;
+      btnConfirmOk.disabled = false;
+    }, 200);
+  }
 
   function statusBadge(status) {
     if (status === 'Disetujui') {
@@ -617,9 +666,12 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('modal-request-item').textContent = row.dataset.alat || '-';
     document.getElementById('modal-request-item-meta').textContent = (row.dataset.kode || '-') + ' \u00b7 ' + (row.dataset.merk || '-');
     document.getElementById('modal-request-lab').textContent = row.dataset.lab || '-';
-    document.getElementById('modal-request-date').textContent = row.dataset.jadwal || '-';
-    document.getElementById('modal-request-time').textContent = row.dataset.jam || '-';
-    document.getElementById('modal-request-duration').textContent = row.dataset.durasi || '-';
+    const tenggat = row.dataset.tenggat || '-';
+    const jamKembali = row.dataset.jamkembali || '-';
+    document.getElementById('modal-request-return-deadline').textContent = row.dataset.jadwal || '-';
+    document.getElementById('modal-request-return-deadline-time').textContent = row.dataset.jam || '-';
+    document.getElementById('modal-request-deadline').textContent = row.dataset.tenggat || '-';
+    document.getElementById('modal-request-deadline-time').textContent = row.dataset.jamkembali || '-';
     document.getElementById('modal-request-qty').textContent = (row.dataset.jumlah || '1') + ' unit';
     document.getElementById('modal-request-purpose').textContent = row.dataset.tujuan || '-';
 
@@ -724,30 +776,45 @@ document.addEventListener('DOMContentLoaded', function () {
 
   rows.forEach(function (row) {
     bindDetailButton(row.querySelector('.btn-detail'));
-
-    const approveBtn = row.querySelector('.btn-approve');
-    if (approveBtn) {
-      approveBtn.addEventListener('click', function () {
-        decide(row, 'Disetujui');
-      });
-    }
-
-    const rejectBtn = row.querySelector('.btn-reject');
-    if (rejectBtn) {
-      rejectBtn.addEventListener('click', function () {
-        decide(row, 'Ditolak');
-      });
-    }
   });
 
   if (btnModalApprove) {
     btnModalApprove.addEventListener('click', function () {
-      decide(activeRow, 'Disetujui');
+      if (!activeRow) return;
+      openConfirmModal('approve', activeRow);
     });
   }
   if (btnModalReject) {
     btnModalReject.addEventListener('click', function () {
-      decide(activeRow, 'Ditolak');
+      if (!activeRow) return;
+      openConfirmModal('reject', activeRow);
+    });
+  }
+
+  if (btnConfirmCancel) {
+    btnConfirmCancel.addEventListener('click', function () {
+      if (confirmProcessing) return;
+      closeConfirmModal();
+    });
+  }
+  if (confirmModalOverlay) {
+    confirmModalOverlay.addEventListener('click', function () {
+      if (confirmProcessing) return;
+      closeConfirmModal();
+    });
+  }
+  if (btnConfirmOk) {
+    btnConfirmOk.addEventListener('click', function () {
+      if (!confirmAction || confirmProcessing) return;
+      const { mode, row } = confirmAction;
+      if (!row || row.dataset.status !== 'Menunggu Persetujuan') { closeConfirmModal(); return; }
+      confirmProcessing = true;
+      btnConfirmOk.disabled = true;
+      confirmOkText.textContent = mode === 'approve' ? 'Memproses...' : 'Memproses...';
+      setTimeout(function () {
+        decide(row, mode === 'approve' ? 'Disetujui' : 'Ditolak');
+        closeConfirmModal();
+      }, 250);
     });
   }
 
@@ -757,7 +824,13 @@ document.addEventListener('DOMContentLoaded', function () {
   if (btnCloseToast) btnCloseToast.addEventListener('click', function () { toast.classList.add('hidden'); });
 
   document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeModal();
+    if (event.key === 'Escape') {
+      if (confirmModal && !confirmModal.classList.contains('hidden')) {
+        if (!confirmProcessing) closeConfirmModal();
+        return;
+      }
+      if (modal && !modal.classList.contains('hidden')) closeModal();
+    }
   });
 
   [searchInput, labFilter, statusFilter].forEach(function (el) {
@@ -768,7 +841,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const btnExport = document.getElementById('btn-export-peminjaman');
   if (btnExport) {
     btnExport.addEventListener('click', function () {
-      const header = ['No', 'Kode Pinjam', 'Peminjam', 'Username', 'Email', 'Alat', 'Merk', 'Lab', 'Jadwal', 'Jam', 'n', 'Tujuan', 'Status'];
+      const header = ['No', 'Kode Pinjam', 'Peminjam', 'Username', 'Email', 'Alat', 'Merk', 'Lab', 'Tanggal Pinjam', 'Jam Pinjam', 'Tenggat Kembali', 'Jam Kembali', 'Status'];
       const lines = [header.join(',')];
 
       rows.filter(function (row) { return !row.classList.contains('hidden'); }).forEach(function (row, index) {
@@ -783,8 +856,8 @@ document.addEventListener('DOMContentLoaded', function () {
           row.dataset.lab || '',
           row.dataset.jadwal || '',
           row.dataset.jam || '',
-          row.dataset.durasi || '',
-          row.dataset.tujuan || '',
+          row.dataset.tenggat || '',
+          row.dataset.jamkembali || '',
           statusLabel(row.dataset.status)
         ].map(function (value) { return '"' + String(value).replace(/"/g, '""') + '"'; });
         lines.push(values.join(','));

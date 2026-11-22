@@ -47,19 +47,24 @@
 
     #sidebar {
       width: 16rem;
-      overflow: hidden;
+      overflow-y: auto;
+      overflow-x: hidden;
       flex-shrink: 0;
-      transition: width .3s ease;
+      transition: width .3s ease, transform .3s ease;
     }
 
     #sidebar.collapsed {
       width: 0;
       border-right-color: transparent;
+      overflow: hidden;
     }
 
     #sidebar-inner {
       width: 16rem;
-      min-height: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     #menu-toggle .bar {
@@ -73,12 +78,32 @@
 
     #sidebar-backdrop { display: none; }
 
+    @media (min-width: 1024px) {
+      #sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 40;
+      }
+
+      #app-shell {
+        margin-left: 16rem;
+        transition: margin-left .3s ease;
+      }
+
+      #app-shell.sidebar-collapsed {
+        margin-left: 0;
+      }
+    }
+
     @media (max-width: 1023px) {
       #sidebar {
         position: fixed;
         top: 0;
         left: 0;
         bottom: 0;
+        height: 100vh;
         z-index: 40;
         box-shadow: 0 10px 40px rgba(15,23,42,.18);
       }
@@ -96,15 +121,15 @@
   </style>
 </head>
 
-<body class="bg-[#f8fafc] text-slate-800 antialiased min-h-screen">
-  <div class="flex min-h-screen w-full">
+<body class="bg-[#f8fafc] text-slate-800 antialiased h-screen overflow-hidden">
+  <div class="flex h-screen w-full overflow-hidden">
 
     <%- include('../partials/sidebar-peminjam', { currentPath }) %>
 
-    <div class="flex-1 flex flex-col min-w-0">
+    <div id="app-shell" class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
       <%- include('../partials/header', { pageTitle, userName: 'User', userRole: 'Sistem Peminjam', userInitials: 'U' }) %>
 
-      <main class="flex-1 min-w-0 p-4 sm:p-8 space-y-6 overflow-x-hidden">
+      <main class="flex-1 min-w-0 p-4 sm:p-8 space-y-6 overflow-y-auto overflow-x-hidden">
         <%- body %>
       </main>
     </div>

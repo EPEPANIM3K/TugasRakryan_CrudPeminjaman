@@ -1,0 +1,22 @@
+<nav class="lg:hidden fixed inset-x-0 bottom-0 z-40 bg-white/95 backdrop-blur border-t border-slate-200 shadow-[0_-4px_20px_-8px_rgba(15,23,42,0.18)] pb-[env(safe-area-inset-bottom)]" aria-label="Navigasi admin mobile">
+  <div class="grid grid-cols-6">
+    <%
+      const adminMobileMenus = [
+        { name: 'Dashboard', url: '/admin', icon: 'space_dashboard' },
+        { name: 'Alat', url: '/admin/alat', icon: 'handyman' },
+        { name: 'Pengguna', url: '/admin/users', icon: 'group' },
+        { name: 'Pinjam', url: '/admin/peminjaman', icon: 'assignment' },
+        { name: 'Kembali', url: '/admin/pengembalian', icon: 'assignment_return' },
+        { name: 'Log', url: '/admin/aktivitas', icon: 'history' }
+      ];
+    %>
+    <% adminMobileMenus.forEach(function(menu) { const active = currentPath === menu.url; %>
+      <a href="<%= menu.url %>"
+         class="flex flex-col items-center justify-center gap-0.5 py-2 min-h-[56px] text-[10px] font-semibold transition-colors <%= active ? 'text-blue-600' : 'text-slate-500 hover:text-slate-800' %>"
+         aria-current="<%= active ? 'page' : 'false' %>">
+        <span class="material-symbols-outlined text-[21px] <%= active ? 'text-blue-600' : 'text-slate-400' %>"><%= menu.icon %></span>
+        <span><%= menu.name %></span>
+      </a>
+    <% }) %>
+  </div>
+</nav>

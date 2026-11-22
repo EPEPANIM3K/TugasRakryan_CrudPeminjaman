@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const sidebar = document.getElementById('sidebar');
   const toggle = document.getElementById('menu-toggle');
   const backdrop = document.getElementById('sidebar-backdrop');
+  const appShell = document.getElementById('app-shell');
 
   if (!sidebar || !toggle || !backdrop) return;
 
@@ -12,6 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
     toggle.classList.toggle('is-open', open);
     toggle.setAttribute('aria-expanded', String(open));
     backdrop.classList.toggle('show', open && isMobile());
+    if (appShell) {
+      if (isMobile()) {
+        appShell.classList.toggle('sidebar-collapsed', !open);
+      } else {
+        appShell.classList.toggle('sidebar-collapsed', !open);
+      }
+    }
 
     if (save && !isMobile()) {
       try {

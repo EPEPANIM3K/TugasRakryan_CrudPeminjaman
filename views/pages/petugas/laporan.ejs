@@ -191,7 +191,11 @@
   @media print {
     @page { size: A4 landscape; margin: 12mm; }
 
-    body { background: #ffffff !important; }
+    body {
+      background: #ffffff !important;
+      height: auto !important;
+      overflow: visible !important;
+    }
 
     #sidebar,
     #sidebar-backdrop,
@@ -202,13 +206,22 @@
       display: none !important;
     }
 
-    .flex.min-h-screen.w-full > .flex-1 {
+    #app-shell {
+      margin-left: 0 !important;
       width: 100% !important;
+      height: auto !important;
+      overflow: visible !important;
+    }
+
+    .flex.h-screen.w-full.overflow-hidden {
+      height: auto !important;
+      overflow: visible !important;
     }
 
     main {
       padding: 0 !important;
       overflow: visible !important;
+      height: auto !important;
     }
 
     #laporan-print-area {
@@ -279,16 +292,16 @@ document.addEventListener('DOMContentLoaded', function () {
         { key: 'peminjam', label: 'Peminjam', align: 'left' },
         { key: 'alat', label: 'Alat', align: 'left' },
         { key: 'lab', label: 'Laboratorium', align: 'left' },
-        { key: 'tanggal', label: 'Tanggal', align: 'left' },
-        { key: 'n', label: 'n', align: 'right' },
+        { key: 'tanggalPinjam', label: 'Tanggal Pinjam', align: 'left' },
+        { key: 'tenggat', label: 'Tenggat Kembali', align: 'left' },
         { key: 'status', label: 'Status', align: 'left' }
       ],
       rows: [
-        { kode: 'PJ-2025-0901', peminjam: 'Rina Ayu Lestari', alat: 'Mikroskop Binokuler CX23', lab: 'Lab Biologi', tanggal: '25 Feb 2025', n: '3 hari', status: 'Disetujui' },
-        { kode: 'PJ-2025-0902', peminjam: 'Fathur Rahman', alat: 'Oscilloscope Digital 100MHz', lab: 'Laboratorium Instrumentasi', tanggal: '25 Feb 2025', n: '2 hari', status: 'Disetujui' },
-        { kode: 'PJ-2025-0903', peminjam: 'Siti Nurhaliza, S.Si.', alat: 'Spektrofotometer UV-Vis 1800', lab: 'Lab Kimia', tanggal: '25 Feb 2025', n: '5 hari', status: 'Disetujui' },
-        { kode: 'PJ-2025-0904', peminjam: 'Bima Satria Wicaksono', alat: 'Solder Station Digital', lab: 'Laboratorium Instrumentasi', tanggal: '26 Feb 2025', n: '4 hari', status: 'Disetujui' },
-        { kode: 'PJ-2025-0905', peminjam: 'Allya Amanda Putri', alat: 'Autoclave Steam Sterilizer', lab: 'Lab Biologi', tanggal: '26 Feb 2025', n: '1 hari', status: 'Ditolak' }
+        { kode: 'PJ-2025-0901', peminjam: 'Rina Ayu Lestari', alat: 'Mikroskop Binokuler CX23', lab: 'Lab Biologi', tanggalPinjam: '25 Feb 2025', tenggat: '28 Feb 2025', status: 'Disetujui' },
+        { kode: 'PJ-2025-0902', peminjam: 'Fathur Rahman', alat: 'Oscilloscope Digital 100MHz', lab: 'Laboratorium Instrumentasi', tanggalPinjam: '25 Feb 2025', tenggat: '27 Feb 2025', status: 'Disetujui' },
+        { kode: 'PJ-2025-0903', peminjam: 'Siti Nurhaliza, S.Si.', alat: 'Spektrofotometer UV-Vis 1800', lab: 'Lab Kimia', tanggalPinjam: '25 Feb 2025', tenggat: '2 Mar 2025', status: 'Disetujui' },
+        { kode: 'PJ-2025-0904', peminjam: 'Bima Satria Wicaksono', alat: 'Solder Station Digital', lab: 'Laboratorium Instrumentasi', tanggalPinjam: '26 Feb 2025', tenggat: '2 Mar 2025', status: 'Disetujui' },
+        { kode: 'PJ-2025-0905', peminjam: 'Allya Amanda Putri', alat: 'Autoclave Steam Sterilizer', lab: 'Lab Biologi', tanggalPinjam: '26 Feb 2025', tenggat: '27 Feb 2025', status: 'Ditolak' }
       ],
       note: 'Laporan peminjaman memuat seluruh permohonan yang diajukan pada periode terpilih beserta status keputusannya.'
     },
