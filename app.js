@@ -40,11 +40,9 @@ app.get('/admin/users', (req, res) => {
     });
 });
 
-app.get('/admin/peminjaman', (req, res) => {
-    res.render('pages/admin/peminjaman', {
-        pageTitle: 'Kelola Peminjaman'
-    });
-});
+// Route peminjaman menggunakan router admin
+const adminRoutes = require('./routes/admin');
+app.use('/admin', adminRoutes);
 
 app.get('/admin/pengembalian', (req, res) => {
     res.render('pages/admin/pengembalian', {

@@ -43,15 +43,13 @@
     <div class="flex flex-1 flex-col min-w-0 h-full overflow-hidden">
       <%- include('../partials/header') %>
 
-      <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 sm:p-6 lg:p-8 pb-20 lg:pb-8">
+      <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 sm:p-6 lg:p-8">
         <div class="max-w-[1600px] mx-auto w-full flex flex-col h-full">
           <%- body %>
         </div>
       </main>
     </div>
   </div>
-
-  <%- include('../partials/mobile-nav-admin') %>
 
   <!-- Global Modal Logout -->
   <div id="modal-logout" class="fixed inset-0 z-[100] hidden">
