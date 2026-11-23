@@ -50,12 +50,6 @@ app.get('/admin', (req, res) => {
     });
 });
 
-app.get('/admin/alat', (req, res) => {
-    res.render('pages/admin/alat', {
-        pageTitle: 'Kelola Alat & Barang'
-    });
-});
-
 app.get('/admin/users', (req, res) => {
     res.render('pages/admin/users', {
         pageTitle: 'Kelola Pengguna'
@@ -104,13 +98,7 @@ app.get('/peminjam', (req, res) => {
     res.redirect('/peminjam/alat');
 });
 
-app.get('/peminjam/alat', (req, res) => {
-    res.render('pages/peminjam/alat', {
-        layout: 'layouts/peminjam',
-        pageTitle: 'Katalog Alat Lab',
-        currentPath: '/peminjam/alat'
-    });
-});
+app.use('/peminjam', require('./routes/peminjam'));
 
 app.get('/peminjam/pengembalian', (req, res) => {
     res.render('pages/peminjam/pengembalian', {

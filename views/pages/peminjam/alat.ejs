@@ -19,7 +19,7 @@
         <span class="material-symbols-outlined text-[20px] text-slate-300">inventory_2</span>
       </div>
       <div class="my-2">
-        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-total-alat">4</div>
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-total-alat"><%= stats.total %></div>
         <div class="text-xs font-medium text-slate-400 mt-1">Inventaris laboratorium</div>
       </div>
     </div>
@@ -29,7 +29,7 @@
         <span class="material-symbols-outlined text-[20px] text-slate-300">check_circle</span>
       </div>
       <div class="my-2">
-        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-tersedia">3</div>
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-tersedia"><%= stats.tersedia %></div>
         <div class="text-xs font-medium text-slate-400 mt-1">Alat siap dipinjam</div>
       </div>
     </div>
@@ -39,7 +39,7 @@
         <span class="material-symbols-outlined text-[20px] text-slate-300">pending_actions</span>
       </div>
       <div class="my-2">
-        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-dipinjam">1</div>
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-dipinjam"><%= stats.dipinjam %></div>
         <div class="text-xs font-medium text-slate-400 mt-1">Alat sedang dipinjam</div>
       </div>
     </div>
@@ -65,16 +65,16 @@
 
   <!-- Grid Cards -->
   <div id="alat-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    <!-- Card 1 -->
-    <div class="alat-card bg-white rounded-xl overflow-hidden flex flex-col border border-slate-100 shadow-sm" data-nama="Microscope Olympus CX23" data-kode="MCR-001" data-status="Tersedia" data-stok="12">
+    <% items.forEach(function (item) { var tersedia = isTersedia(item); var stok = Number(item.stok_tersedia) || 0; %>
+    <div class="alat-card bg-white rounded-xl overflow-hidden flex flex-col border border-slate-100 shadow-sm" data-nama="<%= item.nama_alat %>" data-kode="<%= item.kode_alat %>" data-status="<%= tersedia ? 'Tersedia' : 'Sedang Dipinjam' %>" data-stok="<%= stok %>">
       <div class="relative aspect-[4/3] bg-slate-100 rounded-lg m-3 mb-0 overflow-hidden">
-        <img class="w-full h-full object-cover rounded-lg" alt="Microscope Olympus CX23" src="/images/alat/placeholder.svg" onerror="this.onerror=null;this.src='/images/alat/placeholder.svg';">
+        <img class="w-full h-full object-cover rounded-lg" alt="<%= item.nama_alat %>" src="<%= item.foto_url || '/images/alat/placeholder.svg' %>" onerror="this.onerror=null;this.src='/images/alat/placeholder.svg';">
         <div class="absolute top-3 left-3">
-          <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-sm text-slate-800 border border-slate-200 text-xs font-semibold shadow-sm inline-flex items-center gap-1">12 Unit</span>
+          <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-sm text-slate-800 border border-slate-200 text-xs font-semibold shadow-sm inline-flex items-center gap-1"><%= stok %> Unit</span>
         </div>
         <div class="absolute bottom-3 left-3">
-          <span class="px-2.5 py-1 rounded-md bg-emerald-50/95 backdrop-blur-sm text-emerald-700 border border-emerald-200 text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Tersedia
+          <span class="px-2.5 py-1 rounded-md <%= tersedia ? 'bg-emerald-50/95 text-emerald-700 border-emerald-200' : 'bg-amber-50/95 text-amber-700 border-amber-200' %> backdrop-blur-sm border text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm">
+            <span class="w-1.5 h-1.5 rounded-full <%= tersedia ? 'bg-emerald-500' : 'bg-amber-500' %>"></span> <%= tersedia ? 'Tersedia' : 'Sedang Dipinjam' %>
           </span>
         </div>
       </div>
@@ -82,107 +82,23 @@
         <div class="space-y-2 flex-1">
           <div class="flex items-center gap-1 text-slate-500 text-xs truncate">
             <span class="material-symbols-outlined text-[15px] shrink-0">room</span>
-            <span class="truncate">Lab Biologi</span>
+            <span class="truncate"><%= item.nama_lab || '-' %></span>
           </div>
           <div>
-            <h3 class="text-base font-semibold text-slate-900 line-clamp-1">Microscope Olympus CX23</h3>
-            <p class="text-xs text-slate-500 truncate mt-0.5">MCR-001 · Olympus</p>
+            <h3 class="text-base font-semibold text-slate-900 line-clamp-1"><%= item.nama_alat %></h3>
+            <p class="text-xs text-slate-500 truncate mt-0.5"><%= item.kode_alat %> · <%= item.merk || '-' %></p>
           </div>
-          <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">Mikroskop binokuler LED untuk praktikum biologi dasar dan menengah.</p>
+          <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed"><%= item.deskripsi || '-' %></p>
         </div>
+        <% if (tersedia) { %>
         <button type="button" class="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors">Pinjam</button>
-      </div>
-    </div>
-
-    <!-- Card 2 -->
-    <div class="alat-card bg-white rounded-xl overflow-hidden flex flex-col border border-slate-100 shadow-sm" data-nama="Digital Hotplate Stirrer" data-kode="HTP-002" data-status="Sedang Dipinjam" data-stok="0">
-      <div class="relative aspect-[4/3] bg-slate-100 rounded-lg m-3 mb-0 overflow-hidden">
-        <img class="w-full h-full object-cover rounded-lg" alt="Digital Hotplate Stirrer" src="/images/alat/placeholder.svg" onerror="this.onerror=null;this.src='/images/alat/placeholder.svg';">
-        <div class="absolute top-3 left-3">
-          <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-sm text-slate-800 border border-slate-200 text-xs font-semibold shadow-sm inline-flex items-center gap-1">0 Unit</span>
-        </div>
-        <div class="absolute bottom-3 left-3">
-          <span class="px-2.5 py-1 rounded-md bg-amber-50/95 backdrop-blur-sm text-amber-700 border border-amber-200 text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm">
-            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Sedang Dipinjam
-          </span>
-        </div>
-      </div>
-      <div class="p-4 flex flex-col flex-1">
-        <div class="space-y-2 flex-1">
-          <div class="flex items-center gap-1 text-slate-500 text-xs truncate">
-            <span class="material-symbols-outlined text-[15px] shrink-0">room</span>
-            <span class="truncate">Lab Kimia</span>
-          </div>
-          <div>
-            <h3 class="text-base font-semibold text-slate-900 line-clamp-1">Digital Hotplate Stirrer</h3>
-            <p class="text-xs text-slate-500 truncate mt-0.5">HTP-002 · Thermo Scientific</p>
-          </div>
-          <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">Pemanas dan pengaduk magnetik digital dengan kontrol suhu presisi.</p>
-        </div>
+        <% } else { %>
         <button type="button" disabled class="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-200 text-slate-500 text-sm font-semibold cursor-not-allowed">Tidak Tersedia</button>
+        <% } %>
       </div>
     </div>
-
-    <!-- Card 3 -->
-    <div class="alat-card bg-white rounded-xl overflow-hidden flex flex-col border border-slate-100 shadow-sm" data-nama="Autoclave Steam Sterilizer" data-kode="ATC-003" data-status="Tersedia" data-stok="2">
-      <div class="relative aspect-[4/3] bg-slate-100 rounded-lg m-3 mb-0 overflow-hidden">
-        <img class="w-full h-full object-cover rounded-lg" alt="Autoclave Steam Sterilizer" src="/images/alat/placeholder.svg" onerror="this.onerror=null;this.src='/images/alat/placeholder.svg';">
-        <div class="absolute top-3 left-3">
-          <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-sm text-slate-800 border border-slate-200 text-xs font-semibold shadow-sm inline-flex items-center gap-1">2 Unit</span>
-        </div>
-        <div class="absolute bottom-3 left-3">
-          <span class="px-2.5 py-1 rounded-md bg-emerald-50/95 backdrop-blur-sm text-emerald-700 border border-emerald-200 text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Tersedia
-          </span>
-        </div>
-      </div>
-      <div class="p-4 flex flex-col flex-1">
-        <div class="space-y-2 flex-1">
-          <div class="flex items-center gap-1 text-slate-500 text-xs truncate">
-            <span class="material-symbols-outlined text-[15px] shrink-0">room</span>
-            <span class="truncate">Lab Biologi</span>
-          </div>
-          <div>
-            <h3 class="text-base font-semibold text-slate-900 line-clamp-1">Autoclave Steam Sterilizer</h3>
-            <p class="text-xs text-slate-500 truncate mt-0.5">ATC-003 · Hirayama</p>
-          </div>
-          <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">Autoklaf sterilisasi uap bertekanan untuk sterilisasi alat dan media.</p>
-        </div>
-        <button type="button" class="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors">Pinjam</button>
-      </div>
-    </div>
-
-    <!-- Card 4 -->
-    <div class="alat-card bg-white rounded-xl overflow-hidden flex flex-col border border-slate-100 shadow-sm" data-nama="Microscope Digital USB" data-kode="MCD-004" data-status="Tersedia" data-stok="5">
-      <div class="relative aspect-[4/3] bg-slate-100 rounded-lg m-3 mb-0 overflow-hidden">
-        <img class="w-full h-full object-cover rounded-lg" alt="Microscope Digital USB" src="/images/alat/placeholder.svg" onerror="this.onerror=null;this.src='/images/alat/placeholder.svg';">
-        <div class="absolute top-3 left-3">
-          <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-sm text-slate-800 border border-slate-200 text-xs font-semibold shadow-sm inline-flex items-center gap-1">5 Unit</span>
-        </div>
-        <div class="absolute bottom-3 left-3">
-          <span class="px-2.5 py-1 rounded-md bg-emerald-50/95 backdrop-blur-sm text-emerald-700 border border-emerald-200 text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Tersedia
-          </span>
-        </div>
-      </div>
-      <div class="p-4 flex flex-col flex-1">
-        <div class="space-y-2 flex-1">
-          <div class="flex items-center gap-1 text-slate-500 text-xs truncate">
-            <span class="material-symbols-outlined text-[15px] shrink-0">room</span>
-            <span class="truncate">Lab Fisika</span>
-          </div>
-          <div>
-            <h3 class="text-base font-semibold text-slate-900 line-clamp-1">Microscope Digital USB</h3>
-            <p class="text-xs text-slate-500 truncate mt-0.5">MCD-004 · Celestron</p>
-          </div>
-          <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">Mikroskop digital dengan koneksi USB untuk dokumentasi dan pengamatan praktis.</p>
-        </div>
-        <button type="button" class="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors">Pinjam</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Empty State -->
+    <% }); %>
+  </div><!-- Empty State -->
   <div id="alat-empty-state" class="hidden bg-white border border-slate-200 rounded-xl p-10 text-center">
     <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center">
       <span class="material-symbols-outlined text-[28px]">search_off</span>

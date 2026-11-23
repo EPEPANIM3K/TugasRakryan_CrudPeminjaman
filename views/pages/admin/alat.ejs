@@ -31,8 +31,8 @@
         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-brand-700">Statistik Alat</span>
       </div>
       <div class="my-2">
-        <div class="text-3xl font-extrabold text-slate-900 tracking-tight">1,420</div>
-        <div class="text-xs font-medium text-slate-400 mt-1">Tersebar di 8 Laboratorium Aktif</div>
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight"><%= stats.total.toLocaleString('id-ID') %></div>
+        <div class="text-xs font-medium text-slate-400 mt-1">Tersebar di <%= stats.lab %> Laboratorium Aktif</div>
       </div>
     </div>
     <!-- Card 2: Kondisi Baik -->
@@ -41,7 +41,7 @@
         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700">Kondisi Baik</span>
       </div>
       <div class="my-2">
-        <div class="text-3xl font-extrabold text-slate-900 tracking-tight">1,356</div>
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight"><%= stats.baik.toLocaleString('id-ID') %></div>
         <div class="text-xs font-medium text-slate-400 mt-1">Unit Siap Pakai & Terkalibrasi</div>
       </div>
     </div>
@@ -51,7 +51,7 @@
         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-violet-50 text-violet-700">Sedang Dipinjam</span>
       </div>
       <div class="my-2">
-        <div class="text-3xl font-extrabold text-slate-900 tracking-tight">176</div>
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight"><%= stats.dipinjam.toLocaleString('id-ID') %></div>
         <div class="text-xs font-medium text-slate-400 mt-1">Oleh Mahasiswa & Riset Dosen</div>
       </div>
     </div>
@@ -95,278 +95,38 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100 text-sm text-slate-700 bg-white">
-        <!-- Row 1 -->
+        <% items.forEach(function (item, index) { var tgl = formatTanggal(item.created_at); %>
         <tr class="hover:bg-slate-50/80 transition-colors group">
-          <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">01</td>
-          <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">TL-001</td>
+          <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6"><%= String(index + 1).padStart(2, '0') %></td>
+          <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap"><%= item.kode_alat %></td>
           <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Oscilloscope Digital 100MHz</div>
-              <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">Tektronix TBS1102B</div>
+              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap"><%= item.nama_alat %></div>
+              <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap"><%= item.merk || '-' %></div>
           </td>
-          <td class="py-3.5 px-4 text-slate-600 font-medium text-xs whitespace-nowrap min-w-[140px]">Elektronik</td>
-          <td class="py-3.5 px-4 text-slate-800 font-semibold text-xs whitespace-nowrap min-w-[160px]">Ruang RPL / IoT</td>
-          <td class="py-3.5 px-4 text-slate-600 text-xs whitespace-nowrap min-w-[130px]">Rak D-01</td>
+          <td class="py-3.5 px-4 text-slate-600 font-medium text-xs whitespace-nowrap min-w-[140px]"><%= item.kategori_nama || '-' %></td>
+          <td class="py-3.5 px-4 text-slate-800 font-semibold text-xs whitespace-nowrap min-w-[160px]"><%= item.nama_lab || '-' %></td>
+          <td class="py-3.5 px-4 text-slate-600 text-xs whitespace-nowrap min-w-[130px]"><%= item.lokasi_rak || '-' %></td>
           <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">14 Feb 2024</div>
-              <div class="text-slate-400">09:30 WIB</div>
+              <div class="font-medium"><%= tgl.tanggal %></div>
+              <div class="text-slate-400"><%= tgl.jam %></div>
             </td>
-          <td class="py-3.5 px-4 text-center font-bold text-emerald-600 text-xs whitespace-nowrap w-28">18 Unit</td>
+          <td class="py-3.5 px-4 text-center font-bold <%= item.stok_total > 0 ? 'text-emerald-600' : 'text-amber-600' %> text-xs whitespace-nowrap w-28"><%= item.stok_total %> Unit</td>
           <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
             <div class="inline-flex items-center justify-center gap-1.5">
-              <!-- Edit Button -->
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Edit" type="button" data-id="1" data-kode="TL-001" data-nama="Oscilloscope Digital 100MHz" data-kategori="Elektronik" data-ruang="Ruang RPL / IoT" data-lokasi="Rak D-01" data-foto="">
+              <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Edit" type="button"
+                data-id="<%= item.id %>" data-kode="<%= item.kode_alat %>" data-nama="<%= item.nama_alat %>"
+                data-merek="<%= item.merk || '' %>" data-kategori="<%= item.kategori_nama || '' %>"
+                data-ruang="<%= item.nama_lab || '' %>" data-lokasi="<%= item.lokasi_rak || '' %>"
+                data-stok="<%= item.stok_total %>" data-foto="<%= item.foto_url || '' %>">
                 <span class="material-symbols-outlined text-[18px]">edit</span>
               </button>
-              <!-- Hapus Button with Confirmation -->
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-id="1" data-kode="TL-001" data-nama="Oscilloscope Digital 100MHz">
+              <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-id="<%= item.id %>" data-kode="<%= item.kode_alat %>" data-nama="<%= item.nama_alat %>">
                 <span class="material-symbols-outlined text-[18px]">delete</span>
               </button>
             </div>
           </td>
         </tr>
-        <!-- Row 2 -->
-        <tr class="hover:bg-slate-50/80 transition-colors group">
-          <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">02</td>
-          <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">TL-002</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Function Generator 20MHz</div>
-              <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">Agilent 33250A</div>
-          </td>
-          <td class="py-3.5 px-4 text-slate-600 font-medium text-xs whitespace-nowrap min-w-[140px]">Elektronik</td>
-          <td class="py-3.5 px-4 text-slate-800 font-semibold text-xs whitespace-nowrap min-w-[160px]">Ruang RPL / IoT</td>
-          <td class="py-3.5 px-4 text-slate-600 text-xs whitespace-nowrap min-w-[130px]">Rak D-02</td>
-          <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">28 Feb 2024</div>
-              <div class="text-slate-400">14:15 WIB</div>
-            </td>
-          <td class="py-3.5 px-4 text-center font-bold text-emerald-600 text-xs whitespace-nowrap w-28">8 Unit</td>
-          <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-            <div class="inline-flex items-center justify-center gap-1.5">
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Edit" type="button" data-id="2" data-kode="TL-002" data-nama="Function Generator 20MHz" data-kategori="Elektronik" data-ruang="Ruang RPL / IoT" data-lokasi="Rak D-02" data-foto="">
-                <span class="material-symbols-outlined text-[18px]">edit</span>
-              </button>
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-id="2" data-kode="TL-002" data-nama="Function Generator 20MHz">
-                <span class="material-symbols-outlined text-[18px]">delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-        <!-- Row 3 -->
-        <tr class="hover:bg-slate-50/80 transition-colors group">
-          <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">03</td>
-          <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">TL-003</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Oscilloscope Digital 100MHz</div>
-              <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">Tektronix TBS1102B</div>
-          </td>
-          <td class="py-3.5 px-4 text-slate-600 font-medium text-xs whitespace-nowrap min-w-[140px]">Elektronik</td>
-          <td class="py-3.5 px-4 text-slate-800 font-semibold text-xs whitespace-nowrap min-w-[160px]">Ruang RPL / IoT</td>
-          <td class="py-3.5 px-4 text-slate-600 text-xs whitespace-nowrap min-w-[130px]">Rak D-05</td>
-          <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">01 Mar 2024</div>
-              <div class="text-slate-400">10:15 WIB</div>
-            </td>
-          <td class="py-3.5 px-4 text-center font-bold text-brand-600 text-xs whitespace-nowrap w-28">8 Unit</td>
-          <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-            <div class="inline-flex items-center justify-center gap-1.5">
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Edit" type="button" data-id="3" data-kode="TL-003" data-nama="Oscilloscope Digital 100MHz" data-kategori="Elektronik" data-ruang="Ruang RPL / IoT" data-lokasi="Rak D-05" data-foto="">
-                <span class="material-symbols-outlined text-[18px]">edit</span>
-              </button>
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-id="3" data-kode="TL-003" data-nama="Oscilloscope Digital 100MHz">
-                <span class="material-symbols-outlined text-[18px]">delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-        <!-- Row 4 -->
-        <tr class="hover:bg-slate-50/80 transition-colors group">
-          <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">04</td>
-          <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">TL-004</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Solder Station Digital Soldering</div>
-              <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">Hakko FX-888D</div>
-          </td>
-          <td class="py-3.5 px-4 text-slate-600 font-medium text-xs whitespace-nowrap min-w-[140px]">Elektronik</td>
-          <td class="py-3.5 px-4 text-slate-800 font-semibold text-xs whitespace-nowrap min-w-[160px]">Ruang Workshop Teknik</td>
-          <td class="py-3.5 px-4 text-slate-600 text-xs whitespace-nowrap min-w-[130px]">Rak E-03</td>
-          <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">19 Mei 2024</div>
-              <div class="text-slate-400">13:30 WIB</div>
-            </td>
-          <td class="py-3.5 px-4 text-center font-bold text-emerald-600 text-xs whitespace-nowrap w-28">18 Unit</td>
-          <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-            <div class="inline-flex items-center justify-center gap-1.5">
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Edit" type="button" data-id="4" data-kode="TL-004" data-nama="Solder Station Digital Soldering" data-kategori="Elektronik" data-ruang="Ruang Workshop Teknik" data-lokasi="Rak E-03" data-foto="">
-                <span class="material-symbols-outlined text-[18px]">edit</span>
-              </button>
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-id="4" data-kode="TL-004" data-nama="Solder Station Digital Soldering">
-                <span class="material-symbols-outlined text-[18px]">delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-        <!-- Row 5 -->
-        <tr class="hover:bg-slate-50/80 transition-colors group">
-          <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">05</td>
-          <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">TL-005</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Solder Station Digital Soldering</div>
-              <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">Hakko FX-888D</div>
-          </td>
-          <td class="py-3.5 px-4 text-slate-600 font-medium text-xs whitespace-nowrap min-w-[140px]">Elektronik</td>
-          <td class="py-3.5 px-4 text-slate-800 font-semibold text-xs whitespace-nowrap min-w-[160px]">Ruang Workshop Teknik</td>
-          <td class="py-3.5 px-4 text-slate-600 text-xs whitespace-nowrap min-w-[130px]">Rak E-03</td>
-          <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">12 Apr 2024</div>
-              <div class="text-slate-400">11:00 WIB</div>
-            </td>
-          <td class="py-3.5 px-4 text-center font-bold text-amber-600 text-xs whitespace-nowrap w-28">0 Unit</td>
-          <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-            <div class="inline-flex items-center justify-center gap-1.5">
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Edit" type="button" data-id="5" data-kode="TL-005" data-nama="Solder Station Digital Soldering" data-kategori="Elektronik" data-ruang="Ruang Workshop Teknik" data-lokasi="Rak E-03" data-foto="">
-                <span class="material-symbols-outlined text-[18px]">edit</span>
-              </button>
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-id="5" data-kode="TL-005" data-nama="Solder Station Digital Soldering">
-                <span class="material-symbols-outlined text-[18px]">delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-        <!-- Row 6 -->
-        <tr class="hover:bg-slate-50/80 transition-colors group">
-          <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">06</td>
-          <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">TL-006</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Multimeter Digital Auto-Ranging</div>
-              <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">Fluke 8845A</div>
-          </td>
-          <td class="py-3.5 px-4 text-slate-600 font-medium text-xs whitespace-nowrap min-w-[140px]">Elektronik</td>
-          <td class="py-3.5 px-4 text-slate-800 font-semibold text-xs whitespace-nowrap min-w-[160px]">Ruang Workshop Teknik</td>
-          <td class="py-3.5 px-4 text-slate-600 text-xs whitespace-nowrap min-w-[130px]">Rak F-01</td>
-          <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">23 Mei 2024</div>
-              <div class="text-slate-400">09:45 WIB</div>
-            </td>
-          <td class="py-3.5 px-4 text-center font-bold text-emerald-600 text-xs whitespace-nowrap w-28">25 Unit</td>
-          <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-            <div class="inline-flex items-center justify-center gap-1.5">
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Edit" type="button" data-id="6" data-kode="TL-006" data-nama="Multimeter Digital Auto-Ranging" data-kategori="Elektronik" data-ruang="Ruang Workshop Teknik" data-lokasi="Rak F-01" data-foto="">
-                <span class="material-symbols-outlined text-[18px]">edit</span>
-              </button>
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-id="6" data-kode="TL-006" data-nama="Multimeter Digital Auto-Ranging">
-                <span class="material-symbols-outlined text-[18px]">delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-        <!-- Row 7 -->
-        <tr class="hover:bg-slate-50/80 transition-colors group">
-          <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">07</td>
-          <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">TL-007</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Power Supply Dual Channel 0-30V</div>
-              <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">HP E3631A</div>
-          </td>
-          <td class="py-3.5 px-4 text-slate-600 font-medium text-xs whitespace-nowrap min-w-[140px]">Elektronik</td>
-          <td class="py-3.5 px-4 text-slate-800 font-semibold text-xs whitespace-nowrap min-w-[160px]">Ruang Workshop Teknik</td>
-          <td class="py-3.5 px-4 text-slate-600 text-xs whitespace-nowrap min-w-[130px]">Rak F-02</td>
-          <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">05 Jun 2024</div>
-              <div class="text-slate-400">15:20 WIB</div>
-            </td>
-          <td class="py-3.5 px-4 text-center font-bold text-brand-600 text-xs whitespace-nowrap w-28">12 Unit</td>
-          <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-            <div class="inline-flex items-center justify-center gap-1.5">
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Edit" type="button" data-id="7" data-kode="TL-007" data-nama="Power Supply Dual Channel 0-30V" data-kategori="Elektronik" data-ruang="Ruang Workshop Teknik" data-lokasi="Rak F-02" data-foto="">
-                <span class="material-symbols-outlined text-[18px]">edit</span>
-              </button>
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-id="7" data-kode="TL-007" data-nama="Power Supply Dual Channel 0-30V">
-                <span class="material-symbols-outlined text-[18px]">delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-        <!-- Row 8 -->
-        <tr class="hover:bg-slate-50/80 transition-colors group">
-          <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">08</td>
-          <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">TL-008</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Signal Generator 1GHz</div>
-              <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">Rohde & Schwarz SMB100A</div>
-          </td>
-          <td class="py-3.5 px-4 text-slate-600 font-medium text-xs whitespace-nowrap min-w-[140px]">Elektronik</td>
-          <td class="py-3.5 px-4 text-slate-800 font-semibold text-xs whitespace-nowrap min-w-[160px]">Ruang Workshop Teknik</td>
-          <td class="py-3.5 px-4 text-slate-600 text-xs whitespace-nowrap min-w-[130px]">Rak G-01</td>
-          <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">18 Juni 2024</div>
-              <div class="text-slate-400">11:10 WIB</div>
-            </td>
-          <td class="py-3.5 px-4 text-center font-bold text-emerald-600 text-xs whitespace-nowrap w-28">5 Unit</td>
-          <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-            <div class="inline-flex items-center justify-center gap-1.5">
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Edit" type="button" data-id="8" data-kode="TL-008" data-nama="Signal Generator 1GHz" data-kategori="Elektronik" data-ruang="Ruang Workshop Teknik" data-lokasi="Rak G-01" data-foto="">
-                <span class="material-symbols-outlined text-[18px]">edit</span>
-              </button>
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-id="8" data-kode="TL-008" data-nama="Signal Generator 1GHz">
-                <span class="material-symbols-outlined text-[18px]">delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-        <!-- Row 9 -->
-        <tr class="hover:bg-slate-50/80 transition-colors group">
-          <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">09</td>
-          <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">TL-009</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Microwave Oven 20L</div>
-              <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">Panasonic NN-DS59</div>
-          </td>
-          <td class="py-3.5 px-4 text-slate-600 font-medium text-xs whitespace-nowrap min-w-[140px]">Kimia</td>
-          <td class="py-3.5 px-4 text-slate-800 font-semibold text-xs whitespace-nowrap min-w-[160px]">Lab Kimia Terpadu</td>
-          <td class="py-3.5 px-4 text-slate-600 text-xs whitespace-nowrap min-w-[130px]">Rak G-03</td>
-          <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">22 Juli 2024</div>
-              <div class="text-slate-400">14:00 WIB</div>
-            </td>
-          <td class="py-3.5 px-4 text-center font-bold text-brand-600 text-xs whitespace-nowrap w-28">3 Unit</td>
-          <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-            <div class="inline-flex items-center justify-center gap-1.5">
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Edit" type="button" data-id="9" data-kode="TL-009" data-nama="Microwave Oven 20L" data-kategori="Kimia" data-ruang="Lab Kimia Terpadu" data-lokasi="Rak G-03" data-foto="">
-                <span class="material-symbols-outlined text-[18px]">edit</span>
-              </button>
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-id="9" data-kode="TL-009" data-nama="Microwave Oven 20L">
-                <span class="material-symbols-outlined text-[18px]">delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-        <!-- Row 10 -->
-        <tr class="hover:bg-slate-50/80 transition-colors group">
-          <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">10</td>
-          <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">TL-010</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Centrifuge Mikro Kecepatan Tinggi</div>
-              <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">Eppendorf 5424</div>
-          </td>
-          <td class="py-3.5 px-4 text-slate-600 font-medium text-xs whitespace-nowrap min-w-[140px]">Biologi</td>
-          <td class="py-3.5 px-4 text-slate-800 font-semibold text-xs whitespace-nowrap min-w-[160px]">Ruang Kultur Jaringan</td>
-          <td class="py-3.5 px-4 text-slate-600 text-xs whitespace-nowrap min-w-[130px]">Rak B-01</td>
-          <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">12 Apr 2024</div>
-              <div class="text-slate-400">11:00 WIB</div>
-            </td>
-          <td class="py-3.5 px-4 text-center font-bold text-emerald-600 text-xs whitespace-nowrap w-28">18 Unit</td>
-          <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-            <div class="inline-flex items-center justify-center gap-1.5">
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Edit" type="button" data-id="10" data-kode="TL-010" data-nama="Centrifuge Mikro Kecepatan Tinggi" data-kategori="Biologi" data-ruang="Ruang Kultur Jaringan" data-lokasi="Rak B-01" data-foto="">
-                <span class="material-symbols-outlined text-[18px]">edit</span>
-              </button>
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-id="10" data-kode="TL-010" data-nama="Centrifuge Mikro Kecepatan Tinggi">
-                <span class="material-symbols-outlined text-[18px]">delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
+        <% }); %>
         </tbody>
       </table>
     </div>
@@ -422,7 +182,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div>
             <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="input-kode-inventaris">Kode Inventaris <span class="text-rose-500">*</span></label>
-            <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="input-kode-inventaris" placeholder="Contoh: TL-011" required type="text">
+            <input class="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-500 cursor-not-allowed focus:outline-none" id="input-kode-inventaris" placeholder="Kode otomatis" value="<%= nextKode %>" readonly required type="text" aria-readonly="true" title="Kode inventaris dibuat otomatis">
           </div>
           <div>
             <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="input-merek">Merek</label>
@@ -505,7 +265,6 @@ document.addEventListener('DOMContentLoaded', function () {
   let editingRow = null;
   let removeFoto = false;
 
-  const wait = function (ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); };
   const textOf = function (el) { return el ? (el.textContent || '').replace(/\s+/g, ' ').trim() : ''; };
 
   function setFotoPreview(src) {
@@ -750,6 +509,8 @@ document.addEventListener('DOMContentLoaded', function () {
       if (modalSubtitle) modalSubtitle.textContent = 'Lengkapi informasi alat, stok, dan lokasi penyimpanan laboratorium';
       if (submitBtn) { submitBtn.dataset.mode = 'tambah'; delete submitBtn.dataset.id; submitBtn.querySelector('span').textContent = 'Simpan Alat'; }
       if (formTambahAlat) formTambahAlat.reset();
+      const kodeInput = document.getElementById('input-kode-inventaris');
+      if (kodeInput) kodeInput.value = '<%= nextKode %>';
       resetCategoryUI();
       resetFotoUI();
       openModal(false);
@@ -771,18 +532,15 @@ document.addEventListener('DOMContentLoaded', function () {
       const row = btn.closest('tr');
       if (!row) return;
       editingRow = row;
-      const cells = row.children;
-      const nameCell = cells[2];
-      const nameSpans = nameCell ? nameCell.querySelectorAll('span') : [];
       const data = {
-        kode: textOf(cells[1]),
-        nama: textOf(nameSpans[0]),
-        merek: textOf(nameSpans[1]),
-        kategori: textOf(cells[3]),
-        ruang: textOf(cells[4]),
-        lokasi: textOf(cells[5]),
-        stok: textOf(cells[7]).replace(/[^\d]/g, ''),
-        foto: row.dataset.foto || btn.getAttribute('data-foto') || ''
+        kode: btn.dataset.kode || '',
+        nama: btn.dataset.nama || '',
+        merek: btn.dataset.merek || '',
+        kategori: btn.dataset.kategori || '',
+        ruang: btn.dataset.ruang || '',
+        lokasi: btn.dataset.lokasi || '',
+        stok: btn.dataset.stok || '',
+        foto: btn.dataset.foto || ''
       };
 
       if (modalTitle) modalTitle.textContent = 'Edit Alat';
@@ -811,41 +569,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  function updateRow(row, data) {
-    const cells = row.children;
-    if (cells[1]) cells[1].textContent = data.kode;
-    if (cells[2]) {
-      const spans = cells[2].querySelectorAll('span');
-      if (spans[0]) spans[0].textContent = data.nama;
-      if (spans[1]) spans[1].textContent = data.merek || spans[1].textContent;
-    }
-    if (cells[3]) cells[3].textContent = data.kategori || '-';
-    if (cells[4]) cells[4].textContent = data.ruang || '-';
-    if (cells[5]) cells[5].textContent = data.lokasi || '-';
-    if (cells[7] && data.stok !== '') {
-      cells[7].textContent = data.stok + ' Unit';
-      const stock = Number(data.stok);
-      cells[7].className = 'w-28 px-3.5 py-3.5 text-center font-bold text-xs whitespace-nowrap ' +
-        (stock === 0 ? 'text-amber-600' : 'text-emerald-600');
-    }
-    row.dataset.foto = data.foto || '';
-
-    row.querySelectorAll('button[title="Edit"]').forEach(function (button) {
-      button.dataset.kode = data.kode;
-      button.dataset.nama = data.nama;
-      button.dataset.kategori = data.kategori;
-      button.dataset.ruang = data.ruang;
-      button.dataset.lokasi = data.lokasi;
-      button.dataset.foto = data.foto || '';
-    });
-    row.querySelectorAll('button[title="Hapus"]').forEach(function (button) {
-      button.dataset.kode = data.kode;
-      button.dataset.nama = data.nama;
-    });
-  }
-
-  // Form submit. The prototype has no persistence endpoint, so a successful
-  // edit updates the row in place and confirms the result with a toast.
+  // Form submit: simpan ke database lewat endpoint admin.
   if (formTambahAlat) {
     formTambahAlat.addEventListener('submit', async function (e) {
       e.preventDefault();
@@ -858,29 +582,12 @@ document.addEventListener('DOMContentLoaded', function () {
       const lokasi = (document.getElementById('input-lokasi-rak') || {}).value || '';
       const kategori = getSelectedCategory();
       const fotoFile = fotoInput && fotoInput.files ? fotoInput.files[0] : null;
-      let foto = '';
-      if (fotoFile) {
-        foto = await new Promise(function (resolve) {
-          const reader = new FileReader();
-          reader.onload = function (ev) { resolve(String(ev.target && ev.target.result || '')); };
-          reader.onerror = function () { resolve(''); };
-          reader.readAsDataURL(fotoFile);
-        });
-      } else if (!removeFoto && editingRow) {
-        foto = editingRow.dataset.foto || '';
-      }
-      if (kategori) {
-        const exists = categories.some(function (cat) { return categoryKey(cat) === categoryKey(kategori); });
-        if (!exists) categories.push(kategori);
-        if (categoryHidden) categoryHidden.value = kategori;
-        renderCategoryOptions();
-      }
 
-      if (!nama.trim() || !kode.trim()) {
+      if (!nama.trim()) {
         await window.sipatModal.alert({
           title: 'Data Belum Lengkap',
           subtitle: 'Periksa kembali isian formulir.',
-          message: 'Nama Alat dan Kode Inventaris wajib diisi.',
+          message: 'Nama Alat wajib diisi.',
           tone: 'warning'
         });
         return;
@@ -893,17 +600,29 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       try {
-        await wait(600);
-        const payload = { nama: nama.trim(), kode: kode.trim(), merek: merek.trim(), stok: stok, ruang: ruang.trim(), lokasi: lokasi.trim(), kategori: kategori, foto: foto };
-        if (mode === 'edit' && editingRow) {
-          updateRow(editingRow, payload);
-          window.sipatModal.toast('Perubahan data alat berhasil disimpan.', 'success');
-        } else {
-          window.sipatModal.toast('Data alat baru berhasil disimpan. (Foto siap dikirim saat backend terhubung.)', 'success');
-        }
+        const formData = new FormData();
+        formData.append('nama', nama.trim());
+        formData.append('kode', kode.trim());
+        formData.append('merek', merek.trim());
+        formData.append('stok', stok);
+        formData.append('ruang', ruang.trim());
+        formData.append('lokasi', lokasi.trim());
+        formData.append('kategori', kategori);
+        if (fotoFile) formData.append('foto', fotoFile);
+        if (removeFoto) formData.append('remove_foto', '1');
+
+        const url = mode === 'edit' && submitBtn && submitBtn.dataset.id
+          ? '/admin/alat/' + submitBtn.dataset.id
+          : '/admin/alat';
+        const response = await fetch(url, { method: 'POST', body: formData });
+        const result = await response.json().catch(function () { return {}; });
+        if (!response.ok) throw new Error(result.message || 'Gagal menyimpan data alat.');
+
         closeModal();
+        window.sipatModal.toast(mode === 'edit' ? 'Perubahan data alat berhasil disimpan.' : 'Data alat baru berhasil disimpan.', 'success');
+        setTimeout(function () { window.location.reload(); }, 600);
       } catch (error) {
-        window.sipatModal.toast('Gagal menyimpan data alat. Silakan coba lagi.', 'danger');
+        window.sipatModal.toast(error.message || 'Gagal menyimpan data alat. Silakan coba lagi.', 'danger');
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
@@ -913,21 +632,13 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  function renumberRows() {
-    const table = document.querySelector('table tbody');
-    if (!table) return;
-    Array.prototype.forEach.call(table.querySelectorAll('tr'), function (row, index) {
-      const firstCell = row.children[0];
-      if (firstCell) firstCell.textContent = String(index + 1).padStart(2, '0');
-    });
-  }
-
   // Delete buttons: custom confirmation with the selected item identity.
   document.querySelectorAll('button[title="Hapus"]').forEach(function (btn) {
     btn.addEventListener('click', function () {
       const row = btn.closest('tr');
-      const kode = btn.getAttribute('data-kode') || textOf(row && row.children[1]) || 'N/A';
-      const nama = btn.getAttribute('data-nama') || (row && row.querySelector('span.font-bold') ? textOf(row.querySelector('span.font-bold')) : 'Alat');
+      const id = btn.dataset.id;
+      const kode = btn.dataset.kode || textOf(row && row.children[1]) || 'N/A';
+      const nama = btn.dataset.nama || 'Alat';
 
       window.sipatModal.confirm({
         title: 'Hapus Data Alat?',
@@ -944,15 +655,12 @@ document.addEventListener('DOMContentLoaded', function () {
         confirmClass: 'px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 transition shadow-sm inline-flex items-center justify-center gap-2',
         loadingText: 'Menghapus...',
         onConfirm: async function () {
-          await wait(550);
-          if (!row || !row.parentNode) throw new Error('Data alat tidak ditemukan atau sudah dihapus.');
-          row.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
-          row.style.opacity = '0';
-          row.style.transform = 'translateY(-4px)';
-          await wait(180);
-          row.remove();
-          renumberRows();
+          if (!id) throw new Error('Data alat tidak ditemukan.');
+          const response = await fetch('/admin/alat/' + id + '/delete', { method: 'POST' });
+          const result = await response.json().catch(function () { return {}; });
+          if (!response.ok) throw new Error(result.message || 'Gagal menghapus data alat.');
           window.sipatModal.toast('Data alat ' + kode + ' berhasil dihapus.', 'success');
+          setTimeout(function () { window.location.reload(); }, 600);
         }
       });
     });
