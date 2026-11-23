@@ -3,8 +3,8 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 const router = express.Router();
-const PeminjamanService = require('../services/peminjamanService');
 const AlatController = require('../controllers/alatController');
+const AdminController = require('../controllers/adminController');
 
 const uploadDir = path.join(__dirname, '..', 'public', 'images', 'alat');
 fs.mkdirSync(uploadDir, { recursive: true });
@@ -26,45 +26,10 @@ router.post('/alat', upload.single('foto'), AlatController.create);
 router.post('/alat/:id', upload.single('foto'), AlatController.update);
 router.post('/alat/:id/delete', AlatController.remove);
 
-router.get('/peminjaman', async (req, res) => {
-  try {
-    const service = new PeminjamanService();
-    const stats = await service.countByStatus();
-    const totalPengajuan = await service.countTotal();
-    const distinctStatuses = await service.getDistinctStatuses();
-    const allData = await service.getAll({});
-    const limit = req.query.limit ? parseInt(req.query.limit) : 20;
-    const tableData = allData.slice(0, limit);
+router.get('/peminjaman', AdminController.peminjamanPage);
+router.post('/peminjaman/:id/status', AdminController.updateStatus);
+router.post('/peminjaman/:id/delete', AdminController.removePeminjaman);
 
-    res.render('pages/admin/peminjaman', {
-      pageTitle: 'Kelola Peminjaman',
-      stats: {
-        totalPengajuan: totalPengajuan || 0,
-        menungguPersetujuan: stats['Menunggu Persetujuan'] || 0,
-        disetujui: stats['Disetujui'] || 0,
-        sedangDipinjam: stats['dipinjam'] || 0,
-        selesai: stats['selesai'] || (stats['dikembalikan'] || 0)
-      },
-      tableData: tableData,
-      currentPath: '/admin/peminjaman',
-      distinctStatuses: distinctStatuses || []
-    });
-  } catch (error) {
-    console.error('Error fetching peminjaman data:', error);
-    res.render('pages/admin/peminjaman', {
-      pageTitle: 'Kelola Peminjaman',
-      stats: {
-        totalPengajuan: 0,
-        menungguPersetujuan: 0,
-        disetujui: 0,
-        sedangDipinjam: 0,
-        selesai: 0
-      },
-      tableData: [],
-      currentPath: '/admin/peminjaman',
-      distinctStatuses: []
-    });
-  }
-});
+router.get('/aktivitas', AdminController.aktivitasPage);
 
 module.exports = router;

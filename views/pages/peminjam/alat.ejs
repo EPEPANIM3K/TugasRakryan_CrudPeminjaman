@@ -66,7 +66,7 @@
   <!-- Grid Cards -->
   <div id="alat-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
     <% items.forEach(function (item) { var tersedia = isTersedia(item); var stok = Number(item.stok_tersedia) || 0; %>
-    <div class="alat-card bg-white rounded-xl overflow-hidden flex flex-col border border-slate-100 shadow-sm" data-nama="<%= item.nama_alat %>" data-kode="<%= item.kode_alat %>" data-status="<%= tersedia ? 'Tersedia' : 'Sedang Dipinjam' %>" data-stok="<%= stok %>">
+    <div class="alat-card bg-white rounded-xl overflow-hidden flex flex-col border border-slate-100 shadow-sm" data-nama="<%= item.nama_alat %>" data-kode="<%= item.kode_alat %>" data-item-id="<%= item.id %>" data-lab="<%= item.nama_lab || '' %>" data-status="<%= tersedia ? 'Tersedia' : 'Sedang Dipinjam' %>" data-stok="<%= stok %>">
       <div class="relative aspect-[4/3] bg-slate-100 rounded-lg m-3 mb-0 overflow-hidden">
         <img class="w-full h-full object-cover rounded-lg" alt="<%= item.nama_alat %>" src="<%= item.foto_url || '/images/alat/placeholder.svg' %>" onerror="this.onerror=null;this.src='/images/alat/placeholder.svg';">
         <div class="absolute top-3 left-3">
@@ -136,15 +136,10 @@
             <input type="text" id="input-kode-alat" readonly class="w-full h-11 px-4 bg-slate-100 border border-slate-200 rounded-xl text-slate-700 text-sm cursor-not-allowed">
           </div>
           <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-1.5">Laboratorium <span class="text-rose-500">*</span></label>
-            <select id="input-lab" required class="w-full h-11 appearance-none pl-3.5 pr-9 bg-white border border-slate-200 text-slate-800 text-sm cursor-pointer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
-              <option value="">Pilih laboratorium</option>
-              <option value="Lab Biologi">Lab Biologi</option>
-              <option value="Lab Kimia">Lab Kimia</option>
-              <option value="Laboratorium Instrumentasi">Laboratorium Instrumentasi</option>
-              <option value="Lab Biokimia">Lab Biokimia</option>
-            </select>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5">Laboratorium</label>
+            <input type="text" id="input-lab" readonly class="w-full h-11 px-4 bg-slate-100 border border-slate-200 rounded-xl text-slate-700 text-sm cursor-not-allowed" placeholder="Mengikuti data alat">
           </div>
+          <input type="hidden" id="input-alat-id">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-semibold text-slate-700 mb-1.5">Tanggal Peminjaman <span class="text-rose-500">*</span></label>
@@ -192,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let tersediaCount = 0;
     let dipinjamCount = 0;
 
-    cards.forEach((card) => {
+    cards.forEach(function (card) {
       const nama = (card.dataset.nama || '').toLowerCase();
       const kode = (card.dataset.kode || '').toLowerCase();
       const cardStatus = card.dataset.status || '';
@@ -224,55 +219,46 @@ document.addEventListener('DOMContentLoaded', function () {
   if (statusFilter) statusFilter.addEventListener('change', applyFilters);
   applyFilters();
 
-  function getStoredBorrowings() {
-    try {
-      const raw = localStorage.getItem('sipat_borrowings');
-      return raw ? JSON.parse(raw) : [];
-    } catch (e) {
-      return [];
-    }
+  const modal = document.getElementById('peminjaman-modal');
+  const content = document.getElementById('peminjaman-modal-content');
+  const form = document.getElementById('peminjaman-form');
+  const inputNama = document.getElementById('input-nama-alat');
+  const inputKode = document.getElementById('input-kode-alat');
+  const inputLab = document.getElementById('input-lab');
+  const inputAlatId = document.getElementById('input-alat-id');
+  const inputJumlah = document.getElementById('input-jumlah');
+  const inputTujuan = document.getElementById('input-tujuan');
+  const tanggalInput = document.getElementById('input-tanggal-pinjam');
+  const tanggalKembaliInput = document.getElementById('input-tanggal-kembali');
+  const cbToday = document.getElementById('checkbox-pinjam-hari-ini');
+  const btnClose = document.getElementById('btn-close-peminjaman-modal');
+  const overlay = document.getElementById('peminjaman-modal-overlay');
+
+  function todayString() {
+    return new Date().toISOString().slice(0, 10);
   }
 
-  function setStoredBorrowings(list) {
-    localStorage.setItem('sipat_borrowings', JSON.stringify(list));
-  }
+  function openModal(card) {
+    if (!modal || !content || !card) return;
+    const stok = Math.max(1, parseInt(card.dataset.stok || '1', 10) || 1);
 
-  function generateCode() {
-    const now = new Date();
-    const y = now.getFullYear();
-    const m = String(now.getMonth() + 1).padStart(2, '0');
-    const d = String(now.getDate()).padStart(2, '0');
-    const rand = Math.floor(1000 + Math.random() * 9000);
-    return 'PJ-' + y + m + d + '-' + rand;
-  }
+    inputNama.value = card.dataset.nama || '';
+    inputKode.value = card.dataset.kode || '';
+    inputLab.value = card.dataset.lab || '-';
+    inputAlatId.value = card.dataset.itemId || '';
+    inputJumlah.value = '1';
+    inputJumlah.max = String(stok);
+    inputJumlah.min = '1';
+    inputTujuan.value = '';
 
-  function openModal(prefill) {
-    var modal = document.getElementById('peminjaman-modal');
-    var content = document.getElementById('peminjaman-modal-content');
-    if (prefill) {
-      document.getElementById('input-nama-alat').value = prefill.nama || '';
-      document.getElementById('input-kode-alat').value = prefill.kode || '';
-    } else {
-      document.getElementById('input-nama-alat').value = '';
-      document.getElementById('input-kode-alat').value = '';
-    }
-    document.getElementById('input-lab').value = '';
-    document.getElementById('input-jumlah').value = '1';
-    document.getElementById('input-tujuan').value = '';
-    var tanggalInput = document.getElementById('input-tanggal-pinjam');
-    var tanggalKembaliInput = document.getElementById('input-tanggal-kembali');
-    var cbToday = document.getElementById('checkbox-pinjam-hari-ini');
-    if (tanggalInput) {
-      var todayStr = new Date().toISOString().slice(0, 10);
-      tanggalInput.value = todayStr;
-      tanggalInput.min = todayStr;
-      if (cbToday) cbToday.checked = true;
-      tanggalInput.disabled = true;
-    }
-    if (tanggalKembaliInput) {
-      tanggalKembaliInput.value = '';
-      tanggalKembaliInput.min = new Date().toISOString().slice(0, 10);
-    }
+    const today = todayString();
+    tanggalInput.value = today;
+    tanggalInput.min = today;
+    tanggalInput.disabled = true;
+    if (cbToday) cbToday.checked = true;
+    tanggalKembaliInput.value = '';
+    tanggalKembaliInput.min = today;
+
     modal.classList.remove('hidden');
     requestAnimationFrame(function () {
       content.classList.remove('scale-95', 'opacity-0', 'translate-y-4');
@@ -281,8 +267,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function closeModal() {
-    var modal = document.getElementById('peminjaman-modal');
-    var content = document.getElementById('peminjaman-modal-content');
     if (!modal || !content) return;
     content.classList.add('scale-95', 'opacity-0', 'translate-y-4');
     content.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
@@ -292,33 +276,22 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('.alat-card button').forEach(function (btn) {
     if (btn.disabled) return;
     btn.addEventListener('click', function () {
-      const card = btn.closest('.alat-card');
-      if (!card) return;
-      const nama = card.dataset.nama || '';
-      const kode = card.dataset.kode || '';
-      openModal({ nama: nama, kode: kode });
+      openModal(btn.closest('.alat-card'));
     });
   });
 
-  var btnClose = document.getElementById('btn-close-peminjaman-modal');
-  var overlay = document.getElementById('peminjaman-modal-overlay');
-  var form = document.getElementById('peminjaman-form');
-  var cbToday = document.getElementById('checkbox-pinjam-hari-ini');
-  var tanggalInput = document.getElementById('input-tanggal-pinjam');
-  var tanggalKembaliInput = document.getElementById('input-tanggal-kembali');
-
   if (cbToday && tanggalInput) {
     cbToday.addEventListener('change', function () {
-      var todayStr = new Date().toISOString().slice(0, 10);
+      const today = todayString();
       if (cbToday.checked) {
-        tanggalInput.value = todayStr;
+        tanggalInput.value = today;
         tanggalInput.disabled = true;
       } else {
         tanggalInput.disabled = false;
         tanggalInput.focus();
       }
       if (tanggalKembaliInput) {
-        tanggalKembaliInput.min = tanggalInput.value || todayStr;
+        tanggalKembaliInput.min = tanggalInput.value || today;
         if (tanggalKembaliInput.value && tanggalKembaliInput.value < tanggalKembaliInput.min) {
           tanggalKembaliInput.value = '';
         }
@@ -327,7 +300,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   if (tanggalInput && tanggalKembaliInput) {
     tanggalInput.addEventListener('change', function () {
-      tanggalKembaliInput.min = tanggalInput.value || new Date().toISOString().slice(0, 10);
+      tanggalKembaliInput.min = tanggalInput.value || todayString();
       if (tanggalKembaliInput.value && tanggalKembaliInput.value < tanggalKembaliInput.min) {
         tanggalKembaliInput.value = '';
       }
@@ -337,37 +310,74 @@ document.addEventListener('DOMContentLoaded', function () {
   if (overlay) overlay.addEventListener('click', closeModal);
 
   if (form) {
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
       e.preventDefault();
-      var tanggalVal = (document.getElementById('input-tanggal-pinjam').value || '').trim();
-      var tanggalKembaliVal = (document.getElementById('input-tanggal-kembali').value || '').trim();
-      var item = {
-        kode: generateCode(),
-        kodeAlat: (document.getElementById('input-kode-alat').value || '').trim(),
-        namaAlat: (document.getElementById('input-nama-alat').value || '').trim(),
-        lab: document.getElementById('input-lab').value || '',
-        jadwal: tanggalVal,
-        tanggalKembali: tanggalKembaliVal,
-        jumlah: parseInt(document.getElementById('input-jumlah').value || '1', 10) || 1,
-        tujuan: (document.getElementById('input-tujuan').value || '').trim(),
-        status: 'Menunggu Persetujuan',
-        peminjam: 'Peminjam',
-        email: '',
-        createdAt: new Date().toISOString()
+      const submitBtn = document.querySelector('button[type="submit"][form="peminjaman-form"]');
+      const originalHtml = submitBtn ? submitBtn.innerHTML : '';
+
+      const payload = {
+        alat_id: inputAlatId.value,
+        tanggal_pinjam: tanggalInput.value,
+        tanggal_kembali: tanggalKembaliInput.value,
+        jumlah: inputJumlah.value || '1',
+        tujuan: (inputTujuan.value || '').trim()
       };
-      if (!item.kodeAlat || !item.namaAlat || !item.lab || !item.jadwal || !item.tanggalKembali || !item.tujuan) {
-        alert('Mohon lengkapi semua field yang wajib diisi.');
+
+      if (!payload.alat_id || !payload.tanggal_pinjam || !payload.tanggal_kembali || !payload.tujuan) {
+        await window.sipatModal.alert({
+          title: 'Data Belum Lengkap',
+          subtitle: 'Periksa kembali isian formulir.',
+          message: 'Mohon lengkapi semua field yang wajib diisi sebelum mengajukan peminjaman.',
+          tone: 'warning'
+        });
         return;
       }
-      if (item.tanggalKembali < item.jadwal) {
-        alert('Tanggal pengembalian tidak boleh sebelum tanggal peminjaman.');
+      if (payload.tanggal_kembali < payload.tanggal_pinjam) {
+        await window.sipatModal.alert({
+          title: 'Tanggal Tidak Sesuai',
+          subtitle: 'Periksa kembali tanggal peminjaman.',
+          message: 'Tanggal pengembalian tidak boleh sebelum tanggal peminjaman.',
+          tone: 'warning'
+        });
         return;
       }
-      var list = getStoredBorrowings();
-      list.unshift(item);
-      setStoredBorrowings(list);
-      closeModal();
-      alert('Permohonan peminjaman berhasil diajukan.');
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span><span>Mengirim...</span>';
+      }
+
+      try {
+        const response = await fetch('/peminjam/peminjaman', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(payload)
+        });
+        const result = await response.json().catch(function () { return {}; });
+        if (!response.ok) throw new Error(result.message || 'Gagal mengajukan peminjaman.');
+
+        closeModal();
+        await window.sipatModal.alert({
+          title: 'Permohonan Berhasil Diajukan',
+          subtitle: result.item && result.item.kode_peminjaman ? 'Kode Peminjaman: ' + result.item.kode_peminjaman : 'Menunggu persetujuan petugas.',
+          message: (result.message || 'Permohonan peminjaman berhasil diajukan.') + ' Silakan pantau statusnya di halaman Peminjaman.',
+          tone: 'success',
+          okText: 'Lihat Peminjaman'
+        });
+        window.location.href = '/peminjam/riwayat';
+      } catch (error) {
+        await window.sipatModal.alert({
+          title: 'Gagal Mengajukan',
+          subtitle: 'Permohonan belum terkirim.',
+          message: error.message || 'Terjadi kesalahan. Silakan coba lagi.',
+          tone: 'danger'
+        });
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalHtml;
+        }
+      }
     });
   }
 });

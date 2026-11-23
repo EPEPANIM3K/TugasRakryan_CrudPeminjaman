@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+const LogAktivitas = require('../models/LogAktivitas');
 
 const dashboardByRole = {
   admin: '/admin',
@@ -23,6 +24,14 @@ exports.login = async (req, res) => {
 
     await User.updateLastLogin(user.id);
     req.session.user = { id: user.id, nama: user.nama_lengkap, role: user.role };
+
+    await LogAktivitas.record({
+      req,
+      user: { id: user.id, role: user.role },
+      aksi: 'Login',
+      modul: 'Auth',
+      deskripsi: user.nama_lengkap + ' login sebagai ' + user.role
+    });
 
     res.json({ ok: true, role: user.role, redirect: dashboardByRole[user.role] || '/' });
   } catch (error) {

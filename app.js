@@ -5,6 +5,7 @@ const expressLayouts = require('express-ejs-layouts');
 const session = require('express-session');
 const db = require('./config/database');
 const User = require('./models/User');
+const LogAktivitas = require('./models/LogAktivitas');
 const { requireRole } = require('./middleware/role');
 
 const app = express();
@@ -66,11 +67,7 @@ app.get('/admin/pengembalian', (req, res) => {
     });
 });
 
-app.get('/admin/aktivitas', (req, res) => {
-    res.render('pages/admin/aktivitas', {
-        pageTitle: 'Log Aktivitas'
-    });
-});
+
 
 // =============================================
 // ROUTE UNTUK HALAMAN AUTH / UMUM
@@ -80,7 +77,15 @@ app.get('/', (req, res) => {
     res.render('pages/auth/login', { layout: false });
 });
 
-app.get('/logout', (req, res) => {
+app.get('/logout', async (req, res) => {
+    if (req.session && req.session.user) {
+        await LogAktivitas.record({
+            req,
+            aksi: 'Logout',
+            modul: 'Auth',
+            deskripsi: req.session.user.nama + ' keluar dari sistem'
+        });
+    }
     if (req.session && typeof req.session.destroy === 'function') {
         return req.session.destroy(() => {
             res.clearCookie('connect.sid');
@@ -108,19 +113,7 @@ app.get('/peminjam/pengembalian', (req, res) => {
     });
 });
 
-app.get('/peminjam/riwayat', (req, res) => {
-    const openModal = req.query.open === '1';
-    const prefillKode = req.query.kode || '';
-    const prefillNama = req.query.nama || '';
-    res.render('pages/peminjam/riwayat', {
-        layout: 'layouts/peminjam',
-        pageTitle: 'Peminjaman',
-        currentPath: '/peminjam/riwayat',
-        openModal: openModal,
-        prefillKode: prefillKode,
-        prefillNama: prefillNama
-    });
-});
+
 
 // =============================================
 // ROUTE UNTUK HALAMAN PETUGAS
@@ -130,13 +123,7 @@ app.get('/petugas', (req, res) => {
     res.redirect('/petugas/peminjaman');
 });
 
-app.get('/petugas/peminjaman', (req, res) => {
-    res.render('pages/petugas/peminjaman', {
-        layout: 'layouts/petugas',
-        pageTitle: 'Menyetujui Peminjaman',
-        currentPath: '/petugas/peminjaman'
-    });
-});
+app.use('/petugas', require('./routes/petugas'));
 
 app.get('/petugas/pengembalian', (req, res) => {
     res.render('pages/petugas/pengembalian', {

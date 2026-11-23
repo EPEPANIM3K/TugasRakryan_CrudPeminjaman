@@ -8,12 +8,21 @@ const PeminjamanService = {
 
   // Get total count with optional filters
   async countTotal(filters = {}) {
-    return await Peminjaman.countTotal(filters);
+    const rows = await Peminjaman.getAll(filters);
+    return rows.length;
   },
 
   // Count by status
   async countByStatus() {
-    return await Peminjaman.countByStatus();
+    const stats = await Peminjaman.getStats();
+    return {
+      'Menunggu Persetujuan': stats.pending,
+      'Disetujui': stats.approved,
+      'Ditolak': stats.rejected,
+      'dipinjam': stats.borrowed,
+      'selesai': stats.done,
+      'Dibatalkan': stats.cancelled
+    };
   },
 
   // Get distinct statuses

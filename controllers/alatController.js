@@ -1,4 +1,5 @@
 const Barang = require('../models/Barang');
+const LogAktivitas = require('../models/LogAktivitas');
 
 function formatTanggal(value) {
   const date = value ? new Date(value) : null;
@@ -81,6 +82,15 @@ exports.create = async (req, res) => {
   }
   try {
     const item = await Barang.create(data);
+    await LogAktivitas.record({
+      req,
+      aksi: 'Tambah Alat',
+      modul: 'Inventaris',
+      referensiTipe: 'alat',
+      referensiId: item.id,
+      deskripsi: 'Menambahkan alat ' + item.nama_alat + ' (' + item.kode_alat + ').',
+      metadata: { stok: item.stok_total, laboratorium: item.nama_lab }
+    });
     res.status(201).json({ ok: true, item });
   } catch (error) {
     fail(res, error);
@@ -95,6 +105,17 @@ exports.update = async (req, res) => {
   try {
     const item = await Barang.update(req.params.id, data);
     if (!item) return res.status(404).json({ ok: false, message: 'Data alat tidak ditemukan.' });
+
+    await LogAktivitas.record({
+      req,
+      aksi: 'Edit Alat',
+      modul: 'Inventaris',
+      referensiTipe: 'alat',
+      referensiId: item.id,
+      deskripsi: 'Memperbarui data alat ' + item.nama_alat + ' (' + item.kode_alat + ').',
+      metadata: { stok: item.stok_total, laboratorium: item.nama_lab }
+    });
+
     res.json({ ok: true, item });
   } catch (error) {
     fail(res, error);
@@ -103,8 +124,21 @@ exports.update = async (req, res) => {
 
 exports.remove = async (req, res) => {
   try {
+    const item = await Barang.findById(req.params.id);
+    if (!item) return res.status(404).json({ ok: false, message: 'Data alat tidak ditemukan.' });
+
     const removed = await Barang.remove(req.params.id);
     if (!removed) return res.status(404).json({ ok: false, message: 'Data alat tidak ditemukan.' });
+
+    await LogAktivitas.record({
+      req,
+      aksi: 'Hapus Alat',
+      modul: 'Inventaris',
+      referensiTipe: 'alat',
+      referensiId: item.id,
+      deskripsi: 'Menghapus alat ' + item.nama_alat + ' (' + item.kode_alat + ').'
+    });
+
     res.json({ ok: true });
   } catch (error) {
     fail(res, error);

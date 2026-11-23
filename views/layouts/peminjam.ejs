@@ -166,6 +166,147 @@
     </div>
   </div>
 
+  <!-- Modal Alert / Konfirmasi Reusable -->
+  <div id="sipat-action-modal" data-sipat-modal class="hidden fixed inset-0 z-[130] items-center justify-center p-4" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="sipat-action-title">
+    <div id="sipat-action-overlay" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+    <div id="sipat-action-content" class="relative bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-md transform transition-all duration-200 scale-95 opacity-0 translate-y-2">
+      <div class="p-5 border-b border-slate-100 flex items-start justify-between gap-3">
+        <div class="flex items-start gap-3 min-w-0">
+          <div id="sipat-action-icon-wrap" class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0">
+            <span id="sipat-action-icon" class="material-symbols-outlined text-[21px]">info</span>
+          </div>
+          <div class="min-w-0">
+            <h2 id="sipat-action-title" class="text-lg font-bold text-slate-900 leading-tight">Informasi</h2>
+            <p id="sipat-action-subtitle" class="text-xs text-slate-500 mt-1 hidden"></p>
+          </div>
+        </div>
+        <button id="sipat-action-close" type="button" class="p-2 -mt-1 -mr-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors shrink-0" aria-label="Tutup modal">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+      <div id="sipat-action-body" class="p-6 space-y-4 max-h-[60vh] overflow-y-auto text-sm text-slate-600 leading-relaxed"></div>
+      <div class="p-5 bg-slate-50/60 border-t border-slate-100 flex flex-col sm:flex-row gap-3 sm:justify-end">
+        <button id="sipat-action-cancel" type="button" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 border border-slate-200 bg-white transition shadow-2xs flex-1 sm:flex-none">Batal</button>
+        <button id="sipat-action-confirm" type="button" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-white transition shadow-sm flex-1 sm:flex-none inline-flex items-center justify-center gap-2 bg-brand-700 hover:bg-brand-800">Mengerti</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var modal = document.getElementById('sipat-action-modal');
+      var content = document.getElementById('sipat-action-content');
+      var overlay = document.getElementById('sipat-action-overlay');
+      var iconWrap = document.getElementById('sipat-action-icon-wrap');
+      var icon = document.getElementById('sipat-action-icon');
+      var titleEl = document.getElementById('sipat-action-title');
+      var subtitleEl = document.getElementById('sipat-action-subtitle');
+      var bodyEl = document.getElementById('sipat-action-body');
+      var cancelBtn = document.getElementById('sipat-action-cancel');
+      var confirmBtn = document.getElementById('sipat-action-confirm');
+      var closeBtn = document.getElementById('sipat-action-close');
+
+      var current = null;
+
+      var TONES = {
+        info: { wrap: 'bg-blue-50 text-blue-600 border-blue-100', icon: 'info', button: 'bg-brand-700 hover:bg-brand-800' },
+        success: { wrap: 'bg-emerald-50 text-emerald-600 border-emerald-100', icon: 'check_circle', button: 'bg-emerald-600 hover:bg-emerald-700' },
+        warning: { wrap: 'bg-amber-50 text-amber-600 border-amber-100', icon: 'warning', button: 'bg-amber-500 hover:bg-amber-600' },
+        danger: { wrap: 'bg-rose-50 text-rose-600 border-rose-100', icon: 'delete_forever', button: 'bg-rose-600 hover:bg-rose-700' }
+      };
+
+      function escapeHtml(value) {
+        return String(value == null ? '' : value).replace(/[&<>"']/g, function (character) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
+        });
+      }
+
+      function setSubtitle(text) {
+        if (!subtitleEl) return;
+        if (text) {
+          subtitleEl.textContent = text;
+          subtitleEl.classList.remove('hidden');
+        } else {
+          subtitleEl.textContent = '';
+          subtitleEl.classList.add('hidden');
+        }
+      }
+
+      function open(options, mode) {
+        var opts = options || {};
+        return new Promise(function (resolve) {
+          if (!modal) {
+            resolve(mode === 'confirm' ? false : undefined);
+            return;
+          }
+
+          var tone = TONES[opts.tone] || TONES.info;
+          current = { resolve: resolve, closing: false };
+
+          titleEl.textContent = opts.title || (mode === 'confirm' ? 'Konfirmasi' : 'Informasi');
+          setSubtitle(opts.subtitle);
+          iconWrap.className = 'w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 ' + tone.wrap;
+          icon.textContent = tone.icon;
+          bodyEl.innerHTML = opts.html != null ? opts.html : '<p>' + escapeHtml(opts.message || '') + '</p>';
+
+          if (mode === 'confirm') {
+            cancelBtn.classList.remove('hidden');
+            cancelBtn.textContent = opts.cancelText || 'Batal';
+            confirmBtn.textContent = opts.confirmText || 'Ya, Lanjut';
+          } else {
+            cancelBtn.classList.add('hidden');
+            confirmBtn.textContent = opts.okText || 'Mengerti';
+          }
+          confirmBtn.className = 'px-5 py-2.5 rounded-xl text-xs font-semibold text-white transition shadow-sm flex-1 sm:flex-none inline-flex items-center justify-center gap-2 ' + tone.button;
+
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+          modal.setAttribute('aria-hidden', 'false');
+          document.body.style.overflow = 'hidden';
+          void content.offsetWidth;
+          content.classList.remove('scale-95', 'opacity-0', 'translate-y-2');
+          content.classList.add('scale-100', 'opacity-100', 'translate-y-0');
+          window.setTimeout(function () {
+            try { confirmBtn.focus(); } catch (error) { /* no-op */ }
+          }, 60);
+        });
+      }
+
+      function close(result) {
+        if (!current || current.closing) return;
+        current.closing = true;
+        var resolve = current.resolve;
+
+        content.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
+        content.classList.add('scale-95', 'opacity-0', 'translate-y-2');
+        window.setTimeout(function () {
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+          modal.setAttribute('aria-hidden', 'true');
+          document.body.style.overflow = '';
+          current = null;
+          resolve(result);
+        }, 180);
+      }
+
+      confirmBtn.addEventListener('click', function () { close(true); });
+      cancelBtn.addEventListener('click', function () { close(false); });
+      closeBtn.addEventListener('click', function () { close(false); });
+      if (overlay) overlay.addEventListener('click', function () { close(false); });
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && current) close(false);
+      });
+
+      window.sipatModal = {
+        alert: function (options) { return open(options, 'alert'); },
+        confirm: function (options) { return open(options, 'confirm'); },
+        escape: escapeHtml
+      };
+    })();
+  </script>
+
   <script src="/js/admin-layout.js"></script>
 </body>
 </html>

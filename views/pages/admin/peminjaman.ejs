@@ -33,7 +33,7 @@
     <!-- Card 2: Menunggu Persetujuan -->
     <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
       <div class="flex items-center justify-between mb-3">
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700">Menunggu Persetujuan</span>
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-50 text-amber-700">Menunggu Persetujuan</span>
       </div>
       <div class="my-2">
         <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-menunggu"><%= stats.menungguPersetujuan || 0 %></div>
@@ -63,21 +63,18 @@
       <div class="relative w-full lg:w-auto min-w-[200px]">
         <select class="w-full h-10 appearance-none pl-3.5 pr-9 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg cursor-pointer focus:outline-none focus:border-brand-700 transition-colors" id="filter-status-admin">
           <option value="">Semua Status</option>
-          <% if (distinctStatuses) { %>
-            <% distinctStatuses.forEach(function(status) { %>
-              <option value="<%= status %>"><%= status %></option>
-            <% }); %>
-          <% } %>
-          <option value="terlambat">Terlambat</option>
-          <option value="dipinjam">Sedang Dipinjam</option>
-          <option value="dikembalikan">Dikembalikan Tepat Waktu</option>
+          <% (distinctStatuses || []).forEach(function(status) { %>
+            <option value="<%= status %>"><%= status %></option>
+          <% }); %>
         </select>
         <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
       </div>
       <div class="relative w-full lg:w-auto min-w-[180px]">
-        <select class="w-full h-10 appearance-none pl-3.5 pr-9 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg cursor-pointer focus:outline-none focus:border-brand-700 transition-colors">
+        <select class="w-full h-10 appearance-none pl-3.5 pr-9 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg cursor-pointer focus:outline-none focus:border-brand-700 transition-colors" id="filter-lab-admin">
           <option value="">Semua Laboratorium</option>
-          <option value="Semua">Semua</option>
+          <% (labs || []).forEach(function(lab) { %>
+            <option value="<%= lab %>"><%= lab %></option>
+          <% }); %>
         </select>
         <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
       </div>
@@ -101,228 +98,82 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100 text-sm text-slate-700 bg-white">
-        <!-- Row 1 -->
-        <tr class="hover:bg-slate-50/80 transition-colors group">
-          <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">01</td>
-          <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">PJ-2025-0888</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-            <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Bima Satria Wicaksono</div>
-            <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@bimasatria • bima@mhs.univ.ac.id</div>
-          </td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-            <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Oscilloscope Digital 100MHz</div>
-            <div class="text-xs text-slate-400 mt-0.5 whitespace-nowrap">Tektronix TBS1102B</div>
-          </td>
-          <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">20 Feb 2025</td>
-          <td class="py-3.5 px-4 text-xs font-mono text-rose-600 whitespace-nowrap min-w-[140px]">24 Feb 2025</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[150px]">
-            <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600">
-              <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
-              <span>Terlambat (1 Hari)</span>
-            </div>
-          </td>
-          <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-            <div class="inline-flex items-center justify-center gap-1.5">
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail" type="button" data-id="1" data-kode="PJ-2025-0888" data-nama="Oscilloscope Digital 100MHz">
-                <span class="material-symbols-outlined text-[18px]">visibility</span>
-              </button>
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-id="1" data-kode="PJ-2025-0888" data-nama="Oscilloscope Digital 100MHz">
-                <span class="material-symbols-outlined text-[18px]">delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-        <!-- Row 2 -->
-        <tr class="hover:bg-slate-50/80 transition-colors group">
-          <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">02</td>
-          <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">PJ-2025-0899</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-            <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Ari Wijaya</div>
-            <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@ariw • ari@mhs.univ.ac.id</div>
-          </td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-            <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Multimeter Digital Auto-Ranging</div>
-            <div class="text-xs text-slate-400 mt-0.5 whitespace-nowrap">Fluke 8845A</div>
-          </td>
-          <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">15 Feb 2025</td>
-          <td class="py-3.5 px-4 text-xs font-mono text-rose-600 whitespace-nowrap min-w-[140px]">20 Feb 2025</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[150px]">
-            <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600">
-              <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
-              <span>Terlambat (3 Hari)</span>
-            </div>
-          </td>
-          <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-            <div class="inline-flex items-center justify-center gap-1.5">
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail" type="button" data-id="2" data-kode="PJ-2025-0899" data-nama="Multimeter Digital Auto-Ranging">
-                <span class="material-symbols-outlined text-[18px]">visibility</span>
-              </button>
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-id="2" data-kode="PJ-2025-0899" data-nama="Multimeter Digital Auto-Ranging">
-                <span class="material-symbols-outlined text-[18px]">delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-        <!-- Row 3 -->
-        <tr class="hover:bg-slate-50/80 transition-colors group">
-          <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">03</td>
-          <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">PJ-2025-0901</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-            <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Rina Permatasari</div>
-            <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@rinap • rinap@mhs.univ.ac.id</div>
-          </td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-            <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Spektrofotometer UV-Vis 1800</div>
-            <div class="text-xs text-slate-400 mt-0.5 whitespace-nowrap">Shimadzu</div>
-          </td>
-          <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">18 Feb 2025</td>
-          <td class="py-3.5 px-4 text-xs font-mono text-rose-600 whitespace-nowrap min-w-[140px]">22 Feb 2025</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[150px]">
-            <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600">
-              <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
-              <span>Terlambat (2 Hari)</span>
-            </div>
-          </td>
-          <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-            <div class="inline-flex items-center justify-center gap-1.5">
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail" type="button" data-id="3" data-kode="PJ-2025-0901" data-nama="Spektrofotometer UV-Vis 1800">
-                <span class="material-symbols-outlined text-[18px]">visibility</span>
-              </button>
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-id="3" data-kode="PJ-2025-0901" data-nama="Spektrofotometer UV-Vis 1800">
-                <span class="material-symbols-outlined text-[18px]">delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-        <!-- Row 4 -->
-        <tr class="hover:bg-slate-50/80 transition-colors group">
-          <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">04</td>
-          <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">PJ-2025-0912</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-            <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Bima Satria Wicaksono</div>
-            <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@bimasatria • bima@mhs.univ.ac.id</div>
-          </td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-            <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Centrifuge Mikro 15000g</div>
-            <div class="text-xs text-slate-400 mt-0.5 whitespace-nowrap">Eppendorf 5424</div>
-          </td>
-          <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">20 Feb 2025</td>
-          <td class="py-3.5 px-4 text-xs font-mono text-rose-600 whitespace-nowrap min-w-[140px]">28 Feb 2025</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[150px]">
-            <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600">
-              <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
-              <span>Terlambat (5 Hari)</span>
-            </div>
-          </td>
-          <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-            <div class="inline-flex items-center justify-center gap-1.5">
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail" type="button" data-id="4" data-kode="PJ-2025-0912" data-nama="Centrifuge Mikro 15000g">
-                <span class="material-symbols-outlined text-[18px]">visibility</span>
-              </button>
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-id="4" data-kode="PJ-2025-0912" data-nama="Centrifuge Mikro 15000g">
-                <span class="material-symbols-outlined text-[18px]">delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-        <!-- Row 5 -->
-        <tr class="hover:bg-slate-50/80 transition-colors group">
-          <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">05</td>
-          <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">PJ-2025-0923</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-            <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Allya Amanda Putri</div>
-            <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@allya.p • allya@mhs.univ.ac.id</div>
-          </td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-            <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Power Supply Dual Channel 0-30V</div>
-            <div class="text-xs text-slate-400 mt-0.5 whitespace-nowrap">HP E3631A</div>
-          </td>
-          <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">22 Feb 2025</td>
-          <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">30 Feb 2025</td>
-          <td class="py-3.5 px-4 whitespace-nowrap min-w-[150px]">
-            <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-              <span>Dikembalikan Tepat Waktu</span>
-            </div>
-          </td>
-          <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-            <div class="inline-flex items-center justify-center gap-1.5">
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail" type="button" data-id="5" data-kode="PJ-2025-0923" data-nama="Power Supply Dual Channel 0-30V">
-                <span class="material-symbols-outlined text-[18px]">visibility</span>
-              </button>
-              <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-id="5" data-kode="PJ-2025-0923" data-nama="Power Supply Dual Channel 0-30V">
-                <span class="material-symbols-outlined text-[18px]">delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
+          <% if (!tableData.length) { %>
+          <tr>
+            <td colspan="8" class="px-4 py-12 text-center text-sm text-slate-400">
+              <span class="material-symbols-outlined text-[40px] mb-2 block">inbox</span>
+              Belum ada data peminjaman.
+            </td>
+          </tr>
+          <% } %>
+          <% tableData.forEach(function(item, idx) { var meta = statusMeta(item.status); var deletable = ['Menunggu Persetujuan','Ditolak','Dibatalkan','Selesai'].indexOf(item.status) !== -1; %>
+          <tr class="peminjaman-admin-row hover:bg-slate-50/80 transition-colors group"
+              data-id="<%= item.id %>"
+              data-kode="<%= item.kode_peminjaman || '-' %>"
+              data-nama="<%= item.nama_lengkap || '-' %>"
+              data-username="@<%= item.username || '-' %>"
+              data-email="<%= item.email || '-' %>"
+              data-alat="<%= item.alat_nama || '-' %>"
+              data-merk="<%= item.alat_merk || '-' %>"
+              data-kode-alat="<%= item.alat_kode || '-' %>"
+              data-lab="<%= item.nama_lab || '-' %>"
+              data-tanggal-pinjam="<%= formatTanggal(item.tanggal_pinjam) %>"
+              data-tanggal-kembali="<%= formatTanggal(item.tanggal_kembali_rencana) %>"
+              data-status="<%= item.status %>"
+              data-tujuan="<%= (item.tujuan_peminjaman || '-').replace(/"/g,'&quot;') %>"
+              data-catatan="<%= ((item.catatan_petugas || item.alasan_penolakan || '') + '').replace(/"/g,'&quot;') %>"
+              data-jumlah="<%= item.total_jumlah || 0 %>"
+              data-deletable="<%= deletable ? '1' : '0' %>">
+            <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6"><%= String(idx + 1).padStart(2, '0') %></td>
+            <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap"><%= item.kode_peminjaman || '-' %></td>
+            <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
+              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap"><%= item.nama_lengkap || '-' %></div>
+              <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@<%= item.username || '-' %> &bull; <%= item.email || '-' %></div>
+            </td>
+            <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
+              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap"><%= item.alat_nama || '-' %></div>
+              <div class="text-xs text-slate-400 mt-0.5 whitespace-nowrap"><%= item.alat_merk || '-' %> &bull; <%= item.nama_lab || '-' %></div>
+            </td>
+            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]"><%= formatTanggal(item.tanggal_pinjam) %></td>
+            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]"><%= formatTanggal(item.tanggal_kembali_rencana) %></td>
+            <td class="py-3.5 px-4 whitespace-nowrap min-w-[150px]">
+              <div class="inline-flex items-center gap-1.5 text-xs font-semibold <%= meta.textClass %>">
+                <span class="w-2 h-2 rounded-full <%= meta.dotClass %> shrink-0"></span>
+                <span><%= meta.label %></span>
+              </div>
+              <% if (item.status === 'Ditolak' && item.alasan_penolakan) { %>
+              <div class="text-[10px] text-rose-400 mt-0.5 max-w-[150px] truncate" title="<%= item.alasan_penolakan %>"><%= item.alasan_penolakan %></div>
+              <% } %>
+            </td>
+            <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
+              <div class="inline-flex items-center justify-center gap-1.5">
+                <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Lihat Detail" type="button">
+                  <span class="material-symbols-outlined text-[18px]">visibility</span>
+                </button>
+                <% if (deletable) { %>
+                <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors btn-hapus-peminjaman" title="Hapus" type="button">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+                <% } %>
+              </div>
+            </td>
+          </tr>
+          <% }); %>
+          <tr id="admin-filter-empty" class="hidden">
+            <td colspan="8" class="px-4 py-12 text-center text-sm text-slate-400">
+              <span class="material-symbols-outlined text-[40px] mb-2 block">search_off</span>
+              Tidak ada data yang cocok dengan filter.
+            </td>
+          </tr>
         </tbody>
       </table>
-    </div>
-  </div>
-
-  <!-- Modal Tambah/Edit Peminjaman -->
-  <div id="modal-peminjaman" class="hidden fixed inset-0 z-50 items-center justify-center px-6 py-8">
-    <div id="modal-peminjaman-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm"></div>
-    <div id="modal-peminjaman-content" class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg transform transition-all duration-300 scale-95 opacity-0 translate-y-4 z-10 max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
-        <h2 class="text-xl font-bold text-slate-900" id="modal-peminjaman-title">Tambah Peminjaman</h2>
-        <button id="btn-close-modal-peminjaman" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors" type="button" aria-label="Tutup">
-          <span class="material-symbols-outlined text-[18px]">close</span>
-        </button>
-      </div>
-      <form id="form-peminjaman" class="p-6 space-y-4">
-        <input type="hidden" id="pm-id" value="">
-        <div>
-          <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="pm-kode">Kode Peminjaman <span class="text-rose-500">*</span></label>
-          <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="pm-kode" placeholder="Contoh: PJ-2025-1001" type="text" required>
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="pm-nama">Nama Pelapor <span class="text-rose-500">*</span></label>
-          <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="pm-nama" placeholder="Nama lengkap peminjam" type="text" required>
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="pm-username-email">Username & Email <span class="text-slate-400 font-normal">(opsional)</span></label>
-          <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="pm-username-email" placeholder="Contoh: bima@mhs.univ.ac.id" type="text">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="pm-alat">Nama Alat <span class="text-rose-500">*</span></label>
-          <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="pm-alat" placeholder="Nama alat" type="text" required>
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="pm-merk">Merk / Keterangan <span class="text-slate-400 font-normal">(opsional)</span></label>
-          <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="pm-merk" placeholder="Contoh: Tektronix" type="text">
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="pm-tgl-pinjam">Tanggal Pinjam <span class="text-rose-500">*</span></label>
-            <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="pm-tgl-pinjam" type="date" required>
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="pm-tgl-kembali">Tanggal Kembali <span class="text-rose-500">*</span></label>
-            <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="pm-tgl-kembali" type="date" required>
-          </div>
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="pm-status">Status <span class="text-rose-500">*</span></label>
-          <select class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs cursor-pointer" id="pm-status" required>
-            <option value="terlambat">Terlambat</option>
-            <option value="dipinjam">Sedang Dipinjam</option>
-            <option value="dikembalikan">Dikembalikan Tepat Waktu</option>
-          </select>
-        </div>
-        <div class="flex items-center justify-end gap-3 pt-2 border-t border-slate-100">
-          <button class="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 border border-slate-200 bg-white transition shadow-2xs" id="btn-cancel-modal-peminjaman" type="button">Batal</button>
-          <button class="px-6 py-2.5 rounded-xl text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 transition shadow-sm" id="btn-submit-peminjaman" type="submit">Simpan</button>
-        </div>
-      </form>
     </div>
   </div>
 
   <!-- Modal Detail Peminjaman -->
   <div id="modal-detail-peminjaman" class="hidden fixed inset-0 z-50 items-center justify-center px-6 py-8">
     <div id="modal-detail-peminjaman-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm"></div>
-    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0 translate-y-4 z-10" id="modal-detail-peminjaman-content">
+    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg transform transition-all duration-300 scale-95 opacity-0 translate-y-4 z-10 max-h-[90vh] overflow-y-auto" id="modal-detail-peminjaman-content">
       <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
         <h2 class="text-xl font-bold text-slate-900">Detail Peminjaman</h2>
         <button id="btn-close-detail-peminjaman" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors" type="button" aria-label="Tutup">
@@ -334,17 +185,28 @@
         <div class="flex justify-between gap-4"><span class="text-slate-500">Nama Pelapor</span><span class="text-slate-900 text-right" id="detail-pm-nama">-</span></div>
         <div class="flex justify-between gap-4"><span class="text-slate-500">Username / Email</span><span class="text-slate-700 text-right text-xs font-mono" id="detail-pm-identity">-</span></div>
         <div class="flex justify-between gap-4"><span class="text-slate-500">Alat</span><span class="text-slate-900 text-right" id="detail-pm-alat">-</span></div>
+        <div class="flex justify-between gap-4"><span class="text-slate-500">Laboratorium</span><span class="text-slate-700 text-right" id="detail-pm-lab">-</span></div>
+        <div class="flex justify-between gap-4"><span class="text-slate-500">Jumlah</span><span class="text-slate-700 text-right" id="detail-pm-jumlah">-</span></div>
         <div class="flex justify-between gap-4"><span class="text-slate-500">Tanggal Pinjam</span><span class="text-slate-700" id="detail-pm-tglpinjam">-</span></div>
         <div class="flex justify-between gap-4"><span class="text-slate-500">Tanggal Kembali</span><span class="text-slate-700" id="detail-pm-tglkembali">-</span></div>
+        <div class="flex justify-between gap-4"><span class="text-slate-500">Tujuan</span><span class="text-slate-900 text-right" id="detail-pm-tujuan">-</span></div>
         <div class="flex justify-between gap-4"><span class="text-slate-500">Status</span><span class="text-slate-900 text-right font-semibold" id="detail-pm-status">-</span></div>
+        <div id="detail-pm-catatan-wrap" class="hidden">
+          <div class="flex justify-between gap-4"><span class="text-slate-500">Catatan</span><span class="text-slate-700 text-right" id="detail-pm-catatan">-</span></div>
+        </div>
       </div>
-      <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/60 flex justify-end rounded-b-2xl">
+      <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/60 flex flex-col sm:flex-row sm:justify-between gap-3 rounded-b-2xl">
+        <div class="flex flex-wrap gap-2" id="detail-pm-actions">
+          <button type="button" data-action="dipinjam" class="hidden px-4 py-2 rounded-lg text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 transition shadow-sm">Tandai Dipinjam</button>
+          <button type="button" data-action="selesai" class="hidden px-4 py-2 rounded-lg text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition shadow-sm">Tandai Selesai</button>
+          <button type="button" data-action="batal" class="hidden px-4 py-2 rounded-lg text-xs font-semibold text-rose-600 border border-rose-200 bg-white hover:bg-rose-50 transition">Batalkan</button>
+        </div>
         <button class="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 border border-slate-200 bg-white transition shadow-2xs" id="btn-tutup-detail-peminjaman" type="button">Tutup</button>
       </div>
     </div>
   </div>
 
-  <!-- Export Modal (existing, kept as-is) -->
+  <!-- Export Modal -->
   <div id="export-modal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/50 backdrop-blur-sm">
     <div class="relative bg-white rounded-2xl w-full max-w-2xl m-6 shadow-2xl transform transition-all duration-300 scale-95 opacity-0">
       <div class="flex items-center justify-between p-5 border-b border-slate-200">
@@ -357,41 +219,32 @@
         <div>
           <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="export-format">Format</label>
           <select class="w-full px-4 py-2.5 bg-white border border-slate-200 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="export-format">
-            <option value="excel">Excel (.xlsx)</option>
             <option value="csv">CSV (.csv)</option>
           </select>
         </div>
         <div>
-          <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="export-scope">Jangkauan</label>
-          <div class="space-y-3">
-            <label class="flex items-center gap-2 cursor-pointer select-none">
-              <input type="radio" name="export-scope" value="semua" class="w-4 h-4 rounded bg-brand-600 shrink-0" checked>
-              <span>Semua Data</span>
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer select-none">
-              <input type="radio" name="export-scope" value="terpilih" class="w-4 h-4 rounded bg-slate-200 shrink-0">
-              <span>Data yang Dipilih</span>
-            </label>
-          </div>
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="export-format-2">Sheet Name (Excel)</label>
-          <input class="w-full px-4 py-2.5 bg-white border border-slate-200 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="export-sheet-name" placeholder="Sheet1" type="text">
+          <label class="block font-semibold text-slate-800 text-xs mb-1.5">Jangkauan</label>
+          <p class="text-xs text-slate-500">Data yang diekspor mengikuti hasil filter yang sedang aktif.</p>
         </div>
         <div class="space-y-3">
-          <button class="px-4 py-2.5 rounded-lg bg-brand-700 hover:bg-brand-800 text-xs font-semibold text-white transition shadow-sm w-full" id="btn-export-excel">Unduh & Ekspor Sekarang</button>
-          <button class="px-4 py-2.5 rounded-lg bg-white text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 border border-slate-200 text-xs font-semibold transition shadow-sm w-full">Batal</button>
+          <button class="px-4 py-2.5 rounded-lg bg-brand-700 hover:bg-brand-800 text-xs font-semibold text-white transition shadow-sm w-full" id="btn-export-excel">Unduh &amp; Ekspor Sekarang</button>
+          <button class="px-4 py-2.5 rounded-lg bg-white text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 border border-slate-200 text-xs font-semibold transition shadow-sm w-full" id="btn-cancel-export">Batal</button>
         </div>
       </div>
     </div>
   </div>
+</div>
 
 <!-- Script Interaksi Peminjaman -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  const wait = function (ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); };
-  const textOf = function (el) { return el ? (el.textContent || '').replace(/\s+/g, ' ').trim() : ''; };
-  const modalApi = window.sipatModal;
+  var modalApi = window.sipatModal;
+  var detailModal = document.getElementById('modal-detail-peminjaman');
+  var detailContent = document.getElementById('modal-detail-peminjaman-content');
+  var detailOverlay = document.getElementById('modal-detail-peminjaman-overlay');
+  var exportModal = document.getElementById('export-modal');
+  var exportContent = exportModal ? exportModal.querySelector('.relative') : null;
+  var activeRow = null;
 
   function showModal(modal, content) {
     if (!modal || !content) return;
@@ -414,137 +267,146 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 220);
   }
 
-  // Export modal
-  const exportModal = document.getElementById('export-modal');
-  const exportContent = exportModal ? exportModal.querySelector('.relative') : null;
-  const btnOpenExport = document.getElementById('btn-open-export');
-  const btnCloseExport = document.getElementById('btn-close-export-modal');
-  const btnCancelExport = exportModal ? exportModal.querySelector('.bg-white.text-slate-600') : null;
+  function toast(message, tone) {
+    if (modalApi && typeof modalApi.toast === 'function') {
+      modalApi.toast(message, tone || 'success');
+    } else {
+      window.alert(message);
+    }
+  }
 
-  if (btnOpenExport) btnOpenExport.addEventListener('click', function (e) {
-    e.preventDefault();
-    showModal(exportModal, exportContent);
-  });
-  if (btnCloseExport) btnCloseExport.addEventListener('click', function () { hideModal(exportModal, exportContent); });
-  if (btnCancelExport) btnCancelExport.addEventListener('click', function () { hideModal(exportModal, exportContent); });
-  if (exportModal) exportModal.addEventListener('click', function (e) {
-    if (e.target === exportModal) hideModal(exportModal, exportContent);
-  });
+  function esc(value) {
+    return modalApi && typeof modalApi.escape === 'function'
+      ? modalApi.escape(value == null ? '' : String(value))
+      : String(value == null ? '' : value);
+  }
 
-  // Add / edit peminjaman modal
-  const pmModal = document.getElementById('modal-peminjaman');
-  const pmContent = document.getElementById('modal-peminjaman-content');
-  const btnClosePm = document.getElementById('btn-close-modal-peminjaman');
-  const btnCancelPm = document.getElementById('btn-cancel-modal-peminjaman');
-  const formPm = document.getElementById('form-peminjaman');
+  async function postForm(url, data) {
+    var response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(data || {})
+    });
+    var result = await response.json().catch(function () { return {}; });
+    if (!response.ok) throw new Error(result.message || 'Terjadi kesalahan pada server.');
+    return result;
+  }
 
-  function closePeminjamanModal() { hideModal(pmModal, pmContent); }
-
-  if (btnClosePm) btnClosePm.addEventListener('click', closePeminjamanModal);
-  if (btnCancelPm) btnCancelPm.addEventListener('click', closePeminjamanModal);
-  if (pmModal) pmModal.addEventListener('click', function (e) {
-    if (e.target === pmModal) closePeminjamanModal();
-  });
-
-  // Detail modal
-  const detailModal = document.getElementById('modal-detail-peminjaman');
-  const detailContent = document.getElementById('modal-detail-peminjaman-content');
-
-  function closeDetailModal() { hideModal(detailModal, detailContent); }
-
-  function openDetailModal(data) {
-    if (!detailModal || !detailContent) return;
-    const set = function (id, value) {
-      const el = document.getElementById(id);
+  // ---------- Detail modal ----------
+  function openDetail(row) {
+    if (!row) return;
+    activeRow = row;
+    var d = row.dataset;
+    var set = function (id, value) {
+      var el = document.getElementById(id);
       if (el) el.textContent = value || '-';
     };
-    set('detail-pm-kode', data.kode);
-    set('detail-pm-nama', data.nama);
-    set('detail-pm-identity', data.identity);
-    set('detail-pm-alat', data.alat);
-    set('detail-pm-tglpinjam', data.tglpinjam);
-    set('detail-pm-tglkembali', data.tglkembali);
-    set('detail-pm-status', data.status);
+
+    set('detail-pm-kode', d.kode);
+    set('detail-pm-nama', d.nama);
+    set('detail-pm-identity', (d.username || '-') + ' \u00b7 ' + (d.email || '-'));
+    set('detail-pm-alat', (d.alat || '-') + (d.merk && d.merk !== '-' ? ' (' + d.merk + ')' : ''));
+    set('detail-pm-lab', d.lab);
+    set('detail-pm-jumlah', (d.jumlah || '0') + ' unit');
+    set('detail-pm-tglpinjam', d.tanggalPinjam);
+    set('detail-pm-tglkembali', d.tanggalKembali);
+    set('detail-pm-tujuan', d.tujuan);
+    set('detail-pm-status', d.status);
+
+    var catatanWrap = document.getElementById('detail-pm-catatan-wrap');
+    if (catatanWrap) {
+      catatanWrap.classList.toggle('hidden', !d.catatan);
+      set('detail-pm-catatan', d.catatan);
+    }
+
+    var actions = document.querySelectorAll('#detail-pm-actions [data-action]');
+    actions.forEach(function (button) {
+      var action = button.dataset.action;
+      var visible =
+        (action === 'dipinjam' && d.status === 'Disetujui') ||
+        (action === 'selesai' && (d.status === 'Dipinjam' || d.status === 'Terlambat')) ||
+        (action === 'batal' && (d.status === 'Menunggu Persetujuan' || d.status === 'Disetujui'));
+      button.classList.toggle('hidden', !visible);
+    });
+
     showModal(detailModal, detailContent);
   }
 
-  const btnCloseDetail = document.getElementById('btn-close-detail-peminjaman');
-  const btnTutupDetail = document.getElementById('btn-tutup-detail-peminjaman');
-  if (btnCloseDetail) btnCloseDetail.addEventListener('click', closeDetailModal);
-  if (btnTutupDetail) btnTutupDetail.addEventListener('click', closeDetailModal);
-  if (detailModal) detailModal.addEventListener('click', function (e) {
-    if (e.target === detailModal) closeDetailModal();
+  function closeDetail() { hideModal(detailModal, detailContent); }
+
+  document.querySelectorAll('.peminjaman-admin-row').forEach(function (row) {
+    var detailBtn = row.querySelector('button[title="Lihat Detail"]');
+    if (detailBtn) detailBtn.addEventListener('click', function () { openDetail(row); });
   });
 
-  function readRow(row) {
-    const cells = row ? row.children : [];
-    const identityCell = cells[2];
-    const alatCell = cells[3];
-    const nameSpans = identityCell ? identityCell.querySelectorAll('span') : [];
-    const alatSpans = alatCell ? alatCell.querySelectorAll('span') : [];
-    return {
-      kode: textOf(cells[1]),
-      nama: textOf(nameSpans[0]),
-      identity: textOf(nameSpans[1]),
-      alat: textOf(alatSpans[0]),
-      merek: textOf(alatSpans[1]),
-      tglpinjam: textOf(cells[4]),
-      tglkembali: textOf(cells[5]),
-      status: textOf(cells[6])
-    };
-  }
+  var btnCloseDetail = document.getElementById('btn-close-detail-peminjaman');
+  var btnTutupDetail = document.getElementById('btn-tutup-detail-peminjaman');
+  if (btnCloseDetail) btnCloseDetail.addEventListener('click', closeDetail);
+  if (btnTutupDetail) btnTutupDetail.addEventListener('click', closeDetail);
+  if (detailOverlay) detailOverlay.addEventListener('click', closeDetail);
 
-  document.querySelectorAll('button[title="Lihat Detail"]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      const row = btn.closest('tr');
-      const data = readRow(row);
-      data.alat = data.alat + (data.merek ? ' (' + data.merek + ')' : '');
-      openDetailModal(data);
-    });
-  });
+  var ACTION_LABEL = {
+    dipinjam: 'Tandai Dipinjam',
+    selesai: 'Tandai Selesai',
+    batal: 'Batalkan Peminjaman'
+  };
 
-  document.addEventListener('keydown', function (e) {
-    if (e.key !== 'Escape') return;
-    if (exportModal && !exportModal.classList.contains('hidden')) hideModal(exportModal, exportContent);
-    if (pmModal && !pmModal.classList.contains('hidden')) closePeminjamanModal();
-    if (detailModal && !detailModal.classList.contains('hidden')) closeDetailModal();
-  });
+  document.querySelectorAll('#detail-pm-actions [data-action]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      if (!activeRow) return;
+      var action = button.dataset.action;
+      var row = activeRow;
+      var d = row.dataset;
 
-  if (formPm) {
-    formPm.addEventListener('submit', async function (e) {
-      e.preventDefault();
-      const submit = document.getElementById('btn-submit-peminjaman');
-      const original = submit ? submit.innerHTML : '';
-      if (submit) {
-        submit.disabled = true;
-        submit.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">progress_activity</span><span>Menyimpan...</span>';
+      if (!modalApi || typeof modalApi.confirm !== 'function') {
+        if (!window.confirm(ACTION_LABEL[action] + ' untuk ' + d.kode + '?')) return;
+        runAction(row, action).catch(function (error) { window.alert(error.message); });
+        return;
       }
-      try {
-        await wait(600);
-        if (modalApi) modalApi.toast('Data peminjaman berhasil disimpan.', 'success');
-        closePeminjamanModal();
-      } catch (error) {
-        if (modalApi) modalApi.toast('Gagal menyimpan data peminjaman. Silakan coba lagi.', 'danger');
-      } finally {
-        if (submit) { submit.disabled = false; submit.innerHTML = original || 'Simpan'; }
+
+      modalApi.confirm({
+        title: ACTION_LABEL[action] + '?',
+        subtitle: 'Status peminjaman akan diperbarui.',
+        tone: action === 'batal' ? 'danger' : 'primary',
+        message: '<div class="text-sm text-slate-700 space-y-2">' +
+          '<p>Apakah Anda yakin ingin memproses transaksi berikut?</p>' +
+          '<div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 space-y-1">' +
+          '<p class="text-xs text-slate-500">Kode Peminjaman</p>' +
+          '<p class="font-mono font-bold text-slate-800">' + esc(d.kode) + '</p>' +
+          '<p class="font-semibold text-slate-800 mt-1">' + esc(d.nama) + '</p>' +
+          '<p class="text-xs text-slate-500">' + esc(d.alat) + '</p>' +
+          '</div></div>',
+        confirmText: 'Ya, Lanjutkan',
+        confirmClass: 'px-5 py-2.5 rounded-xl text-xs font-semibold text-white ' +
+          (action === 'batal' ? 'bg-rose-600 hover:bg-rose-700' : 'bg-blue-600 hover:bg-blue-700') +
+          ' transition shadow-sm inline-flex items-center justify-center gap-2',
+        loadingText: 'Memproses...',
+        onConfirm: function () { return runAction(row, action); }
+      });
+    });
+  });
+
+  async function runAction(row, action) {
+    await postForm('/admin/peminjaman/' + row.dataset.id + '/status', { action: action });
+    toast(ACTION_LABEL[action] + ' berhasil.', action === 'batal' ? 'danger' : 'success');
+    closeDetail();
+    setTimeout(function () { window.location.reload(); }, 700);
+  }
+
+  // ---------- Delete ----------
+  document.querySelectorAll('.btn-hapus-peminjaman').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var row = button.closest('.peminjaman-admin-row');
+      if (!row) return;
+      var d = row.dataset;
+
+      if (!modalApi || typeof modalApi.confirm !== 'function') {
+        if (!window.confirm('Hapus data peminjaman ' + d.kode + '?')) return;
+        deleteRow(row).catch(function (error) { window.alert(error.message); });
+        return;
       }
-    });
-  }
 
-  function renumberRows() {
-    const tbody = document.querySelector('table tbody');
-    if (!tbody) return;
-    Array.prototype.forEach.call(tbody.querySelectorAll('tr'), function (row, index) {
-      const first = row.children[0];
-      if (first) first.textContent = String(index + 1).padStart(2, '0');
-    });
-  }
-
-  document.querySelectorAll('button[title="Hapus"]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      const row = btn.closest('tr');
-      const data = readRow(row);
-      window.sipatModal.confirm({
+      modalApi.confirm({
         title: 'Hapus Data Peminjaman?',
         subtitle: 'Tindakan ini tidak dapat dibatalkan.',
         tone: 'danger',
@@ -552,74 +414,130 @@ document.addEventListener('DOMContentLoaded', function () {
           '<p>Apakah Anda yakin ingin menghapus transaksi peminjaman berikut?</p>' +
           '<div class="rounded-xl border border-rose-100 bg-rose-50/70 px-4 py-3 space-y-1">' +
           '<p class="text-xs text-slate-500">Kode Peminjaman</p>' +
-          '<p class="font-mono font-bold text-rose-700">' + window.sipatModal.escape(data.kode || 'N/A') + '</p>' +
-          '<p class="font-semibold text-slate-800 mt-1">' + window.sipatModal.escape(data.nama || 'Peminjam') + '</p>' +
-          '<p class="text-xs text-slate-500">' + window.sipatModal.escape(data.alat || 'Alat') + '</p>' +
+          '<p class="font-mono font-bold text-rose-700">' + esc(d.kode) + '</p>' +
+          '<p class="font-semibold text-slate-800 mt-1">' + esc(d.nama) + '</p>' +
+          '<p class="text-xs text-slate-500">' + esc(d.alat) + '</p>' +
           '</div></div>',
         confirmText: 'Ya, Hapus',
         confirmClass: 'px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 transition shadow-sm inline-flex items-center justify-center gap-2',
         loadingText: 'Menghapus...',
-        onConfirm: async function () {
-          await wait(550);
-          if (!row || !row.parentNode) throw new Error('Data peminjaman tidak ditemukan atau sudah dihapus.');
-          row.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
-          row.style.opacity = '0';
-          row.style.transform = 'translateY(-4px)';
-          await wait(180);
-          row.remove();
-          renumberRows();
-          window.sipatModal.toast('Transaksi ' + (data.kode || '') + ' berhasil dihapus.', 'success');
-        }
+        onConfirm: function () { return deleteRow(row); }
       });
     });
   });
-});
-</script>
 
-<!-- Search & Filter Script for Admin Peminjaman -->
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  var searchInput = document.getElementById('search-peminjaman-admin');
-  var filterStatus = document.getElementById('filter-status-admin');
-
-  function normalizeStatus(s) {
-    return (s || '').toLowerCase().replace(/\s+/g, ' ').trim();
+  async function deleteRow(row) {
+    await postForm('/admin/peminjaman/' + row.dataset.id + '/delete');
+    toast('Transaksi ' + (row.dataset.kode || '') + ' berhasil dihapus.', 'success');
+    row.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
+    row.style.opacity = '0';
+    row.style.transform = 'translateY(-4px)';
+    setTimeout(function () {
+      row.remove();
+      renumberRows();
+      applyFilters();
+    }, 180);
   }
 
+  function renumberRows() {
+    var rows = document.querySelectorAll('.peminjaman-admin-row');
+    rows.forEach(function (row, index) {
+      var first = row.children[0];
+      if (first) first.textContent = String(index + 1).padStart(2, '0');
+    });
+  }
+
+  // ---------- Filters ----------
+  var searchInput = document.getElementById('search-peminjaman-admin');
+  var filterStatus = document.getElementById('filter-status-admin');
+  var filterLab = document.getElementById('filter-lab-admin');
+  var emptyRow = document.getElementById('admin-filter-empty');
+
   function applyFilters() {
-    var rows = document.querySelectorAll('#peminjaman-table tbody tr');
-    var searchTerm = (searchInput ? searchInput.value : '').toLowerCase().trim();
-    var statusValue = normalizeStatus(filterStatus ? filterStatus.value : '');
+    var rows = Array.prototype.slice.call(document.querySelectorAll('.peminjaman-admin-row'));
+    var term = (searchInput ? searchInput.value : '').trim().toLowerCase();
+    var status = filterStatus ? filterStatus.value : '';
+    var lab = filterLab ? filterLab.value : '';
+    var visible = 0;
 
     rows.forEach(function (row) {
-      // Skip empty-state row
-      if (row.querySelector('td[colspan]')) { row.style.display = ''; return; }
-
-      var cells = row.querySelectorAll('td');
-      var kode = cells[1] ? cells[1].textContent.toLowerCase() : '';
-      var nameSpans = cells[2] ? cells[2].querySelectorAll('span') : [];
-      var nama = nameSpans[0] ? nameSpans[0].textContent.toLowerCase() : '';
-      var identity = nameSpans[1] ? nameSpans[1].textContent.toLowerCase() : '';
-      var alatSpans = cells[3] ? cells[3].querySelectorAll('span') : [];
-      var alat = alatSpans[0] ? alatSpans[0].textContent.toLowerCase() : '';
-      var merk = alatSpans[1] ? alatSpans[1].textContent.toLowerCase() : '';
-      var statusText = normalizeStatus(cells[6] ? cells[6].textContent : '');
-
-      var matchesSearch = !searchTerm ||
-        kode.indexOf(searchTerm) !== -1 ||
-        nama.indexOf(searchTerm) !== -1 ||
-        identity.indexOf(searchTerm) !== -1 ||
-        alat.indexOf(searchTerm) !== -1 ||
-        merk.indexOf(searchTerm) !== -1;
-
-      var matchesStatus = !statusValue || statusText.indexOf(statusValue) !== -1;
-
-      row.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
+      var d = row.dataset;
+      var matchesSearch = !term ||
+        (d.kode || '').toLowerCase().indexOf(term) !== -1 ||
+        (d.nama || '').toLowerCase().indexOf(term) !== -1 ||
+        (d.email || '').toLowerCase().indexOf(term) !== -1 ||
+        (d.alat || '').toLowerCase().indexOf(term) !== -1 ||
+        (d.merk || '').toLowerCase().indexOf(term) !== -1;
+      var matchesStatus = !status || d.status === status;
+      var matchesLab = !lab || d.lab === lab;
+      var show = matchesSearch && matchesStatus && matchesLab;
+      row.classList.toggle('hidden', !show);
+      if (show) visible++;
     });
+
+    if (emptyRow) emptyRow.classList.toggle('hidden', visible !== 0 || rows.length === 0);
   }
 
   if (searchInput) searchInput.addEventListener('input', applyFilters);
   if (filterStatus) filterStatus.addEventListener('change', applyFilters);
+  if (filterLab) filterLab.addEventListener('change', applyFilters);
   applyFilters();
+
+  // ---------- Export ----------
+  var btnOpenExport = document.getElementById('btn-open-export');
+  var btnCloseExport = document.getElementById('btn-close-export-modal');
+  var btnCancelExport = document.getElementById('btn-cancel-export');
+  var btnExport = document.getElementById('btn-export-excel');
+
+  if (btnOpenExport) btnOpenExport.addEventListener('click', function () { showModal(exportModal, exportContent); });
+  if (btnCloseExport) btnCloseExport.addEventListener('click', function () { hideModal(exportModal, exportContent); });
+  if (btnCancelExport) btnCancelExport.addEventListener('click', function () { hideModal(exportModal, exportContent); });
+  if (exportModal) exportModal.addEventListener('click', function (e) {
+    if (e.target === exportModal) hideModal(exportModal, exportContent);
+  });
+
+  if (btnExport) {
+    btnExport.addEventListener('click', function () {
+      var rows = Array.prototype.slice.call(document.querySelectorAll('.peminjaman-admin-row')).filter(function (row) {
+        return !row.classList.contains('hidden');
+      });
+
+      if (!rows.length) {
+        toast('Tidak ada data untuk diekspor.', 'danger');
+        return;
+      }
+
+      var header = ['No', 'Kode Peminjaman', 'Nama Peminjam', 'Username', 'Email', 'Alat', 'Merk', 'Laboratorium', 'Tanggal Pinjam', 'Tanggal Kembali', 'Jumlah', 'Status', 'Tujuan'];
+      var csv = [header.join(';')];
+
+      rows.forEach(function (row, index) {
+        var d = row.dataset;
+        var values = [
+          index + 1, d.kode, d.nama, d.username, d.email, d.alat, d.merk, d.lab,
+          d.tanggalPinjam, d.tanggalKembali, d.jumlah, d.status, d.tujuan
+        ];
+        csv.push(values.map(function (value) {
+          return '"' + String(value == null ? '' : value).replace(/"/g, '""') + '"';
+        }).join(';'));
+      });
+
+      var blob = new Blob(['\uFEFF' + csv.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+      var link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'peminjaman-' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+      hideModal(exportModal, exportContent);
+      toast('Data peminjaman berhasil diekspor.', 'success');
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (exportModal && !exportModal.classList.contains('hidden')) hideModal(exportModal, exportContent);
+    if (detailModal && !detailModal.classList.contains('hidden')) closeDetail();
+  });
 });
 </script>
