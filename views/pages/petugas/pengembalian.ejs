@@ -9,25 +9,15 @@
       <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Memantau Pengembalian</h1>
       <p class="text-sm text-slate-500 mt-1">Pantau alat yang masih dipinjam, deteksi keterlambatan, dan verifikasi kondisi alat saat dikembalikan ke laboratorium.</p>
     </div>
-    <div class="flex flex-wrap items-center gap-2.5 shrink-0">
-      <button id="btn-refresh-pengembalian" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm" type="button">
-        <span class="material-symbols-outlined text-[18px] text-slate-500">refresh</span>
-        <span>Muat Ulang</span>
-      </button>
-      <button id="btn-export-pengembalian" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm" type="button">
-        <span class="material-symbols-outlined text-[18px] text-slate-500">file_download</span>
-        <span>Ekspor Data</span>
-      </button>
-    </div>
+    <div class="flex flex-wrap items-center gap-2.5 shrink-0"></div>
   </div>
 
   <!-- Stat Cards -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
     <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
-      <div class="flex items-center justify-between mb-3">
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-brand-700">Sedang Dipinjam</span>
-        <span class="material-symbols-outlined text-[20px] text-slate-300">inventory_2</span>
-      </div>
+    <div class="flex items-center justify-between mb-3">
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-brand-700">Sedang Dipinjam</span>
+    </div>
       <div class="my-2">
         <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-dipinjam">6</div>
         <div class="text-xs font-medium text-slate-400 mt-1">Alat belum dikembalikan</div>
@@ -35,10 +25,9 @@
     </div>
 
     <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
-      <div class="flex items-center justify-between mb-3">
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-rose-50 text-rose-700">Terlambat</span>
-        <span class="material-symbols-outlined text-[20px] text-slate-300">schedule</span>
-      </div>
+    <div class="flex items-center justify-between mb-3">
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-rose-50 text-rose-700">Terlambat</span>
+    </div>
       <div class="my-2">
         <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-terlambat">2</div>
         <div class="text-xs font-medium text-slate-400 mt-1">Melewati tenggat pengembalian</div>
@@ -46,10 +35,9 @@
     </div>
 
     <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
-      <div class="flex items-center justify-between mb-3">
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700">Selesai Hari Ini</span>
-        <span class="material-symbols-outlined text-[20px] text-slate-300">task_alt</span>
-      </div>
+    <div class="flex items-center justify-between mb-3">
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700">Selesai Hari Ini</span>
+    </div>
       <div class="my-2">
         <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-selesai">1</div>
         <div class="text-xs font-medium text-slate-400 mt-1">Sudah diverifikasi petugas</div>
@@ -129,14 +117,16 @@
               <div class="text-slate-400">16:00 WIB</div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 text-slate-500 border border-slate-200 text-[11px] font-semibold">
-                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Tepat waktu
-              </span>
+              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+                <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0"></span>
+                <span>Tepat waktu</span>
+              </div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
-              <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-semibold">
-                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Dipinjam
-              </span>
+              <div class="row-status inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600">
+                <span class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
+                <span>Dipinjam</span>
+              </div>
             </td>
             <td class="px-4 py-3.5 text-center">
               <div class="inline-flex items-center justify-center gap-1">
@@ -171,14 +161,16 @@
               <div class="text-slate-400">16:00 WIB</div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-semibold">
-                <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> +5 hari
-              </span>
+              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600">
+                <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
+                <span>+5 hari</span>
+              </div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
-              <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-semibold">
-                <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Terlambat
-              </span>
+              <div class="row-status inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600">
+                <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
+                <span>Terlambat</span>
+              </div>
             </td>
             <td class="px-4 py-3.5 text-center">
               <div class="inline-flex items-center justify-center gap-1">
@@ -213,14 +205,16 @@
               <div class="text-slate-400">16:00 WIB</div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 text-slate-500 border border-slate-200 text-[11px] font-semibold">
-                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> 0 hari
-              </span>
+              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+                <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0"></span>
+                <span>0 hari</span>
+              </div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
-              <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-semibold">
-                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Menunggu Verifikasi
-              </span>
+              <div class="row-status inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600">
+                <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
+                <span>Menunggu Verifikasi</span>
+              </div>
             </td>
             <td class="px-4 py-3.5 text-center">
               <div class="inline-flex items-center justify-center gap-1">
@@ -255,14 +249,16 @@
               <div class="text-slate-400">16:00 WIB</div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-semibold">
-                <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> +7 hari
-              </span>
+              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600">
+                <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
+                <span>+7 hari</span>
+              </div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
-              <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-semibold">
-                <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Terlambat
-              </span>
+              <div class="row-status inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600">
+                <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
+                <span>Terlambat</span>
+              </div>
             </td>
             <td class="px-4 py-3.5 text-center">
               <div class="inline-flex items-center justify-center gap-1">
@@ -297,14 +293,16 @@
               <div class="text-slate-400">16:00 WIB</div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 text-slate-500 border border-slate-200 text-[11px] font-semibold">
-                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Tepat waktu
-              </span>
+              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+                <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0"></span>
+                <span>Tepat waktu</span>
+              </div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
-              <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-semibold">
-                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Dipinjam
-              </span>
+              <div class="row-status inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600">
+                <span class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
+                <span>Dipinjam</span>
+              </div>
             </td>
             <td class="px-4 py-3.5 text-center">
               <div class="inline-flex items-center justify-center gap-1">
@@ -339,14 +337,16 @@
               <div class="text-slate-400">16:00 WIB</div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-semibold">
-                <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> +3 hari
-              </span>
+              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600">
+                <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
+                <span>+3 hari</span>
+              </div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
-              <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-semibold">
-                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Menunggu Verifikasi
-              </span>
+              <div class="row-status inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600">
+                <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
+                <span>Menunggu Verifikasi</span>
+              </div>
             </td>
             <td class="px-4 py-3.5 text-center">
               <div class="inline-flex items-center justify-center gap-1">
@@ -381,14 +381,16 @@
               <div class="text-slate-400">16:00 WIB</div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Diverifikasi
-              </span>
+              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+                <span>Diverifikasi</span>
+              </div>
             </td>
             <td class="px-4 py-3.5 whitespace-nowrap">
-              <span class="row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Selesai
-              </span>
+              <div class="row-status inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+                <span>Selesai</span>
+              </div>
             </td>
             <td class="px-4 py-3.5 text-center">
               <div class="inline-flex items-center justify-center gap-1">
@@ -436,14 +438,9 @@
   <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none">
     <div id="modal-return-content" class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col overflow-hidden pointer-events-auto transform transition-all duration-300 scale-95 opacity-0 translate-y-4 max-h-[92vh]">
       <div class="px-6 py-5 border-b border-slate-100 flex items-start justify-between bg-white shrink-0 gap-4">
-        <div class="flex items-start gap-3.5">
-          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-            <span class="material-symbols-outlined text-[22px]">assignment_turned_in</span>
-          </div>
-          <div>
-            <h2 class="text-base font-bold text-slate-900 leading-tight">Verifikasi Pengembalian</h2>
-            <p class="text-xs text-slate-500 mt-1">Periksa kondisi fisik alat sebelum menyatakan pengembalian selesai.</p>
-          </div>
+        <div>
+          <h2 class="text-base font-bold text-slate-900 leading-tight">Verifikasi Pengembalian</h2>
+          <p class="text-xs text-slate-500 mt-1">Periksa kondisi fisik alat sebelum menyatakan pengembalian selesai.</p>
         </div>
         <button id="btn-close-return" type="button" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors shrink-0" aria-label="Tutup modal">
           <span class="material-symbols-outlined text-[20px]">close</span>
@@ -645,11 +642,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 200);
   }
 
-  function statusBadge(status) {
-    if (status === 'Selesai') return 'row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold';
-    if (status === 'Terlambat') return 'row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-semibold';
-    if (status === 'Menunggu Verifikasi') return 'row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-semibold';
-    return 'row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-semibold';
+  function statusClass(status) {
+    if (status === 'Selesai') return 'text-emerald-600';
+    if (status === 'Terlambat') return 'text-rose-600';
+    if (status === 'Menunggu Verifikasi') return 'text-amber-600';
+    return 'text-blue-600';
   }
 
   function statusDot(status) {
@@ -657,6 +654,12 @@ document.addEventListener('DOMContentLoaded', function () {
     if (status === 'Terlambat') return 'bg-rose-500';
     if (status === 'Menunggu Verifikasi') return 'bg-amber-500';
     return 'bg-blue-500';
+  }
+
+  function renderStatus(status) {
+    return '<div class="row-status inline-flex items-center gap-1.5 text-xs font-semibold ' + statusClass(status) + '">'
+      + '<span class="w-2 h-2 rounded-full shrink-0 ' + statusDot(status) + '"></span>'
+      + '<span>' + status + '</span></div>';
   }
 
   function updateStats() {
@@ -791,14 +794,14 @@ document.addEventListener('DOMContentLoaded', function () {
     row.dataset.status = 'Selesai';
     const badge = row.querySelector('.row-status');
     if (badge) {
-      badge.className = statusBadge('Selesai');
-      badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' + statusDot('Selesai') + '"></span> Selesai';
+      const wrap = badge.closest('td') || badge.parentElement;
+      if (wrap) wrap.innerHTML = renderStatus('Selesai');
     }
 
     const lateCell = row.children[5];
     if (lateCell) {
-      lateCell.innerHTML = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold">' +
-        '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Diverifikasi</span>';
+      lateCell.innerHTML = '<div class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600">' +
+        '<span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span><span>Diverifikasi</span></div>';
     }
 
     const actionCell = row.lastElementChild;
@@ -881,55 +884,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!el) return;
     el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', applyFilters);
   });
-
-  const btnRefresh = document.getElementById('btn-refresh-pengembalian');
-  if (btnRefresh) {
-    btnRefresh.addEventListener('click', function () {
-      rows.forEach(function (row) { row.classList.remove('hidden'); });
-      if (searchInput) searchInput.value = '';
-      if (labFilter) labFilter.value = '';
-      if (statusFilter) statusFilter.value = '';
-      applyFilters();
-      showToast('approve', 'Data Diperbarui', 'Daftar pemantauan pengembalian berhasil dimuat ulang.');
-    });
-  }
-
-  const btnExport = document.getElementById('btn-export-pengembalian');
-  if (btnExport) {
-    btnExport.addEventListener('click', function () {
-      const header = ['No', 'Kode Pinjam', 'Peminjam', 'Username', 'Email', 'Alat', 'Merk', 'Lab', 'Tenggat', 'Jam', 'Keterlambatan', 'Status'];
-      const lines = [header.join(',')];
-
-      rows.filter(function (row) { return !row.classList.contains('hidden'); }).forEach(function (row, index) {
-        const values = [
-          String(index + 1),
-          row.dataset.kode || '',
-          row.dataset.nama || '',
-          row.dataset.username || '',
-          row.dataset.email || '',
-          row.dataset.alat || '',
-          row.dataset.merk || '',
-          row.dataset.lab || '',
-          row.dataset.tenggat || '',
-          row.dataset.jam || '',
-          row.dataset.terlambat || '',
-          row.dataset.status || ''
-        ].map(function (value) { return '"' + String(value).replace(/"/g, '""') + '"'; });
-        lines.push(values.join(','));
-      });
-
-      const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.href = url;
-      link.download = 'pemantauan-pengembalian-petugas.csv';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      showToast('approve', 'Ekspor Berhasil', 'Data pemantauan pengembalian berhasil diunduh sebagai CSV.');
-    });
-  }
 
   updateStats();
   applyFilters();

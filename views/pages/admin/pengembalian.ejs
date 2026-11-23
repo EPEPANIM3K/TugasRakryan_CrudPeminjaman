@@ -10,10 +10,6 @@
       <p class="text-sm text-slate-500 mt-1">Verifikasi pengembalian alat, inspeksi kelayakan fisik instrumen laboratorium, pencatatan denda/keterlambatan, dan riwayat serah terima.</p>
     </div>
     <div class="flex flex-wrap items-center gap-2.5 shrink-0">
-      <button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm" id="btn-tambah-pengembalian" type="button">
-        <span class="material-symbols-outlined text-[18px]">add</span>
-        <span>Tambah Pengembalian</span>
-      </button>
       <button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm" id="btn-open-export" type="button">
         <span class="material-symbols-outlined text-[18px] text-slate-500">file_download</span>
         <span class="">Ekspor Excel</span>
@@ -525,17 +521,6 @@ document.addEventListener('DOMContentLoaded', function () {
     exportRowChecks.forEach(function (cb) { cb.checked = false; });
     if (exportSelectAll) exportSelectAll.checked = false;
   });
-
-  // Add return handler (kept outside the table action scope)
-  const btnTambahPengembalian = document.getElementById('btn-tambah-pengembalian');
-  if (btnTambahPengembalian) {
-    btnTambahPengembalian.addEventListener('click', async function () {
-      await window.sipatModal.alert({
-        title: 'Info',
-        message: 'Fitur Tambah Pengembalian akan membuka form verifikasi/penambahan data pengembalian (integrasi backend diperlukan).'
-      });
-    });
-  }
 
   function readRow(row) {
     const cells = row ? row.children : [];

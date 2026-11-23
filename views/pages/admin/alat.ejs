@@ -414,18 +414,26 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div>
-            <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="select-category">Kategori</label>
-            <div class="relative">
-              <select class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 appearance-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs cursor-pointer pr-8" id="select-category">
-                <option value="" disabled selected>Pilih Kategori</option>
-                <option value="Elektronik">Elektronik</option>
-                <option value="Biologi">Biologi</option>
-                <option value="Kimia">Kimia</option>
-                <option value="Mekanikal">Mekanikal</option>
-                <option value="Optik">Optik</option>
-                <option value="Lain-lain">Lain-lain</option>
-              </select>
-              <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
+            <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="category-trigger">Kategori</label>
+            <div class="relative" id="category-field">
+              <input type="hidden" id="select-category" value="">
+              <button type="button" id="category-trigger" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 flex items-center justify-between gap-2 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs">
+                <span id="category-trigger-label" class="text-slate-400 truncate">Pilih Kategori</span>
+                <span class="material-symbols-outlined text-slate-400 text-[18px] shrink-0">expand_more</span>
+              </button>
+              <div id="category-dropdown" class="hidden absolute z-30 mt-2 w-full bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden">
+                <div id="category-options" class="max-h-56 overflow-y-auto p-1.5 space-y-1"></div>
+                <div class="border-t border-slate-100 p-2 bg-slate-50/60">
+                  <button type="button" id="category-add-other" class="w-full px-3 py-2 rounded-lg text-xs font-semibold text-brand-700 hover:bg-brand-50 text-left transition-colors inline-flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px]">add</span>
+                    <span>Lain-lain / Tambah kategori</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div id="category-custom-wrap" class="hidden mt-2">
+              <input id="input-category-custom" type="text" placeholder="Tulis kategori baru..." class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs">
+              <p class="text-[11px] text-slate-400 mt-1.5">Isi kategori kustom, lalu simpan alat untuk menambahkannya.</p>
             </div>
           </div>
           <div>
@@ -500,20 +508,171 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 300);
   }
 
-  function resetCategoryUI() {
-    const select = document.getElementById('select-category');
-    if (select) select.selectedIndex = 0;
+  const categoryField = document.getElementById('category-field');
+  const categoryTrigger = document.getElementById('category-trigger');
+  const categoryTriggerLabel = document.getElementById('category-trigger-label');
+  const categoryDropdown = document.getElementById('category-dropdown');
+  const categoryOptions = document.getElementById('category-options');
+  const categoryAddOther = document.getElementById('category-add-other');
+  const categoryHidden = document.getElementById('select-category');
+  const categoryCustomWrap = document.getElementById('category-custom-wrap');
+  const categoryCustomInput = document.getElementById('input-category-custom');
+  const defaultCategories = ['Elektronik', 'Biologi', 'Kimia', 'Mekanikal', 'Optik'];
+  let categories = defaultCategories.slice();
+
+  function normalizeCategory(value) {
+    return String(value || '').replace(/\s+/g, ' ').trim();
   }
 
-  function setCategory(value) {
-    const select = document.getElementById('select-category');
-    if (!select || !value) return false;
-    const match = Array.from(select.options).find(function (option) {
-      return option.value.toLowerCase() === String(value).trim().toLowerCase();
-    });
-    if (match) { select.value = match.value; return true; }
-    return false;
+  function categoryKey(value) {
+    return normalizeCategory(value).toLowerCase();
   }
+
+  function collectCategoriesFromTable() {
+    const set = new Set(defaultCategories.map(categoryKey));
+    document.querySelectorAll('#table-body-alat tr td:nth-child(4)').forEach(function (cell) {
+      const val = normalizeCategory(textOf(cell));
+      if (!val || val === '-' || set.has(categoryKey(val))) return;
+      set.add(categoryKey(val));
+      categories.push(val);
+    });
+  }
+
+  function renderCategoryOptions() {
+    if (!categoryOptions) return;
+    const selected = categoryKey(categoryHidden ? categoryHidden.value : '');
+    categoryOptions.innerHTML = '';
+    categories.forEach(function (cat) {
+      const row = document.createElement('div');
+      row.className = 'flex items-center gap-1 rounded-lg ' + (selected === categoryKey(cat) ? 'bg-brand-50' : 'hover:bg-slate-50');
+
+      const selectBtn = document.createElement('button');
+      selectBtn.type = 'button';
+      selectBtn.className = 'flex-1 text-left px-3 py-2 text-xs font-medium ' + (selected === categoryKey(cat) ? 'text-brand-700' : 'text-slate-700');
+      selectBtn.textContent = cat;
+      selectBtn.addEventListener('click', function () {
+        setCategory(cat, false);
+        closeCategoryDropdown();
+      });
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'mr-1 p-1.5 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors shrink-0';
+      removeBtn.title = 'Hapus kategori';
+      removeBtn.setAttribute('aria-label', 'Hapus kategori ' + cat);
+      removeBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">close</span>';
+      removeBtn.addEventListener('click', async function (e) {
+        e.stopPropagation();
+        const ok = await window.sipatModal.confirm({
+          title: 'Hapus kategori?',
+          subtitle: 'Kategori akan dihapus dari pilihan form.',
+          message: 'Kategori "' + cat + '" akan dihapus dari daftar pilihan. Data alat yang sudah ada tidak diubah.',
+          confirmText: 'Hapus',
+          cancelText: 'Batal',
+          tone: 'danger'
+        });
+        if (!ok) return;
+        categories = categories.filter(function (item) { return categoryKey(item) !== categoryKey(cat); });
+        if (selected === categoryKey(cat)) clearCategorySelection();
+        renderCategoryOptions();
+      });
+
+      row.appendChild(selectBtn);
+      row.appendChild(removeBtn);
+      categoryOptions.appendChild(row);
+    });
+  }
+
+  function closeCategoryDropdown() {
+    if (categoryDropdown) categoryDropdown.classList.add('hidden');
+  }
+
+  function openCategoryDropdown() {
+    renderCategoryOptions();
+    if (categoryDropdown) categoryDropdown.classList.remove('hidden');
+  }
+
+  function updateCategoryTrigger(label, muted) {
+    if (!categoryTriggerLabel) return;
+    categoryTriggerLabel.textContent = label;
+    categoryTriggerLabel.className = (muted ? 'text-slate-400 truncate' : 'text-slate-700 truncate');
+  }
+
+  function clearCategorySelection() {
+    if (categoryHidden) categoryHidden.value = '';
+    if (categoryCustomInput) categoryCustomInput.value = '';
+    if (categoryCustomWrap) categoryCustomWrap.classList.add('hidden');
+    updateCategoryTrigger('Pilih Kategori', true);
+  }
+
+  function resetCategoryUI() {
+    clearCategorySelection();
+    closeCategoryDropdown();
+    renderCategoryOptions();
+  }
+
+  function setCategory(value, useCustom) {
+    const val = normalizeCategory(value);
+    if (!val) { resetCategoryUI(); return false; }
+    const existing = categories.find(function (cat) { return categoryKey(cat) === categoryKey(val); });
+    if (existing && !useCustom) {
+      if (categoryHidden) categoryHidden.value = existing;
+      if (categoryCustomWrap) categoryCustomWrap.classList.add('hidden');
+      if (categoryCustomInput) categoryCustomInput.value = '';
+      updateCategoryTrigger(existing, false);
+      renderCategoryOptions();
+      return true;
+    }
+    if (categoryHidden) categoryHidden.value = val;
+    if (categoryCustomWrap) categoryCustomWrap.classList.remove('hidden');
+    if (categoryCustomInput) categoryCustomInput.value = val;
+    updateCategoryTrigger(val, false);
+    renderCategoryOptions();
+    return true;
+  }
+
+  function getSelectedCategory() {
+    const customVisible = categoryCustomWrap && !categoryCustomWrap.classList.contains('hidden');
+    const customVal = normalizeCategory(categoryCustomInput ? categoryCustomInput.value : '');
+    if (customVisible) return customVal;
+    return normalizeCategory(categoryHidden ? categoryHidden.value : '');
+  }
+
+  if (categoryTrigger) {
+    categoryTrigger.addEventListener('click', function () {
+      if (!categoryDropdown) return;
+      const hidden = categoryDropdown.classList.contains('hidden');
+      if (hidden) openCategoryDropdown(); else closeCategoryDropdown();
+    });
+  }
+
+  if (categoryAddOther) {
+    categoryAddOther.addEventListener('click', function () {
+      if (categoryCustomWrap) categoryCustomWrap.classList.remove('hidden');
+      if (categoryCustomInput) {
+        categoryCustomInput.value = '';
+        categoryCustomInput.focus();
+      }
+      if (categoryHidden) categoryHidden.value = '';
+      updateCategoryTrigger('Lain-lain', false);
+      closeCategoryDropdown();
+    });
+  }
+
+  if (categoryCustomInput) {
+    categoryCustomInput.addEventListener('input', function () {
+      const val = normalizeCategory(categoryCustomInput.value);
+      if (categoryHidden) categoryHidden.value = val;
+      updateCategoryTrigger(val || 'Lain-lain', !val);
+    });
+  }
+
+  document.addEventListener('click', function (e) {
+    if (categoryField && !categoryField.contains(e.target)) closeCategoryDropdown();
+  });
+
+  collectCategoriesFromTable();
+  renderCategoryOptions();
 
   if (btnOpenModal) {
     btnOpenModal.addEventListener('click', function (e) {
@@ -622,8 +781,13 @@ document.addEventListener('DOMContentLoaded', function () {
       const stok = (document.getElementById('input-stok') || {}).value || '';
       const ruang = (document.getElementById('input-ruang') || {}).value || '';
       const lokasi = (document.getElementById('input-lokasi-rak') || {}).value || '';
-      const kategoriSelect = document.getElementById('select-category');
-      const kategori = kategoriSelect ? kategoriSelect.value : '';
+      const kategori = getSelectedCategory();
+      if (kategori) {
+        const exists = categories.some(function (cat) { return categoryKey(cat) === categoryKey(kategori); });
+        if (!exists) categories.push(kategori);
+        if (categoryHidden) categoryHidden.value = kategori;
+        renderCategoryOptions();
+      }
 
       if (!nama.trim() || !kode.trim()) {
         await window.sipatModal.alert({
@@ -643,12 +807,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
       try {
         await wait(600);
-        if (mode === 'edit' && editingRow) {
-          updateRow(editingRow, { nama: nama.trim(), kode: kode.trim(), merek: merek.trim(), stok: stok, ruang: ruang.trim(), lokasi: lokasi.trim(), kategori: kategori });
-          window.sipatModal.toast('Perubahan data alat berhasil disimpan.', 'success');
-        } else {
-          window.sipatModal.toast('Data alat baru berhasil disimpan.', 'success');
-        }
+      if (mode === 'edit' && editingRow) {
+        updateRow(editingRow, { nama: nama.trim(), kode: kode.trim(), merek: merek.trim(), stok: stok, ruang: ruang.trim(), lokasi: lokasi.trim(), kategori: kategori });
+        window.sipatModal.toast('Perubahan data alat berhasil disimpan.', 'success');
+      } else {
+        window.sipatModal.toast('Data alat baru berhasil disimpan.', 'success');
+      }
         closeModal();
       } catch (error) {
         window.sipatModal.toast('Gagal menyimpan data alat. Silakan coba lagi.', 'danger');

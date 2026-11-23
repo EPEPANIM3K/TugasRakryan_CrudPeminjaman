@@ -11,10 +11,6 @@
     </div>
     <!-- Action Buttons Right-Aligned -->
     <div class="flex flex-wrap items-center gap-2.5 shrink-0">
-      <button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm" id="btn-open-form-peminjaman" type="button">
-        <span class="material-symbols-outlined text-[18px]">add</span>
-        <span>Tambah Peminjaman</span>
-      </button>
       <button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm" id="btn-open-export" type="button">
         <span class="material-symbols-outlined text-[18px] text-slate-500">file_download</span>
         <span class="">Ekspor Excel</span>
@@ -438,22 +434,12 @@ document.addEventListener('DOMContentLoaded', function () {
   // Add / edit peminjaman modal
   const pmModal = document.getElementById('modal-peminjaman');
   const pmContent = document.getElementById('modal-peminjaman-content');
-  const btnOpenPm = document.getElementById('btn-open-form-peminjaman');
   const btnClosePm = document.getElementById('btn-close-modal-peminjaman');
   const btnCancelPm = document.getElementById('btn-cancel-modal-peminjaman');
   const formPm = document.getElementById('form-peminjaman');
 
   function closePeminjamanModal() { hideModal(pmModal, pmContent); }
 
-  if (btnOpenPm) btnOpenPm.addEventListener('click', function (e) {
-    e.preventDefault();
-    const title = document.getElementById('modal-peminjaman-title');
-    if (title) title.textContent = 'Tambah Peminjaman';
-    const submit = document.getElementById('btn-submit-peminjaman');
-    if (submit) submit.dataset.mode = 'tambah';
-    if (formPm) formPm.reset();
-    showModal(pmModal, pmContent);
-  });
   if (btnClosePm) btnClosePm.addEventListener('click', closePeminjamanModal);
   if (btnCancelPm) btnCancelPm.addEventListener('click', closePeminjamanModal);
   if (pmModal) pmModal.addEventListener('click', function (e) {

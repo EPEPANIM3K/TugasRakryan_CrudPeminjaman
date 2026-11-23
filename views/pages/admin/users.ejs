@@ -11,7 +11,7 @@
     </div>
     <!-- Action Buttons Right-Aligned -->
     <div class="flex flex-wrap items-center gap-2.5 shrink-0">
-      <button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm shadow-sm hover:bg-blue-700 transition-all active:scale-[0.99]" id="btn-open-form-user" type="button">
+      <button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm shadow-sm hover:bg-blue-700 transition-all active:scale-[0.99]" id="btn-open-modal" type="button">
         <span class="material-symbols-outlined text-[18px]">add</span>
         <span class="">Tambah User</span>
       </button>
@@ -340,14 +340,9 @@
 
       <!-- Header Form -->
       <div class="px-6 py-5 border-b border-slate-100 flex items-start justify-between bg-white shrink-0 rounded-t-2xl">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand-700 flex items-center justify-center shrink-0">
-            <span class="material-symbols-outlined text-[22px]" id="modal-user-icon">person_add</span>
-          </div>
-          <div>
-            <h2 id="modal-user-title" class="text-lg font-bold text-slate-900 tracking-tight">Tambah Akun Pengguna</h2>
-            <p id="modal-user-subtitle" class="text-xs text-slate-500 mt-0.5">Lengkapi informasi kredensial dan hak akses civitas laboratorium</p>
-          </div>
+        <div>
+          <h2 id="modal-user-title" class="text-lg font-bold text-slate-900 tracking-tight">Tambah Akun Pengguna</h2>
+          <p id="modal-user-subtitle" class="text-xs text-slate-500 mt-0.5">Lengkapi informasi kredensial dan hak akses civitas laboratorium</p>
         </div>
         <button id="btn-close-modal" class="p-2 -mr-2 -mt-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors shrink-0" type="button" aria-label="Tutup">
           <span class="material-symbols-outlined text-[20px]">close</span>
@@ -389,11 +384,9 @@
             <div class="relative">
               <select class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 appearance-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs cursor-pointer pr-8" id="select-role" name="role" required>
                 <option value="" disabled selected>Pilih Role</option>
+                <option value="User">User</option>
+                <option value="Pengguna">Pengguna</option>
                 <option value="Admin">Admin</option>
-                <option value="Petugas Lab">Petugas Lab</option>
-                <option value="Dosen Peneliti">Dosen Peneliti</option>
-                <option value="Dosen">Dosen</option>
-                <option value="Mahasiswa">Mahasiswa</option>
               </select>
               <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
             </div>
@@ -659,7 +652,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const submitBtn = document.getElementById('btn-submit-user');
   const modalTitle = document.getElementById('modal-user-title');
   const modalSubtitle = document.getElementById('modal-user-subtitle');
-  const modalIcon = document.getElementById('modal-user-icon');
   const passwordInput = document.getElementById('input-password');
   const passwordHint = document.getElementById('password-hint');
   const passwordRequiredMark = document.getElementById('password-required-mark');
@@ -674,7 +666,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (modalSubtitle) modalSubtitle.textContent = isEdit
       ? 'Perbarui informasi kredensial dan hak akses civitas laboratorium'
       : 'Lengkapi informasi kredensial dan hak akses civitas laboratorium';
-    if (modalIcon) modalIcon.textContent = isEdit ? 'manage_accounts' : 'person_add';
     if (submitBtn) submitBtn.textContent = isEdit ? 'Simpan Perubahan' : 'Simpan Akun';
     if (passwordInput) {
       passwordInput.required = !isEdit;
