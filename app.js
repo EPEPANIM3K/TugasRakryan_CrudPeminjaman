@@ -2,7 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
+const session = require('express-session');
 const db = require('./config/database');
+const User = require('./models/User');
+const { requireRole } = require('./middleware/role');
 
 const app = express();
 
@@ -13,11 +16,29 @@ app.set('layout', 'layouts/admin');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(expressLayouts);
+app.use(session({
+    // shortcut: MemoryStore hilang saat restart, pakai store persisten untuk produksi
+    secret: process.env.SESSION_SECRET || 'sipat-secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { httpOnly: true, sameSite: 'lax' }
+}));
 app.use((req, res, next) => {
     res.locals.currentPath = req.path;
     res.locals.pageTitle = 'Dashboard Admin';
+    res.locals.currentUser = req.session.user || null;
     next();
 });
+
+// =============================================
+// AUTENTIKASI
+// =============================================
+
+app.use('/auth', require('./routes/auth'));
+
+app.use('/admin', requireRole('admin'));
+app.use('/petugas', requireRole('petugas'));
+app.use('/peminjam', requireRole('user'));
 
 // =============================================
 // ROUTE UNTUK HALAMAN ADMIN
@@ -145,17 +166,19 @@ app.get('/petugas/laporan', (req, res) => {
     });
 });
 
-async function testDatabase() {
+async function initDatabase() {
     try {
         const connection = await db.getConnection();
         console.log('MySQL berhasil terhubung!');
         connection.release();
+        await User.ensureDefaultUsers();
+        console.log('Akun default siap.');
     } catch (error) {
         console.error('MySQL gagal terhubung:', error.message);
     }
 }
 
-testDatabase();
+initDatabase();
 
 // =============================================
 // SERVER START
