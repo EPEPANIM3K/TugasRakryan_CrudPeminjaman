@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
+const db = require('./config/database');
 
 const app = express();
 
@@ -143,6 +144,18 @@ app.get('/petugas/laporan', (req, res) => {
         currentPath: '/petugas/laporan'
     });
 });
+
+async function testDatabase() {
+    try {
+        const connection = await db.getConnection();
+        console.log('MySQL berhasil terhubung!');
+        connection.release();
+    } catch (error) {
+        console.error('MySQL gagal terhubung:', error.message);
+    }
+}
+
+testDatabase();
 
 // =============================================
 // SERVER START
