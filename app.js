@@ -15,6 +15,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('layout', 'layouts/admin');
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(expressLayouts);
 app.use(session({
@@ -61,11 +62,7 @@ app.get('/admin/users', (req, res) => {
 const adminRoutes = require('./routes/admin');
 app.use('/admin', adminRoutes);
 
-app.get('/admin/pengembalian', (req, res) => {
-    res.render('pages/admin/pengembalian', {
-        pageTitle: 'Kelola Pengembalian'
-    });
-});
+app.get('/admin/pengembalian', require('./controllers/pengembalianController').adminPage);
 
 
 
@@ -105,13 +102,10 @@ app.get('/peminjam', (req, res) => {
 
 app.use('/peminjam', require('./routes/peminjam'));
 
-app.get('/peminjam/pengembalian', (req, res) => {
-    res.render('pages/peminjam/pengembalian', {
-        layout: 'layouts/peminjam',
-        pageTitle: 'Pengembalian',
-        currentPath: '/peminjam/pengembalian'
-    });
-});
+app.get('/peminjam/pengembalian', require('./controllers/pengembalianController').userPage);
+
+// API pengembalian
+app.use('/pengembalian', require('./routes/pengembalian'));
 
 
 
@@ -125,13 +119,7 @@ app.get('/petugas', (req, res) => {
 
 app.use('/petugas', require('./routes/petugas'));
 
-app.get('/petugas/pengembalian', (req, res) => {
-    res.render('pages/petugas/pengembalian', {
-        layout: 'layouts/petugas',
-        pageTitle: 'Memantau Pengembalian',
-        currentPath: '/petugas/pengembalian'
-    });
-});
+app.get('/petugas/pengembalian', require('./controllers/pengembalianController').petugasPage);
 
 app.get('/petugas/laporan', (req, res) => {
     res.render('pages/petugas/laporan', {

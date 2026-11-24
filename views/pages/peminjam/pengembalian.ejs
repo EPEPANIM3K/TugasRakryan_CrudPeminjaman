@@ -12,6 +12,27 @@
     <div class="flex flex-wrap items-center gap-2.5 shrink-0"></div>
   </div>
 
+  <%
+    const _today = new Date(); _today.setHours(0,0,0,0);
+    const _loans = (eligibleLoans || []).map(l => {
+      const due = l.tanggal_kembali_rencana ? new Date(l.tanggal_kembali_rencana) : null;
+      if (due) due.setHours(0,0,0,0);
+      const diff = due ? Math.round((due - _today) / 86400000) : null;
+      const isLate = l.status === 'Terlambat' || (diff !== null && diff < 0);
+      const isDueToday = diff === 0;
+      const lateDays = isLate && diff !== null ? Math.abs(diff) : 0;
+      return Object.assign({}, l, { _diff: diff, _isLate: isLate, _isDueToday: isDueToday, _lateDays: lateDays });
+    });
+    const _aktif = _loans.length;
+    const _jatuhTempo = _loans.filter(l => l._isLate || l._isDueToday).length;
+    const _dueToday = _loans.filter(l => l._isDueToday).length;
+    const _late = _loans.filter(l => l._isLate).length;
+    const _overdue = _loans.find(l => l._isLate);
+    const _pending = (stats && stats.pendingVerify) || 0;
+    const _dueNoteParts = [];
+    if (_dueToday) _dueNoteParts.push(_dueToday + ' hari ini');
+    if (_late) _dueNoteParts.push(_late + ' terlambat');
+  %>
   <!-- Statistics Cards -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
     <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
@@ -20,7 +41,7 @@
         <span class="material-symbols-outlined text-[20px] text-slate-300">assignment_return</span>
       </div>
       <div class="my-2">
-        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-aktif">3</div>
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-aktif"><%= _aktif %></div>
         <div class="text-xs font-medium text-slate-400 mt-1">Alat yang masih ada di tangan Anda</div>
       </div>
     </div>
@@ -30,8 +51,8 @@
         <span class="material-symbols-outlined text-[20px] text-slate-300">schedule</span>
       </div>
       <div class="my-2">
-        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-jatuh-tempo">2</div>
-        <div class="text-xs font-medium text-slate-400 mt-1" id="stat-jatuh-tempo-note">1 hari ini &middot; 1 terlambat 2 hari</div>
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-jatuh-tempo"><%= _jatuhTempo %></div>
+        <div class="text-xs font-medium text-slate-400 mt-1" id="stat-jatuh-tempo-note"><%= _dueNoteParts.length ? _dueNoteParts.join(' · ') : 'Semua pengembalian sesuai jadwal' %></div>
       </div>
     </div>
     <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
@@ -40,29 +61,31 @@
         <span class="material-symbols-outlined text-[20px] text-slate-300">pending_actions</span>
       </div>
       <div class="my-2">
-        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-menunggu">1</div>
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-menunggu"><%= _pending %></div>
         <div class="text-xs font-medium text-slate-400 mt-1">Sudah diajukan, menunggu cek petugas</div>
       </div>
     </div>
   </div>
 
   <!-- Overdue Alert -->
+  <% if (_overdue) { %>
   <div id="overdue-alert" class="bg-rose-50 border border-rose-200 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4">
     <div class="w-11 h-11 rounded-xl bg-white text-rose-600 border border-rose-200 flex items-center justify-center shrink-0">
       <span class="material-symbols-outlined text-[24px]">notification_important</span>
     </div>
     <div class="flex-1 min-w-0">
-      <h3 class="text-sm font-bold text-rose-900">1 alat melewati batas pengembalian</h3>
+      <h3 class="text-sm font-bold text-rose-900"><%= _late %> alat melewati batas pengembalian</h3>
       <p class="text-xs text-rose-700 mt-0.5 leading-relaxed">
-        <span class="font-semibold">Spektrofotometer UV-Vis 1800</span> terlambat 2 hari. Denda berjalan
-        <span class="font-semibold">Rp 10.000</span> (Rp 5.000/hari). Segera kembalikan ke petugas lab.
+        <span class="font-semibold"><%= _overdue.alat_nama || '-' %></span> terlambat <%= _overdue._lateDays %> hari. Estimasi denda
+        <span class="font-semibold">Rp <%= (_overdue._lateDays * 5000).toLocaleString('id-ID') %></span> (Rp 5.000/hari). Segera kembalikan ke petugas lab.
       </p>
     </div>
-    <button type="button" data-target="card-spektro" class="overdue-return-btn shrink-0 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold transition-colors shadow-sm">
+    <button type="button" data-target="card-<%= _overdue.id %>" class="overdue-return-btn shrink-0 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold transition-colors shadow-sm">
       <span class="material-symbols-outlined text-[18px]">assignment_return</span>
       <span>Kembalikan Sekarang</span>
     </button>
   </div>
+  <% } %>
 
   <!-- Filter Toolbar -->
   <div class="flex flex-col lg:flex-row lg:items-center gap-4">
@@ -89,207 +112,81 @@
     <div class="flex items-center justify-between gap-3">
       <div class="flex items-center gap-2.5">
         <h2 class="text-base font-bold text-slate-900">Peminjaman Saya</h2>
-        <span id="loan-count" class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-semibold">4 transaksi</span>
+        <span id="loan-count" class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-semibold"><%= _loans.length %> transaksi</span>
       </div>
       <span class="text-xs text-slate-400 hidden sm:block">Pilih alat lalu ajukan pengembalian</span>
     </div>
 
     <div id="loan-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <!-- Card 1 -->
-      <article id="card-mikroskop" class="return-card bg-white rounded-xl overflow-hidden flex flex-col border border-slate-100 shadow-sm" data-nama="Mikroskop Binokuler CX23" data-kode="PJ-2025-0891" data-status="Sedang Dipinjam" data-lab="Lab Biologi" data-tempo="25 Feb 2025" data-jumlah="1" data-icon="biotech">
+      <% 
+        const _activeCards = returnCards.filter(c => c.type === "loan");
+        const _pendingCards = returnCards.filter(c => c.type === "pending");
+        function fmtDate(d) { if(!d) return "-"; const dt=new Date(d); return dt.toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"}); }
+        function dueNote(l) {
+          const due = new Date(l.tanggal_kembali_rencana); due.setHours(0,0,0,0);
+          const diff = Math.round((due - _today)/86400000);
+          if (diff < 0) return {text: "Terlambat " + Math.abs(diff) + " hari", cls: "text-rose-600", dot: "bg-rose-500"};
+          if (diff === 0) return {text: "Jatuh tempo hari ini", cls: "text-amber-600", dot: "bg-amber-500"};
+          return {text: diff + " hari lagi", cls: "text-emerald-600", dot: "bg-emerald-500"};
+        }
+        function statusStyle(st) {
+          if (st === "Terlambat") return {badge:"bg-rose-50/95 backdrop-blur-sm text-rose-700 border-rose-200", dot:"bg-rose-500"};
+          if (st === "Jatuh Tempo") return {badge:"bg-amber-50/95 backdrop-blur-sm text-amber-700 border-amber-200", dot:"bg-amber-500"};
+          if (st === "Menunggu Verifikasi") return {badge:"bg-violet-50/95 backdrop-blur-sm text-violet-700 border-violet-200", dot:"bg-violet-500"};
+          return {badge:"bg-blue-50/95 backdrop-blur-sm text-blue-700 border-blue-200", dot:"bg-blue-500"};
+        }
+      %>
+      <% _activeCards.forEach(c => { const l=c.loan; const st=l.status; const ss=statusStyle(st); const dn=dueNote(l); const lateDays=c.lateDays||0; const denda=lateDays*5000; %>
+      <article class="return-card bg-white rounded-xl overflow-hidden flex flex-col border border-slate-100 shadow-sm" data-id="<%= l.id %>" data-nama="<%= l.alat_nama || '-' %>" data-kode="<%= l.kode_peminjaman %>" data-status="<%= st %>" data-lab="<%= l.nama_lab || '-' %>" data-tempo="<%= fmtDate(l.tanggal_kembali_rencana) %>" data-jumlah="<%= l.total_jumlah || 1 %>" data-icon="<%= c.icon || 'science' %>" data-denda="<%= denda ? 'Rp ' + denda.toLocaleString('id-ID') : '' %>">
         <div class="relative aspect-[4/3] bg-slate-100 rounded-lg m-3 mb-0 overflow-hidden">
-          <img class="w-full h-full object-cover rounded-lg" alt="Mikroskop Binokuler CX23" src="/images/alat/placeholder.svg" onerror="this.onerror=null;this.src='/images/alat/placeholder.svg';">
-          <div class="absolute top-3 left-3">
-            <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-sm text-slate-800 border border-slate-200 text-xs font-semibold shadow-sm inline-flex items-center gap-1">1 Unit</span>
-          </div>
-          <div class="absolute bottom-3 left-3">
-            <span class="status-badge px-2.5 py-1 rounded-md bg-blue-50/95 backdrop-blur-sm text-blue-700 border border-blue-200 text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Sedang Dipinjam
-            </span>
-          </div>
+          <img class="w-full h-full object-cover rounded-lg" alt="<%= l.alat_nama || 'Alat' %>" src="/images/alat/placeholder.svg" onerror="this.onerror=null;this.src='/images/alat/placeholder.svg';">
+          <div class="absolute top-3 left-3"><span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-sm text-slate-800 border border-slate-200 text-xs font-semibold shadow-sm inline-flex items-center gap-1"><%= l.total_jumlah || 1 %> Unit</span></div>
+          <div class="absolute bottom-3 left-3"><span class="status-badge px-2.5 py-1 rounded-md <%= ss.badge %> text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm border"><span class="w-1.5 h-1.5 rounded-full <%= ss.dot %>"></span> <%= st %></span></div>
         </div>
         <div class="p-4 flex flex-col flex-1">
           <div class="space-y-2 flex-1">
-            <div class="flex items-center gap-1 text-slate-500 text-xs truncate">
-              <span class="material-symbols-outlined text-[15px] shrink-0">room</span>
-              <span class="truncate">Lab Biologi</span>
-            </div>
-            <div>
-              <h3 class="text-base font-semibold text-slate-900 line-clamp-1">Mikroskop Binokuler CX23</h3>
-              <p class="text-xs text-slate-500 truncate mt-0.5">PJ-2025-0891 &middot; Olympus</p>
-            </div>
+            <div class="flex items-center gap-1 text-slate-500 text-xs truncate"><span class="material-symbols-outlined text-[15px] shrink-0">room</span><span class="truncate"><%= l.nama_lab || '-' %></span></div>
+            <div><h3 class="text-base font-semibold text-slate-900 line-clamp-1"><%= l.alat_nama || '-' %></h3><p class="text-xs text-slate-500 truncate mt-0.5"><%= l.kode_peminjaman %> &middot; <%= l.alat_merk || '-' %></p></div>
             <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2.5 space-y-1.5">
-              <div class="flex items-center justify-between gap-2 text-[11px]">
-                <span class="text-slate-500">Tgl Pinjam</span>
-                <span class="font-semibold text-slate-800">18 Feb 2025</span>
-              </div>
-              <div class="flex items-center justify-between gap-2 text-[11px]">
-                <span class="text-slate-500">Jatuh Tempo</span>
-                <span class="font-semibold text-slate-800">25 Feb 2025</span>
-              </div>
-              <div class="flex items-center justify-end pt-0.5">
-                <span class="due-note text-[11px] font-semibold text-emerald-600 inline-flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 2 hari lagi
-                </span>
-              </div>
+              <div class="flex items-center justify-between gap-2 text-[11px]"><span class="text-slate-500">Tgl Pinjam</span><span class="font-semibold text-slate-800"><%= fmtDate(l.tanggal_pinjam) %></span></div>
+              <div class="flex items-center justify-between gap-2 text-[11px]"><span class="text-slate-500">Jatuh Tempo</span><span class="font-semibold text-slate-800"><%= fmtDate(l.tanggal_kembali_rencana) %></span></div>
+              <div class="flex items-center justify-end pt-0.5"><span class="due-note text-[11px] font-semibold <%= dn.cls %> inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full <%= dn.dot %>"></span> <%= dn.text %></span></div>
             </div>
           </div>
-          <button type="button" class="btn-return mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors">
-            <span class="material-symbols-outlined text-[18px]">assignment_return</span>
-            <span>Kembalikan</span>
-          </button>
+          <button type="button" class="btn-return mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors"><span class="material-symbols-outlined text-[18px]">assignment_return</span><span>Kembalikan</span></button>
         </div>
       </article>
+      <% }) %>
 
-      <!-- Card 2 -->
-      <article id="card-hotplate" class="return-card bg-white rounded-xl overflow-hidden flex flex-col border border-slate-100 shadow-sm" data-nama="Hotplate Stirrer Keramik" data-kode="PJ-2025-0884" data-status="Jatuh Tempo" data-lab="Lab Kimia" data-tempo="22 Feb 2025" data-jumlah="1" data-icon="science">
+      <% _pendingCards.forEach(p => { const pinjam = p.loan || p.pengembalian || p; if (!pinjam) return; const ss=statusStyle("Menunggu Verifikasi"); %>
+      <article class="return-card bg-white rounded-xl overflow-hidden flex flex-col border border-slate-100 shadow-sm" data-id="<%= pinjam.id %>" data-nama="<%= pinjam.alat_nama || '-' %>" data-kode="<%= pinjam.kode_peminjaman %>" data-status="Menunggu Verifikasi" data-lab="<%= pinjam.nama_lab || '-' %>" data-tempo="<%= fmtDate(pinjam.tanggal_kembali_rencana) %>" data-jumlah="1" data-icon="<%= p.icon || 'science' %>" data-denda="">
         <div class="relative aspect-[4/3] bg-slate-100 rounded-lg m-3 mb-0 overflow-hidden">
-          <img class="w-full h-full object-cover rounded-lg" alt="Hotplate Stirrer Keramik" src="/images/alat/placeholder.svg" onerror="this.onerror=null;this.src='/images/alat/placeholder.svg';">
-          <div class="absolute top-3 left-3">
-            <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-sm text-slate-800 border border-slate-200 text-xs font-semibold shadow-sm inline-flex items-center gap-1">1 Unit</span>
-          </div>
-          <div class="absolute bottom-3 left-3">
-            <span class="status-badge px-2.5 py-1 rounded-md bg-amber-50/95 backdrop-blur-sm text-amber-700 border border-amber-200 text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Jatuh Tempo
-            </span>
-          </div>
+          <img class="w-full h-full object-cover rounded-lg" alt="<%= pinjam.alat_nama || 'Alat' %>" src="/images/alat/placeholder.svg" onerror="this.onerror=null;this.src='/images/alat/placeholder.svg';">
+          <div class="absolute top-3 left-3"><span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-sm text-slate-800 border border-slate-200 text-xs font-semibold shadow-sm inline-flex items-center gap-1">1 Unit</span></div>
+          <div class="absolute bottom-3 left-3"><span class="status-badge px-2.5 py-1 rounded-md <%= ss.badge %> text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm border"><span class="w-1.5 h-1.5 rounded-full <%= ss.dot %>"></span> Menunggu Verifikasi</span></div>
         </div>
         <div class="p-4 flex flex-col flex-1">
           <div class="space-y-2 flex-1">
-            <div class="flex items-center gap-1 text-slate-500 text-xs truncate">
-              <span class="material-symbols-outlined text-[15px] shrink-0">room</span>
-              <span class="truncate">Lab Kimia</span>
-            </div>
-            <div>
-              <h3 class="text-base font-semibold text-slate-900 line-clamp-1">Hotplate Stirrer Keramik</h3>
-              <p class="text-xs text-slate-500 truncate mt-0.5">PJ-2025-0884 &middot; Corning PC-420D</p>
-            </div>
+            <div class="flex items-center gap-1 text-slate-500 text-xs truncate"><span class="material-symbols-outlined text-[15px] shrink-0">room</span><span class="truncate"><%= pinjam.nama_lab || '-' %></span></div>
+            <div><h3 class="text-base font-semibold text-slate-900 line-clamp-1"><%= pinjam.alat_nama || '-' %></h3><p class="text-xs text-slate-500 truncate mt-0.5"><%= pinjam.kode_peminjaman %> &middot; <%= pinjam.alat_merk || '-' %></p></div>
             <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2.5 space-y-1.5">
-              <div class="flex items-center justify-between gap-2 text-[11px]">
-                <span class="text-slate-500">Tgl Pinjam</span>
-                <span class="font-semibold text-slate-800">15 Feb 2025</span>
-              </div>
-              <div class="flex items-center justify-between gap-2 text-[11px]">
-                <span class="text-slate-500">Jatuh Tempo</span>
-                <span class="font-semibold text-slate-800">22 Feb 2025</span>
-              </div>
-              <div class="flex items-center justify-end pt-0.5">
-                <span class="due-note text-[11px] font-semibold text-amber-600 inline-flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Hari ini
-                </span>
-              </div>
+              <div class="flex items-center justify-between gap-2 text-[11px]"><span class="text-slate-500">Tgl Pinjam</span><span class="font-semibold text-slate-800"><%= fmtDate(pinjam.tanggal_pinjam) %></span></div>
+              <div class="flex items-center justify-between gap-2 text-[11px]"><span class="text-slate-500">Jatuh Tempo</span><span class="font-semibold text-slate-800"><%= fmtDate(pinjam.tanggal_kembali_rencana) %></span></div>
+              <div class="flex items-center justify-end pt-0.5"><span class="due-note text-[11px] font-semibold text-violet-600 inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span> Menunggu cek petugas</span></div>
             </div>
           </div>
-          <button type="button" class="btn-return mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors">
-            <span class="material-symbols-outlined text-[18px]">assignment_return</span>
-            <span>Kembalikan</span>
-          </button>
+          <button type="button" disabled class="btn-return mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-100 text-slate-500 text-sm font-semibold cursor-not-allowed"><span class="material-symbols-outlined text-[18px]">hourglass_top</span><span>Menunggu Verifikasi</span></button>
         </div>
       </article>
-
-      <!-- Card 3 -->
-      <article id="card-spektro" class="return-card bg-white rounded-xl overflow-hidden flex flex-col border border-slate-100 shadow-sm" data-nama="Spektrofotometer UV-Vis 1800" data-kode="PJ-2025-0870" data-status="Terlambat" data-lab="Lab Kimia" data-tempo="20 Feb 2025" data-jumlah="1" data-icon="experiment" data-denda="Rp 10.000">
-        <div class="relative aspect-[4/3] bg-slate-100 rounded-lg m-3 mb-0 overflow-hidden">
-          <img class="w-full h-full object-cover rounded-lg" alt="Spektrofotometer UV-Vis 1800" src="/images/alat/placeholder.svg" onerror="this.onerror=null;this.src='/images/alat/placeholder.svg';">
-          <div class="absolute top-3 left-3">
-            <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-sm text-slate-800 border border-slate-200 text-xs font-semibold shadow-sm inline-flex items-center gap-1">1 Unit</span>
-          </div>
-          <div class="absolute bottom-3 left-3">
-            <span class="status-badge px-2.5 py-1 rounded-md bg-rose-50/95 backdrop-blur-sm text-rose-700 border border-rose-200 text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Terlambat
-            </span>
-          </div>
-        </div>
-        <div class="p-4 flex flex-col flex-1">
-          <div class="space-y-2 flex-1">
-            <div class="flex items-center gap-1 text-slate-500 text-xs truncate">
-              <span class="material-symbols-outlined text-[15px] shrink-0">room</span>
-              <span class="truncate">Lab Kimia</span>
-            </div>
-            <div>
-              <h3 class="text-base font-semibold text-slate-900 line-clamp-1">Spektrofotometer UV-Vis 1800</h3>
-              <p class="text-xs text-slate-500 truncate mt-0.5">PJ-2025-0870 &middot; Shimadzu</p>
-            </div>
-            <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2.5 space-y-1.5">
-              <div class="flex items-center justify-between gap-2 text-[11px]">
-                <span class="text-slate-500">Tgl Pinjam</span>
-                <span class="font-semibold text-slate-800">08 Feb 2025</span>
-              </div>
-              <div class="flex items-center justify-between gap-2 text-[11px]">
-                <span class="text-slate-500">Jatuh Tempo</span>
-                <span class="font-semibold text-slate-800">20 Feb 2025</span>
-              </div>
-              <div class="flex items-center justify-end pt-0.5">
-                <span class="due-note text-[11px] font-semibold text-rose-600 inline-flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Terlambat 2 hari
-                </span>
-              </div>
-            </div>
-          </div>
-          <button type="button" class="btn-return mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors">
-            <span class="material-symbols-outlined text-[18px]">assignment_return</span>
-            <span>Kembalikan</span>
-          </button>
-        </div>
-      </article>
-
-      <!-- Card 4 -->
-      <article id="card-solder" class="return-card bg-white rounded-xl overflow-hidden flex flex-col border border-slate-100 shadow-sm" data-nama="Solder Station Digital" data-kode="PJ-2025-0865" data-status="Menunggu Verifikasi" data-lab="Lab Instrumentasi" data-tempo="19 Feb 2025" data-jumlah="1" data-icon="handyman">
-        <div class="relative aspect-[4/3] bg-slate-100 rounded-lg m-3 mb-0 overflow-hidden">
-          <img class="w-full h-full object-cover rounded-lg" alt="Solder Station Digital" src="/images/alat/placeholder.svg" onerror="this.onerror=null;this.src='/images/alat/placeholder.svg';">
-          <div class="absolute top-3 left-3">
-            <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-sm text-slate-800 border border-slate-200 text-xs font-semibold shadow-sm inline-flex items-center gap-1">1 Unit</span>
-          </div>
-          <div class="absolute bottom-3 left-3">
-            <span class="status-badge px-2.5 py-1 rounded-md bg-violet-50/95 backdrop-blur-sm text-violet-700 border border-violet-200 text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span> Menunggu Verifikasi
-            </span>
-          </div>
-        </div>
-        <div class="p-4 flex flex-col flex-1">
-          <div class="space-y-2 flex-1">
-            <div class="flex items-center gap-1 text-slate-500 text-xs truncate">
-              <span class="material-symbols-outlined text-[15px] shrink-0">room</span>
-              <span class="truncate">Lab Instrumentasi</span>
-            </div>
-            <div>
-              <h3 class="text-base font-semibold text-slate-900 line-clamp-1">Solder Station Digital</h3>
-              <p class="text-xs text-slate-500 truncate mt-0.5">PJ-2025-0865 &middot; Hakko FX-888D</p>
-            </div>
-            <div class="rounded-lg bg-slate-50 border border-slate-100 px-3 py-2.5 space-y-1.5">
-              <div class="flex items-center justify-between gap-2 text-[11px]">
-                <span class="text-slate-500">Tgl Pinjam</span>
-                <span class="font-semibold text-slate-800">12 Feb 2025</span>
-              </div>
-              <div class="flex items-center justify-between gap-2 text-[11px]">
-                <span class="text-slate-500">Jatuh Tempo</span>
-                <span class="font-semibold text-slate-800">19 Feb 2025</span>
-              </div>
-              <div class="flex items-center justify-end pt-0.5">
-                <span class="due-note text-[11px] font-semibold text-violet-600 inline-flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span> Menunggu cek petugas
-                </span>
-              </div>
-            </div>
-          </div>
-          <button type="button" disabled class="btn-return mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-100 text-slate-500 text-sm font-semibold cursor-not-allowed">
-            <span class="material-symbols-outlined text-[18px]">hourglass_top</span>
-            <span>Menunggu Verifikasi</span>
-          </button>
-        </div>
-      </article>
+      <% }) %>
     </div>
 
-    <!-- Empty State -->
-    <div id="loan-empty-state" class="hidden bg-white border border-slate-200 rounded-xl p-10 text-center">
-      <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center">
-        <span class="material-symbols-outlined text-[28px]">search_off</span>
-      </div>
+    <div id="loan-empty-state" class="<%= _loans.length ? 'hidden' : '' %> bg-white border border-slate-200 rounded-xl p-10 text-center">
+      <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center"><span class="material-symbols-outlined text-[28px]">search_off</span></div>
       <h3 class="text-base font-semibold text-slate-800">Tidak ada transaksi ditemukan</h3>
       <p class="text-sm text-slate-500 mt-1">Coba ubah kata kunci pencarian atau filter status.</p>
     </div>
   </div>
-</div>
 
 <!-- Modal Ajukan Pengembalian -->
 <div id="modal-return" class="fixed inset-0 z-[100] hidden">
@@ -403,7 +300,8 @@
 
         <div class="px-6 py-4 bg-slate-50/70 border-t border-slate-100 flex flex-col-reverse sm:flex-row items-center justify-end gap-2.5 shrink-0">
           <button id="btn-cancel-return" type="button" class="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 border border-slate-200 bg-white transition shadow-2xs">Batal</button>
-          <button type="submit" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm shadow-blue-500/25 inline-flex items-center justify-center gap-2 transition-all active:scale-[0.99]">
+          <button type="submit"
+            class="w-full sm:flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-sm font-semibold text-white transition-colors shadow-sm shadow-blue-600/20">
             <span class="material-symbols-outlined text-[16px]">send</span>
             <span>Kirim Pengembalian</span>
           </button>
@@ -448,6 +346,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const conditionOptions = Array.from(document.querySelectorAll('.condition-option'));
   const dendaBox = document.getElementById('modal-denda-box');
   const dendaText = document.getElementById('modal-denda');
+  const agreeInput = document.getElementById('agree-return');
   const toast = document.getElementById('return-toast');
   const toastMessage = document.getElementById('toast-message');
   const btnCloseToast = document.getElementById('btn-close-toast');
@@ -583,6 +482,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!formError) return;
     formError.textContent = message;
     formError.classList.remove('hidden');
+    formError.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
   function hideError() {
@@ -676,15 +576,16 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   if (form) {
-    form.addEventListener('submit', function (event) {
+    form.addEventListener('submit', async function (event) {
       event.preventDefault();
+      hideError();
       if (!activeCard) return;
 
       const jumlahInput = document.getElementById('input-jumlah');
       const amount = jumlahInput ? parseInt(jumlahInput.value, 10) : 1;
       const maxAmount = jumlahInput ? parseInt(jumlahInput.max, 10) : 1;
       const condition = form.querySelector('input[name="kondisi"]:checked');
-      const agree = document.getElementById('agree-return');
+      const submitBtn = form.querySelector('button[type="submit"]');
 
       if (!amount || amount < 1 || (maxAmount && amount > maxAmount)) {
         showError('Jumlah unit tidak valid. Masukkan 1 sampai ' + maxAmount + ' unit.');
@@ -694,19 +595,40 @@ document.addEventListener('DOMContentLoaded', function () {
         showError('Silakan pilih kondisi alat sebelum mengajukan pengembalian.');
         return;
       }
-      if (agree && !agree.checked) {
-        showError('Centang pernyataan persetujuan untuk melanjutkan.');
+      if (!agreeInput || !agreeInput.checked) {
+        showError('Centang konfirmasi kondisi barang sebelum mengirim pengembalian.');
         return;
       }
 
-      const name = activeCard.dataset.nama || 'alat';
-      markAsWaiting(activeCard);
+      const peminjamanId = activeCard.dataset.id;
+      const payload = {
+        tanggal_kembali_aktual: new Date().toISOString().slice(0, 10),
+        kondisi_fisik: condition.value,
+        catatan: (document.getElementById('input-catatan')?.value || '').trim()
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">progress_activity</span><span>Mengirim...</span>';
+
+      try {
+        const res = await fetch('/pengembalian/user/' + encodeURIComponent(peminjamanId), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) throw new Error(data.message || 'Gagal mengajukan pengembalian.');
+
       closeModal();
-      refreshStats();
-      applyFilters();
-      showToast('Pengembalian ' + name + ' berhasil diajukan. Menunggu verifikasi petugas lab.');
       activeCard = null;
-    });
+      showToast(data.message || 'Pengembalian berhasil diajukan. Menunggu verifikasi petugas lab.');
+      window.location.reload();
+    } catch (err) {
+      showError(err.message || 'Gagal mengajukan pengembalian.');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">send</span><span>Kirim Pengembalian</span>';
+    }
+  });
   }
 
   refreshStats();

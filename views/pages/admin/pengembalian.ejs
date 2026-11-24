@@ -1,618 +1,151 @@
 <!-- Main Content -->
 <div class="flex flex-col w-full space-y-6">
-  <!-- Page Header & Action Bar -->
   <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-    <div>
-      <div class="flex items-center gap-2 mb-1">
-        <span class="text-xs font-semibold text-brand-700 tracking-wider uppercase">Manajemen Transaksi Laboratorium</span>
-      </div>
-      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Kelola Pengembalian</h1>
-      <p class="text-sm text-slate-500 mt-1">Verifikasi pengembalian alat, inspeksi kelayakan fisik instrumen laboratorium, pencatatan denda/keterlambatan, dan riwayat serah terima.</p>
-    </div>
-    <div class="flex flex-wrap items-center gap-2.5 shrink-0">
-      <button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm" id="btn-open-export" type="button">
-        <span class="material-symbols-outlined text-[18px] text-slate-500">file_download</span>
-        <span class="">Ekspor Excel</span>
-      </button>
+    <div class="flex flex-col gap-1">
+      <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Pemantauan Pengembalian</h1>
+      <p class="text-slate-500 text-sm mt-1">Pantau status pengembalian alat lab. Admin hanya memantau, verifikasi dilakukan oleh petugas.</p>
     </div>
   </div>
 
-  <!-- 3 Stat KPI Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-    <!-- Card 1 -->
-    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
-      <div class="flex items-center justify-between mb-3">
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-brand-700">Statistik Pengembalian</span>
-      </div>
-      <div class="my-2">
-        <div class="text-3xl font-extrabold text-slate-900 tracking-tight">242</div>
-        <div class="text-xs font-medium text-slate-400 mt-1">Instrumen berhasil dikembalikan ke rak lab</div>
-      </div>
-    </div>
+  <%
+    const _items = Array.isArray(items) ? items : [];
+    const _stats = stats || { total: 0, pending: 0, verified: 0, rejected: 0 };
+    const fmtDate = (v) => {
+      if (!v) return '-';
+      const d = new Date(v);
+      if (Number.isNaN(d.getTime())) return String(v);
+      return d.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
+    };
+    const lateInfo = (r) => {
+      const due = r.tanggal_kembali_rencana ? new Date(r.tanggal_kembali_rencana) : null;
+      const act = r.tanggal_kembali_aktual ? new Date(r.tanggal_kembali_aktual) : null;
+      if (!due || !act) return { text: '-', cls: 'text-slate-500' };
+      const d0 = new Date(due.getFullYear(), due.getMonth(), due.getDate());
+      const a0 = new Date(act.getFullYear(), act.getMonth(), act.getDate());
+      const diff = Math.round((a0 - d0) / 86400000);
+      if (diff > 0) return { text: diff + ' Hari', cls: 'text-rose-600 font-semibold' };
+      return { text: 'Tepat waktu', cls: 'text-slate-500' };
+    };
+  %>
 
-    <!-- Card 2 -->
-    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
-      <div class="flex items-center justify-between mb-3">
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700">Tingkat Kelayakan</span>
-      </div>
-      <div class="my-2">
-        <div class="text-3xl font-extrabold text-slate-900 tracking-tight">96.8%</div>
-        <div class="text-xs font-medium text-slate-400 mt-1">Bebas kerusakan fisik &amp; terkalibrasi</div>
-      </div>
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+    <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+      <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Total</p>
+      <div class="text-3xl font-extrabold text-slate-900 font-mono"><%= _stats.total || 0 %></div>
     </div>
-
-    <!-- Card 3 -->
-    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
-      <div class="flex items-center justify-between mb-3">
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-50 text-amber-700">Verifikasi Fisik Lab</span>
-      </div>
-      <div class="my-2">
-        <div class="text-3xl font-extrabold text-slate-900 tracking-tight">6</div>
-        <div class="text-xs font-medium text-slate-400 mt-1">Alat diserahkan &amp; menunggu inspeksi lab</div>
-      </div>
+    <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+      <p class="text-xs font-bold uppercase tracking-wider text-amber-600 mb-1">Menunggu</p>
+      <div class="text-3xl font-extrabold text-slate-900 font-mono"><%= _stats.pending || 0 %></div>
+    </div>
+    <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+      <p class="text-xs font-bold uppercase tracking-wider text-emerald-600 mb-1">Terverifikasi</p>
+      <div class="text-3xl font-extrabold text-slate-900 font-mono"><%= _stats.verified || 0 %></div>
+    </div>
+    <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+      <p class="text-xs font-bold uppercase tracking-wider text-red-600 mb-1">Ditolak</p>
+      <div class="text-3xl font-extrabold text-slate-900 font-mono"><%= _stats.rejected || 0 %></div>
     </div>
   </div>
 
-  <!-- Filter & Search Toolbar Card -->
-  <div class="rounded-xl flex flex-col lg:flex-row items-center gap-3">
-    <!-- Search input -->
-    <div class="relative flex-1 w-full">
-      <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] pointer-events-none select-none">search</span>
-      <input class="w-full pl-10 pr-4 h-10 border border-slate-200 text-slate-700 text-sm rounded-lg placeholder-slate-400 focus:outline-none focus:bg-white focus:border-brand-700 transition-colors bg-white" placeholder="Cari kode kembali, kode pinjam, nama peminjam, atau nama alat..." type="text">
-    </div>
-    <!-- Dropdown Filter 1 -->
-    <div class="relative w-full lg:w-60">
-      <select class="w-full h-10 appearance-none pl-3.5 pr-9 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg cursor-pointer focus:outline-none focus:border-brand-700 transition-colors">
-        <option>Semua Kondisi Alat</option>
-        <option>Kondisi Baik &amp; Lengkap</option>
-        <option>Ada Kerusakan Minor</option>
-        <option>Rusak Berat</option>
-        <option>Hilang / Tidak Lengkap</option>
+  <div class="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+    <div class="p-5 border-b border-slate-100 flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center bg-white">
+      <div class="relative w-full lg:w-96 shrink-0">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
+        <input id="admin-return-search" class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all placeholder:text-slate-400" placeholder="Cari peminjam, alat, atau kode..." type="text"/>
+      </div>
+      <select id="admin-filter-status" class="w-full sm:w-52 pl-3 pr-10 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all cursor-pointer">
+        <option value="">Semua Status</option>
+        <option value="Menunggu Verifikasi">Menunggu Verifikasi</option>
+        <option value="Terverifikasi">Terverifikasi</option>
+        <option value="Ditolak">Ditolak</option>
       </select>
-      <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
     </div>
-    <!-- Dropdown Filter 2 -->
-    <div class="relative w-full lg:w-60">
-      <select class="w-full h-10 appearance-none pl-3.5 pr-9 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg cursor-pointer focus:outline-none focus:border-brand-700 transition-colors">
-        <option>Semua Status Verifikasi</option>
-        <option>Selesai Tervalidasi</option>
-        <option>Menunggu Inspeksi</option>
-        <option>Ada Denda / Masalah</option>
-      </select>
-      <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
-    </div>
-  </div>
 
-  <!-- Data Table Canvas -->
-  <div class="bg-white rounded-xl border border-slate-200/90 shadow-sm overflow-hidden flex flex-col">
-    <div class="w-full overflow-x-auto max-h-[460px] overflow-y-auto">
-      <table class="w-full text-left border-collapse">
-        <thead class="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider text-[11px] font-semibold">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse min-w-[980px]">
+        <thead class="bg-slate-50/80 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
           <tr>
-            <th class="py-3.5 px-4 w-12 text-center pl-6 bg-slate-50 whitespace-nowrap">NO</th>
-            <th class="py-3.5 px-4 min-w-[120px] bg-slate-50 whitespace-nowrap">KODE KEMBALI</th>
-            <th class="py-3.5 px-4 min-w-[280px] w-[320px] bg-slate-50 whitespace-nowrap">NAMA LENGKAP &amp; USERNAME</th>
-            <th class="py-3.5 px-4 min-w-[200px] bg-slate-50 whitespace-nowrap">NAMA ALAT &amp; MERK</th>
-            <th class="py-3.5 px-4 min-w-[140px] bg-slate-50 whitespace-nowrap">TGL KEMBALI</th>
-            <th class="py-3.5 px-4 min-w-[130px] bg-slate-50 whitespace-nowrap">KONDISI FISIK</th>
-            <th class="py-3.5 px-4 min-w-[130px] bg-slate-50 whitespace-nowrap">STATUS</th>
-            <th class="py-3.5 px-4 text-center min-w-[90px] w-24 pr-6 bg-slate-50 whitespace-nowrap">AKSI</th>
+            <th class="px-4 py-3.5 w-14 text-center">No</th>
+            <th class="px-4 py-3.5">Peminjam</th>
+            <th class="px-4 py-3.5">Alat &amp; Lab</th>
+            <th class="px-4 py-3.5">Tgl Aktual</th>
+            <th class="px-4 py-3.5">Keterlambatan</th>
+            <th class="px-4 py-3.5">Kondisi</th>
+            <th class="px-4 py-3.5">Petugas Verifikator</th>
+            <th class="px-4 py-3.5">Status</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100 text-sm text-slate-700 bg-white">
-          <!-- Row 1 -->
-          <tr class="hover:bg-slate-50/80 transition-colors group">
-            <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">01</td>
-            <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">KB-2025-0421</td>
-            <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Bima Satria Wicaksono</div>
-              <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@bimasatria • bima@mhs.univ.ac.id</div>
-            </td>
-            <td class="py-3.5 px-4 min-w-[200px]">
-              <div class="font-medium text-slate-800 leading-tight">Hotplate Stirrer Keramik</div>
-              <div class="text-xs text-slate-400 mt-0.5">Corning PC-420D</div>
-            </td>
-            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">24 Feb 2025</div>
-              <div class="text-slate-400">10:15 WIB</div>
-            </td>
-            <td class="py-3.5 px-4 whitespace-nowrap min-w-[130px]">
-              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-                <span class="">Baik &amp; Lengkap</span>
-              </div>
-            </td>
-            <td class="py-3.5 px-4 whitespace-nowrap min-w-[130px]">
-              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-                <span class="">Selesai &amp; Sah</span>
-              </div>
-            </td>
-            <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-              <div class="inline-flex items-center justify-center gap-1">
-                <button class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-brand-700 transition-colors" title="Lihat Berita Acara" type="button" data-kode="KB-2025-0421" data-alat="Hotplate Stirrer Keramik" data-pelapor="Bima Satria Wicaksono">
-                  <span class="material-symbols-outlined text-[18px]">visibility</span>
-                </button>
-                <button class="p-1.5 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors" title="Hapus Data" type="button" data-kode="KB-2025-0421" data-alat="Hotplate Stirrer Keramik">
-                  <span class="material-symbols-outlined text-[18px]">delete</span>
-                </button>
-              </div>
-            </td>
-          </tr>
-          <!-- Row 2 -->
-          <tr class="hover:bg-slate-50/80 transition-colors group">
-            <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">02</td>
-            <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">KB-2025-0422</td>
-            <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Siti Nurhaliza, S.Si.</div>
-              <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@siti.lab • siti.lab@univ.ac.id</div>
-            </td>
-            <td class="py-3.5 px-4 min-w-[200px]">
-              <div class="font-medium text-slate-800 leading-tight">Mikroskop Binokuler CX23</div>
-              <div class="text-xs text-slate-400 mt-0.5">Olympus</div>
-            </td>
-            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">24 Feb 2025</div>
-              <div class="text-slate-400">11:30 WIB</div>
-            </td>
-            <td class="py-3.5 px-4 whitespace-nowrap min-w-[130px]">
-              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-                <span class="">Baik &amp; Lengkap</span>
-              </div>
-            </td>
-            <td class="py-3.5 px-4 whitespace-nowrap min-w-[130px]">
-              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-                <span class="">Selesai &amp; Sah</span>
-              </div>
-            </td>
-            <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-              <div class="inline-flex items-center justify-center gap-1">
-                <button class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-brand-700 transition-colors" title="Lihat Berita Acara" type="button" data-kode="KB-2025-0422" data-alat="Mikroskop Binokuler CX23" data-pelapor="Siti Nurhaliza, S.Si.">
-                  <span class="material-symbols-outlined text-[18px]">visibility</span>
-                </button>
-                <button class="p-1.5 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors" title="Hapus Data" type="button" data-kode="KB-2025-0422" data-alat="Mikroskop Binokuler CX23">
-                  <span class="material-symbols-outlined text-[18px]">delete</span>
-                </button>
-              </div>
-            </td>
-          </tr>
-          <!-- Row 3 -->
-          <tr class="hover:bg-slate-50/80 transition-colors group">
-            <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">03</td>
-            <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">KB-2025-0423</td>
-            <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Allya Amanda Putri</div>
-              <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@allya.p • allya@mhs.univ.ac.id</div>
-            </td>
-            <td class="py-3.5 px-4 min-w-[200px]">
-              <div class="font-medium text-slate-800 leading-tight">Spektrofotometer UV-Vis 1800</div>
-              <div class="text-xs text-slate-400 mt-0.5">Shimadzu</div>
-            </td>
-            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">24 Feb 2025</div>
-              <div class="text-slate-400">13:00 WIB</div>
-            </td>
-            <td class="py-3.5 px-4 whitespace-nowrap min-w-[130px]">
-              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600">
-                <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
-                <span class="">Kuvet Kurang 1 Pcs</span>
-              </div>
-            </td>
-            <td class="py-3.5 px-4 whitespace-nowrap min-w-[130px]">
-              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600">
-                <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
-                <span class="">Denda Penggantian</span>
-              </div>
-            </td>
-            <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-              <div class="inline-flex items-center justify-center gap-1">
-                <button class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-brand-700 transition-colors" title="Lihat Berita Acara" type="button" data-kode="KB-2025-0423" data-alat="Spektrofotometer UV-Vis 1800" data-pelapor="Allya Amanda Putri">
-                  <span class="material-symbols-outlined text-[18px]">visibility</span>
-                </button>
-                <button class="p-1.5 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors" title="Hapus Data" type="button" data-kode="KB-2025-0423" data-alat="Spektrofotometer UV-Vis 1800">
-                  <span class="material-symbols-outlined text-[18px]">delete</span>
-                </button>
-              </div>
-            </td>
-          </tr>
-          <!-- Row 4 -->
-          <tr class="hover:bg-slate-50/80 transition-colors group">
-            <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">04</td>
-            <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">KB-2025-0424</td>
-            <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Prof. Dr. Bambang Sudiro</div>
-              <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@bambang.s • bambang@univ.ac.id</div>
-            </td>
-            <td class="py-3.5 px-4 min-w-[200px]">
-              <div class="font-medium text-slate-800 leading-tight">Oscilloscope Digital 100MHz</div>
-              <div class="text-xs text-slate-400 mt-0.5">Tektronix TBS1102B</div>
-            </td>
-            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">24 Feb 2025</div>
-              <div class="text-slate-400">14:10 WIB</div>
-            </td>
-            <td class="py-3.5 px-4 whitespace-nowrap min-w-[130px]">
-              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-                <span class="">Baik &amp; Terkalibrasi</span>
-              </div>
-            </td>
-            <td class="py-3.5 px-4 whitespace-nowrap min-w-[130px]">
-              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-                <span class="">Selesai &amp; Sah</span>
-              </div>
-            </td>
-            <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-              <div class="inline-flex items-center justify-center gap-1">
-                <button class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-brand-700 transition-colors" title="Lihat Berita Acara" type="button" data-kode="KB-2025-0424" data-alat="Oscilloscope Digital 100MHz" data-pelapor="Prof. Dr. Bambang Sudiro">
-                  <span class="material-symbols-outlined text-[18px]">visibility</span>
-                </button>
-                <button class="p-1.5 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors" title="Hapus Data" type="button" data-kode="KB-2025-0424" data-alat="Oscilloscope Digital 100MHz">
-                  <span class="material-symbols-outlined text-[18px]">delete</span>
-                </button>
-              </div>
-            </td>
-          </tr>
-          <!-- Row 5 -->
-          <tr class="hover:bg-slate-50/80 transition-colors group">
-            <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">05</td>
-            <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">KB-2025-0425</td>
-            <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Fathur Rahman</div>
-              <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@fathur.r • fathur@mhs.univ.ac.id</div>
-            </td>
-            <td class="py-3.5 px-4 min-w-[200px]">
-              <div class="font-medium text-slate-800 leading-tight">Solder Station Digital</div>
-              <div class="text-xs text-slate-400 mt-0.5">Hakko FX-888D</div>
-            </td>
-            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">24 Feb 2025</div>
-              <div class="text-slate-400">15:45 WIB</div>
-            </td>
-            <td class="py-3.5 px-4 whitespace-nowrap min-w-[130px]">
-              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600">
-                <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0"></span>
-                <span class="">Ujung Solder Aus</span>
-              </div>
-            </td>
-            <td class="py-3.5 px-4 whitespace-nowrap min-w-[130px]">
-              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600">
-                <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
-                <span class="">Menunggu Cek Teknisi</span>
-              </div>
-            </td>
-            <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-              <div class="inline-flex items-center justify-center gap-1">
-                <button class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-brand-700 transition-colors" title="Lihat Berita Acara" type="button">
-                  <span class="material-symbols-outlined text-[18px]">visibility</span>
-                </button>
-                <button class="p-1.5 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors" title="Hapus Data" type="button">
-                  <span class="material-symbols-outlined text-[18px]">delete</span>
-                </button>
-              </div>
-            </td>
-          </tr>
-          <!-- Row 6 -->
-          <tr class="hover:bg-slate-50/80 transition-colors group">
-            <td class="py-3.5 px-4 text-center text-slate-400 font-mono text-xs pl-6">06</td>
-            <td class="py-3.5 px-4 font-mono font-semibold text-brand-700 text-xs whitespace-nowrap">KB-2025-0426</td>
-            <td class="py-3.5 px-4 whitespace-nowrap min-w-[280px] w-[320px]">
-              <div class="font-bold text-slate-900 leading-tight whitespace-nowrap">Dr. Ir. Hendra Wijaya, M.T.</div>
-              <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@hendrawijaya • hendra@univ.ac.id</div>
-            </td>
-            <td class="py-3.5 px-4 min-w-[200px]">
-              <div class="font-medium text-slate-800 leading-tight">Centrifuge Mikro Kecepatan Tinggi</div>
-              <div class="text-xs text-slate-400 mt-0.5">Eppendorf 5424</div>
-            </td>
-            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">24 Feb 2025</div>
-              <div class="text-slate-400">16:20 WIB</div>
-            </td>
-            <td class="py-3.5 px-4 whitespace-nowrap min-w-[130px]">
-              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-                <span class="">Baik &amp; Lengkap</span>
-              </div>
-            </td>
-            <td class="py-3.5 px-4 whitespace-nowrap min-w-[130px]">
-              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-                <span class="">Selesai &amp; Sah</span>
-              </div>
-            </td>
-            <td class="py-3.5 px-4 text-center pr-6 whitespace-nowrap min-w-[90px] w-24">
-              <div class="inline-flex items-center justify-center gap-1">
-                <button class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-brand-700 transition-colors" title="Lihat Berita Acara" type="button">
-                  <span class="material-symbols-outlined text-[18px]">visibility</span>
-                </button>
-                <button class="p-1.5 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors" title="Hapus Data" type="button">
-                  <span class="material-symbols-outlined text-[18px]">delete</span>
-                </button>
-              </div>
-            </td>
-          </tr>
+        <tbody id="admin-return-tbody" class="divide-y divide-slate-100 text-sm bg-white">
+          <% if (!_items.length) { %>
+            <tr><td colspan="8" class="px-4 py-12 text-center text-slate-500">Belum ada data pengembalian.</td></tr>
+          <% } %>
+          <% _items.forEach((r, idx) => { 
+               const late = lateInfo(r);
+               const status = r.status_verifikasi || 'Menunggu Verifikasi';
+               const badge = status === 'Terverifikasi'
+                 ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                 : status === 'Ditolak'
+                   ? 'bg-red-50 text-red-700 border-red-100'
+                   : 'bg-amber-50 text-amber-700 border-amber-100';
+               const dot = status === 'Terverifikasi' ? 'bg-emerald-500' : status === 'Ditolak' ? 'bg-red-500' : 'bg-amber-500';
+          %>
+            <tr class="admin-return-row hover:bg-slate-50/80 transition-colors"
+                data-search="<%= [r.kode_peminjaman, r.nama_lengkap, r.username, r.nama_alat, r.nama_lab, r.kondisi_fisik, status, r.petugas_nama].filter(Boolean).join(' ').toLowerCase() %>"
+                data-status="<%= status %>">
+              <td class="px-4 py-3.5 text-center text-slate-500 font-mono text-xs"><%= idx + 1 %></td>
+              <td class="px-4 py-3.5">
+                <div class="font-semibold text-slate-900"><%= r.nama_lengkap || '-' %></div>
+                <div class="text-xs text-slate-500 font-mono mt-0.5"><%= r.kode_peminjaman || '-' %></div>
+              </td>
+              <td class="px-4 py-3.5">
+                <div class="font-medium text-slate-800"><%= r.nama_alat || '-' %></div>
+                <div class="text-xs text-slate-500"><%= r.nama_lab || '-' %> · <%= r.jumlah_pinjam || 1 %> unit</div>
+              </td>
+              <td class="px-4 py-3.5 whitespace-nowrap">
+                <div class="font-medium text-slate-800"><%= fmtDate(r.tanggal_kembali_aktual) %></div>
+                <div class="text-xs text-slate-400">Jatuh tempo: <%= fmtDate(r.tanggal_kembali_rencana) %></div>
+              </td>
+              <td class="px-4 py-3.5 whitespace-nowrap <%= late.cls %> text-xs"><%= late.text %></td>
+              <td class="px-4 py-3.5 text-slate-700"><%= r.kondisi_fisik || '-' %></td>
+              <td class="px-4 py-3.5 text-slate-700"><%= r.petugas_nama || '-' %></td>
+              <td class="px-4 py-3.5 whitespace-nowrap">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border <%= badge %>">
+                  <span class="w-1.5 h-1.5 rounded-full <%= dot %>"></span><%= status %>
+                </span>
+              </td>
+            </tr>
+          <% }); %>
         </tbody>
       </table>
     </div>
-    <!-- Pagination & Summary Footer Outside Scroll Area -->
-    <div class="px-6 py-4 bg-white border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
-      <div class="text-xs text-slate-500">
-        Menampilkan <span class="font-semibold text-slate-800 font-mono">1-6</span> dari <span class="font-semibold text-slate-800 font-mono">242</span> data pengembalian
-      </div>
-      <div class="flex items-center gap-1.5">
-        <button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:bg-slate-50 transition-colors border border-slate-200/60" type="button" disabled="">
-          <span class="material-symbols-outlined text-[16px]">chevron_left</span>
-          <span class="">Sebelumnya</span>
-        </button>
-        <button class="w-8 h-8 rounded-lg bg-blue-600 text-white text-xs font-semibold shadow-sm flex items-center justify-center" type="button">1</button>
-        <button class="w-8 h-8 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs flex items-center justify-center transition-colors" type="button">2</button>
-        <button class="w-8 h-8 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs flex items-center justify-center transition-colors" type="button">3</button>
-        <span class="w-8 h-8 flex items-center justify-center text-slate-400 text-xs">...</span>
-        <button class="w-8 h-8 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs flex items-center justify-center transition-colors" type="button">10</button>
-        <button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors border border-slate-200/60" type="button">
-          <span class="">Selanjutnya</span>
-          <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Modal Ekspor Data -->
-<div id="modal-export" class="fixed inset-0 z-[100] hidden">
-  <div id="modal-export-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"></div>
-  <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none">
-    <div id="modal-export-content" class="bg-white rounded-2xl shadow-2xl max-w-lg w-full border border-slate-100 overflow-hidden flex flex-col transition-all pointer-events-auto transform duration-300 scale-95 opacity-0 translate-y-4">
-      <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
-        <div class="flex items-center gap-3.5">
-          <div>
-            <h3 class="text-base font-bold text-slate-900 leading-tight">Ekspor Data Pengembalian</h3>
-            <p class="text-xs text-slate-500 mt-0.5 leading-normal">Pilih format berkas dan parameter data pengembalian yang ingin diunduh.</p>
-          </div>
-        </div>
-        <button aria-label="Tutup Modal" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors ml-2" id="btn-close-export" type="button">
-          <span class="material-symbols-outlined text-[20px]">close</span>
-        </button>
-      </div>
-      <div class="p-6 space-y-5 max-h-[72vh] overflow-y-auto">
-        <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2.5">Format Berkas Ekspor</label>
-          <div class="grid grid-cols-3 gap-2.5" id="export-format-group">
-            <label class="export-format-option relative flex flex-col p-3 rounded-xl border-2 border-blue-600 bg-blue-50/40 cursor-pointer shadow-xs transition-all" data-format="xlsx">
-              <input checked="" class="sr-only" name="export_format" type="radio" value="xlsx"/>
-              <div class="flex items-center justify-between mb-2"><div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs"><span class="material-symbols-outlined text-[18px]">table_chart</span></div></div>
-              <span class="text-xs font-bold text-slate-900 leading-tight">Microsoft Excel</span>
-              <span class="text-[10px] text-slate-500 mt-0.5">Format .xlsx</span>
-            </label>
-            <label class="export-format-option relative flex flex-col p-3 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50/70 bg-white cursor-pointer transition-all" data-format="pdf">
-              <input class="sr-only" name="export_format" type="radio" value="pdf"/>
-              <div class="flex items-center justify-between mb-2"><div class="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-xs"><span class="material-symbols-outlined text-[18px]">picture_as_pdf</span></div></div>
-              <span class="text-xs font-bold text-slate-800 leading-tight">Dokumen PDF</span>
-              <span class="text-[10px] text-slate-400 mt-0.5">Format .pdf</span>
-            </label>
-            <label class="export-format-option relative flex flex-col p-3 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50/70 bg-white cursor-pointer transition-all" data-format="csv">
-              <input class="sr-only" name="export_format" type="radio" value="csv"/>
-              <div class="flex items-center justify-between mb-2"><div class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-xs"><span class="material-symbols-outlined text-[18px]">description</span></div></div>
-              <span class="text-xs font-bold text-slate-800 leading-tight">File CSV</span>
-              <span class="text-[10px] text-slate-400 mt-0.5">Format .csv</span>
-            </label>
-          </div>
-        </div>
-        <div>
-          <div class="flex items-center justify-between mb-2"><label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Cakupan Data Ekspor</label></div>
-          <div class="relative">
-            <button class="w-full h-10 pl-3.5 pr-9 rounded-xl bg-white border-2 border-blue-600 text-slate-800 text-xs font-semibold flex items-center justify-between shadow-xs transition-all" id="btn-toggle-export-scope" type="button">
-              <span class="flex items-center gap-2 text-slate-800 truncate"><span class="">Pilih Data Baris Spesifik (Kustom)</span></span>
-              <span class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-blue-600"><span class="material-symbols-outlined text-[18px]" id="export-scope-arrow">keyboard_arrow_up</span></span>
-            </button>
-            <div class="mt-2 bg-white rounded-xl border border-slate-200 shadow-xl overflow-hidden divide-y divide-slate-100 transition-all duration-150" id="export-scope-dropdown">
-              <div class="p-2.5 bg-slate-50/90 flex items-center justify-between gap-2">
-                <label class="inline-flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer select-none"><input class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" id="export-select-all" type="checkbox"/><span class="">Pilih Semua (242 Data)</span></label>
-                <button class="text-[11px] font-semibold text-blue-600 hover:text-brand-700 transition-colors" id="export-reset-selection" type="button">Reset Pilihan</button>
-              </div>
-              <div class="max-h-48 overflow-y-auto divide-y divide-slate-100/80 p-1">
-                <label class="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-50/50 hover:bg-blue-50 cursor-pointer transition-colors">
-                  <input checked="" class="export-row-check rounded border-blue-600 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" type="checkbox"/>
-                  <div class="flex-1 min-w-0"><p class="text-xs font-bold text-slate-900 truncate">KB-2025-0421 • Bima Satria Wicaksono</p><p class="text-[11px] text-slate-400 font-mono mt-0.5 truncate">Hotplate Stirrer Keramik • Selesai &amp; Sah</p></div>
-                </label>
-                <label class="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-50/50 hover:bg-blue-50 cursor-pointer transition-colors">
-                  <input checked="" class="export-row-check rounded border-blue-600 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" type="checkbox"/>
-                  <div class="flex-1 min-w-0"><p class="text-xs font-bold text-slate-900 truncate">KB-2025-0422 • Siti Nurhaliza, S.Si.</p><p class="text-[11px] text-slate-400 font-mono mt-0.5 truncate">Mikroskop Binokuler CX23 • Selesai &amp; Sah</p></div>
-                </label>
-                <label class="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-50/50 hover:bg-blue-50 cursor-pointer transition-colors">
-                  <input checked="" class="export-row-check rounded border-blue-600 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" type="checkbox"/>
-                  <div class="flex-1 min-w-0"><p class="text-xs font-bold text-slate-900 truncate">KB-2025-0423 • Allya Amanda Putri</p><p class="text-[11px] text-slate-400 font-mono mt-0.5 truncate">Spektrofotometer UV-Vis 1800 • Denda Penggantian</p></div>
-                </label>
-                <label class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
-                  <input class="export-row-check rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" type="checkbox"/>
-                  <div class="flex-1 min-w-0"><p class="text-xs font-medium text-slate-700 truncate">KB-2025-0424 • Prof. Dr. Bambang Sudiro</p><p class="text-[11px] text-slate-400 font-mono mt-0.5 truncate">Oscilloscope Digital 100MHz • Selesai &amp; Sah</p></div>
-                </label>
-                <label class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
-                  <input class="export-row-check rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" type="checkbox"/>
-                  <div class="flex-1 min-w-0"><p class="text-xs font-medium text-slate-700 truncate">KB-2025-0425 • Fathur Rahman</p><p class="text-[11px] text-slate-400 font-mono mt-0.5 truncate">Solder Station Digital • Menunggu Cek Teknisi</p></div>
-                </label>
-                <label class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
-                  <input class="export-row-check rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" type="checkbox"/>
-                  <div class="flex-1 min-w-0"><p class="text-xs font-medium text-slate-700 truncate">KB-2025-0426 • Dr. Ir. Hendra Wijaya, M.T.</p><p class="text-[11px] text-slate-400 font-mono mt-0.5 truncate">Centrifuge Mikro Kecepatan Tinggi • Selesai &amp; Sah</p></div>
-                </label>
-              </div>
-              <div class="px-3 py-2 bg-slate-50 flex items-center justify-between text-[11px] text-slate-500"><span class="font-mono font-medium text-slate-400">Hal 1 dari 41</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="px-6 py-4 bg-slate-50/90 border-t border-slate-100 flex items-center justify-end gap-2.5 shrink-0">
-        <button class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-semibold text-xs shadow-2xs transition-colors" id="btn-cancel-export" type="button">Batal</button>
-        <button class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-sm shadow-blue-500/25 flex items-center gap-2 transition-all active:scale-[0.99]" type="button"><span class="material-symbols-outlined text-[16px]">file_download</span><span class="">Unduh &amp; Ekspor Sekarang</span></button>
-      </div>
+    <div class="px-5 py-3.5 border-t border-slate-100 bg-slate-50/60 flex items-center justify-between text-xs text-slate-500">
+      <span>Menampilkan <span id="admin-return-count" class="font-semibold text-slate-700"><%= _items.length %></span> data</span>
+      <span>Mode pantau (read-only)</span>
     </div>
   </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  const wait = function (ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); };
-  const textOf = function (el) { return el ? (el.textContent || '').replace(/\s+/g, ' ').trim() : ''; };
+  const rows = Array.from(document.querySelectorAll('.admin-return-row'));
+  const searchInput = document.getElementById('admin-return-search');
+  const statusFilter = document.getElementById('admin-filter-status');
+  const countEl = document.getElementById('admin-return-count');
 
-  // Export modal (existing functionality kept as-is)
-  const exportModal = document.getElementById('modal-export');
-  const exportModalOverlay = document.getElementById('modal-export-overlay');
-  const exportModalContent = document.getElementById('modal-export-content');
-  const btnOpenExport = document.getElementById('btn-open-export');
-  const btnCloseExport = document.getElementById('btn-close-export');
-  const btnCancelExport = document.getElementById('btn-cancel-export');
-
-  function openExportModal() {
-    if (!exportModal || !exportModalContent) return;
-    exportModal.classList.remove('hidden');
-    exportModal.classList.add('flex');
-    void exportModalContent.offsetWidth;
-    exportModalContent.classList.remove('scale-95', 'opacity-0', 'translate-y-4');
-    exportModalContent.classList.add('scale-100', 'opacity-100', 'translate-y-0');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeExportModal() {
-    if (!exportModal || !exportModalContent) return;
-    exportModalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
-    exportModalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
-    setTimeout(function () {
-      exportModal.classList.add('hidden');
-      exportModal.classList.remove('flex');
-      document.body.style.overflow = '';
-    }, 220);
-  }
-  if (btnOpenExport) btnOpenExport.addEventListener('click', function (e) { e.preventDefault(); openExportModal(); });
-  if (btnCloseExport) btnCloseExport.addEventListener('click', closeExportModal);
-  if (btnCancelExport) btnCancelExport.addEventListener('click', closeExportModal);
-  if (exportModalOverlay) exportModalOverlay.addEventListener('click', closeExportModal);
-  if (exportModal) exportModal.addEventListener('click', function (e) { if (e.target === exportModal) closeExportModal(); });
-
-  document.querySelectorAll('.export-format-option').forEach(function (option) {
-    const radio = option.querySelector('input[type="radio"]');
-    if (!radio) return;
-    radio.addEventListener('change', function () {
-      document.querySelectorAll('.export-format-option').forEach(function (opt) {
-        opt.classList.remove('border-2', 'border-blue-600', 'bg-blue-50/40', 'shadow-xs');
-        opt.classList.add('border', 'border-slate-200', 'bg-white');
-      });
-      option.classList.remove('border', 'border-slate-200', 'bg-white');
-      option.classList.add('border-2', 'border-blue-600', 'bg-blue-50/40', 'shadow-xs');
+  function applyFilters() {
+    const q = (searchInput?.value || '').toLowerCase().trim();
+    const st = statusFilter?.value || '';
+    let visible = 0;
+    rows.forEach(row => {
+      const show = (!q || (row.dataset.search || '').includes(q)) && (!st || row.dataset.status === st);
+      row.classList.toggle('hidden', !show);
+      if (show) visible++;
     });
-  });
-
-  const btnToggleExportScope = document.getElementById('btn-toggle-export-scope');
-  const exportScopeDropdown = document.getElementById('export-scope-dropdown');
-  const exportScopeArrow = document.getElementById('export-scope-arrow');
-  if (btnToggleExportScope && exportScopeDropdown) {
-    btnToggleExportScope.addEventListener('click', function () {
-      const isHidden = exportScopeDropdown.classList.toggle('hidden');
-      if (exportScopeArrow) exportScopeArrow.textContent = isHidden ? 'keyboard_arrow_down' : 'keyboard_arrow_up';
-    });
-  }
-  const exportSelectAll = document.getElementById('export-select-all');
-  const exportRowChecks = document.querySelectorAll('.export-row-check');
-  const exportResetSelection = document.getElementById('export-reset-selection');
-  if (exportSelectAll) exportSelectAll.addEventListener('change', function () {
-    exportRowChecks.forEach(function (cb) { cb.checked = exportSelectAll.checked; });
-  });
-  if (exportResetSelection) exportResetSelection.addEventListener('click', function () {
-    exportRowChecks.forEach(function (cb) { cb.checked = false; });
-    if (exportSelectAll) exportSelectAll.checked = false;
-  });
-
-  function readRow(row) {
-    const cells = row ? row.children : [];
-    const identityCell = cells[2];
-    const toolCell = cells[3];
-    const dateCell = cells[4];
-    const identityParts = identityCell ? identityCell.querySelectorAll('div') : [];
-    const toolParts = toolCell ? toolCell.querySelectorAll('div') : [];
-    const dateParts = dateCell ? dateCell.querySelectorAll('div') : [];
-    const nameEl = identityCell ? identityCell.querySelector('.font-bold') : null;
-    return {
-      kode: textOf(cells[1]),
-      nama: textOf(nameEl) || textOf(identityParts[0]),
-      identity: textOf(identityParts[1]),
-      alat: textOf(toolParts[0]),
-      merek: textOf(toolParts[1]),
-      tanggal: textOf(dateParts[0]),
-      waktu: textOf(dateParts[1]),
-      kondisi: textOf(cells[5]),
-      status: textOf(cells[6])
-    };
+    if (countEl) countEl.textContent = String(visible);
   }
 
-  // Detail / Berita Acara uses the shared info dialog.
-  document.querySelectorAll('button[title="Lihat Berita Acara"]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      const row = btn.closest('tr');
-      const data = readRow(row);
-      window.sipatModal.info({
-        title: 'Berita Acara Pengembalian',
-        subtitle: 'Kode ' + (data.kode || '-'),
-        tone: 'info',
-        message: window.sipatModal.detailList([
-          { label: 'Kode Kembali', value: data.kode, mono: true },
-          { label: 'Nama Peminjam', value: data.nama },
-          { label: 'Username / Email', value: data.identity, mono: true },
-          { label: 'Nama Alat', value: data.alat },
-          { label: 'Merk', value: data.merek },
-          { label: 'Tanggal Kembali', value: data.tanggal + (data.waktu ? ' • ' + data.waktu : '') },
-          { label: 'Kondisi Fisik', value: data.kondisi },
-          { label: 'Status Verifikasi', value: data.status }
-        ])
-      });
-    });
-  });
-
-  function renumberRows() {
-    const tbody = document.querySelector('table tbody');
-    if (!tbody) return;
-    Array.prototype.forEach.call(tbody.querySelectorAll('tr'), function (row, index) {
-      const first = row.children[0];
-      if (first) first.textContent = String(index + 1).padStart(2, '0');
-    });
-  }
-
-  // Delete with identity confirmation and loading state.
-  document.querySelectorAll('button[title="Hapus Data"]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      const row = btn.closest('tr');
-      const data = readRow(row);
-      window.sipatModal.confirm({
-        title: 'Hapus Data Pengembalian?',
-        subtitle: 'Tindakan ini tidak dapat dibatalkan.',
-        tone: 'danger',
-        message: '<div class="text-sm text-slate-700 space-y-2">' +
-          '<p>Apakah Anda yakin ingin menghapus data pengembalian berikut?</p>' +
-          '<div class="rounded-xl border border-rose-100 bg-rose-50/70 px-4 py-3 space-y-1">' +
-          '<p class="text-xs text-slate-500">Kode Kembali</p>' +
-          '<p class="font-mono font-bold text-rose-700">' + window.sipatModal.escape(data.kode || 'N/A') + '</p>' +
-          '<p class="font-semibold text-slate-800 mt-1">' + window.sipatModal.escape(data.nama || 'Peminjam') + '</p>' +
-          '<p class="text-xs text-slate-500">' + window.sipatModal.escape(data.alat || 'Alat') + '</p>' +
-          '</div></div>',
-        confirmText: 'Ya, Hapus',
-        confirmClass: 'px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 transition shadow-sm inline-flex items-center justify-center gap-2',
-        loadingText: 'Menghapus...',
-        onConfirm: async function () {
-          await wait(550);
-          if (!row || !row.parentNode) throw new Error('Data pengembalian tidak ditemukan atau sudah dihapus.');
-          row.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
-          row.style.opacity = '0';
-          row.style.transform = 'translateY(-4px)';
-          await wait(180);
-          row.remove();
-          renumberRows();
-          window.sipatModal.toast('Data pengembalian ' + (data.kode || '') + ' berhasil dihapus.', 'success');
-        }
-      });
-    });
-  });
-
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && exportModal && !exportModal.classList.contains('hidden')) closeExportModal();
-  });
+  if (searchInput) searchInput.addEventListener('input', applyFilters);
+  if (statusFilter) statusFilter.addEventListener('change', applyFilters);
+  applyFilters();
 });
 </script>
