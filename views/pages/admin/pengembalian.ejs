@@ -3,13 +3,13 @@
   <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
     <div class="flex flex-col gap-1">
       <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Pemantauan Pengembalian</h1>
-      <p class="text-slate-500 text-sm mt-1">Pantau status pengembalian alat lab. Admin hanya memantau, verifikasi dilakukan oleh petugas.</p>
+      <p class="text-slate-500 text-sm mt-1">Pantau status pengembalian alat lab. Admin hanya membaca data dan dapat menghapus data; verifikasi tetap dilakukan oleh petugas.</p>
     </div>
   </div>
 
   <%
     const _items = Array.isArray(items) ? items : [];
-    const _stats = stats || { total: 0, pending: 0, verified: 0, rejected: 0 };
+    const _stats = stats || { total: 0, pending: 0, penalty: 0, paid: 0, verified: 0, rejected: 0 };
     const fmtDate = (v) => {
       if (!v) return '-';
       const d = new Date(v);
@@ -26,9 +26,23 @@
       if (diff > 0) return { text: diff + ' Hari', cls: 'text-rose-600 font-semibold' };
       return { text: 'Tepat waktu', cls: 'text-slate-500' };
     };
+    const isPaid = (r) => Number(r.denda_dibayar) === 1 || r.status_denda === 'Lunas';
+    const effectiveStatus = (r) => {
+      if (r.status_verifikasi === 'Terverifikasi') return 'Terverifikasi';
+      if (r.status_verifikasi === 'Ditolak') return 'Ditolak';
+      if (r.status_denda === 'Belum Lunas' && Number(r.denda) > 0) return 'Bayar Denda';
+      return 'Menunggu Verifikasi';
+    };
+    const statusStyle = (status) => {
+      if (status === 'Terverifikasi') return { badge: 'bg-emerald-50 text-emerald-700 border-emerald-100', dot: 'bg-emerald-500' };
+      if (status === 'Ditolak') return { badge: 'bg-red-50 text-red-700 border-red-100', dot: 'bg-red-500' };
+      if (status === 'Bayar Denda') return { badge: 'bg-rose-50 text-rose-700 border-rose-100', dot: 'bg-rose-500' };
+      return { badge: 'bg-amber-50 text-amber-700 border-amber-100', dot: 'bg-amber-500' };
+    };
+    const rupiah = (v) => 'Rp ' + Number(v || 0).toLocaleString('id-ID');
   %>
 
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-5">
     <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
       <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Total</p>
       <div class="text-3xl font-extrabold text-slate-900 font-mono"><%= _stats.total || 0 %></div>
@@ -38,12 +52,16 @@
       <div class="text-3xl font-extrabold text-slate-900 font-mono"><%= _stats.pending || 0 %></div>
     </div>
     <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
-      <p class="text-xs font-bold uppercase tracking-wider text-emerald-600 mb-1">Terverifikasi</p>
-      <div class="text-3xl font-extrabold text-slate-900 font-mono"><%= _stats.verified || 0 %></div>
+      <p class="text-xs font-bold uppercase tracking-wider text-rose-600 mb-1">Bayar Denda</p>
+      <div class="text-3xl font-extrabold text-slate-900 font-mono"><%= _stats.penalty || 0 %></div>
     </div>
     <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
-      <p class="text-xs font-bold uppercase tracking-wider text-red-600 mb-1">Ditolak</p>
-      <div class="text-3xl font-extrabold text-slate-900 font-mono"><%= _stats.rejected || 0 %></div>
+      <p class="text-xs font-bold uppercase tracking-wider text-blue-600 mb-1">Sudah Dibayarkan</p>
+      <div class="text-3xl font-extrabold text-slate-900 font-mono"><%= _stats.paid || 0 %></div>
+    </div>
+    <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+      <p class="text-xs font-bold uppercase tracking-wider text-emerald-600 mb-1">Terverifikasi</p>
+      <div class="text-3xl font-extrabold text-slate-900 font-mono"><%= _stats.verified || 0 %></div>
     </div>
   </div>
 
@@ -53,16 +71,18 @@
         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
         <input id="admin-return-search" class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all placeholder:text-slate-400" placeholder="Cari peminjam, alat, atau kode..." type="text"/>
       </div>
-      <select id="admin-filter-status" class="w-full sm:w-52 pl-3 pr-10 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all cursor-pointer">
+      <select id="admin-filter-status" class="w-full sm:w-56 pl-3 pr-10 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all cursor-pointer">
         <option value="">Semua Status</option>
         <option value="Menunggu Verifikasi">Menunggu Verifikasi</option>
+        <option value="Bayar Denda">Bayar Denda</option>
+        <option value="Sudah Dibayarkan">Sudah Dibayarkan</option>
         <option value="Terverifikasi">Terverifikasi</option>
         <option value="Ditolak">Ditolak</option>
       </select>
     </div>
 
     <div class="overflow-x-auto">
-      <table class="w-full text-left border-collapse min-w-[980px]">
+      <table class="w-full text-left border-collapse min-w-[1180px]">
         <thead class="bg-slate-50/80 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
           <tr>
             <th class="px-4 py-3.5 w-14 text-center">No</th>
@@ -71,34 +91,55 @@
             <th class="px-4 py-3.5">Tgl Aktual</th>
             <th class="px-4 py-3.5">Keterlambatan</th>
             <th class="px-4 py-3.5">Kondisi</th>
+            <th class="px-4 py-3.5">Denda</th>
+            <th class="px-4 py-3.5">Pembayaran</th>
             <th class="px-4 py-3.5">Petugas Verifikator</th>
             <th class="px-4 py-3.5">Status</th>
+            <th class="px-4 py-3.5 text-center w-28">Aksi</th>
           </tr>
         </thead>
         <tbody id="admin-return-tbody" class="divide-y divide-slate-100 text-sm bg-white">
           <% if (!_items.length) { %>
-            <tr><td colspan="8" class="px-4 py-12 text-center text-slate-500">Belum ada data pengembalian.</td></tr>
+            <tr><td colspan="11" class="px-4 py-12 text-center text-slate-500">Belum ada data pengembalian.</td></tr>
           <% } %>
-          <% _items.forEach((r, idx) => { 
+          <% _items.forEach((r, idx) => {
                const late = lateInfo(r);
-               const status = r.status_verifikasi || 'Menunggu Verifikasi';
-               const badge = status === 'Terverifikasi'
-                 ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
-                 : status === 'Ditolak'
-                   ? 'bg-red-50 text-red-700 border-red-100'
-                   : 'bg-amber-50 text-amber-700 border-amber-100';
-               const dot = status === 'Terverifikasi' ? 'bg-emerald-500' : status === 'Ditolak' ? 'bg-red-500' : 'bg-amber-500';
+               const status = effectiveStatus(r);
+               const ss = statusStyle(status);
+               const paid = isPaid(r);
           %>
             <tr class="admin-return-row hover:bg-slate-50/80 transition-colors"
-                data-search="<%= [r.kode_peminjaman, r.nama_lengkap, r.username, r.nama_alat, r.nama_lab, r.kondisi_fisik, status, r.petugas_nama].filter(Boolean).join(' ').toLowerCase() %>"
-                data-status="<%= status %>">
+                data-id="<%= r.id %>"
+                data-kode="<%= r.kode_pengembalian || '-' %>"
+                data-peminjam="<%= r.nama_lengkap || '-' %>"
+                data-username="<%= r.username || '-' %>"
+                data-kode-pinjam="<%= r.kode_peminjaman || '-' %>"
+                data-alat="<%= r.alat_nama || '-' %>"
+                data-kode-alat="<%= r.alat_kode || '-' %>"
+                data-lab="<%= r.nama_lab || '-' %>"
+                data-jumlah="<%= r.jumlah_pinjam || 1 %>"
+                data-pinjam="<%= fmtDate(r.tanggal_pinjam) %>"
+                data-tempo="<%= fmtDate(r.tanggal_kembali_rencana) %>"
+                data-aktual="<%= fmtDate(r.tanggal_kembali_aktual) %>"
+                data-terlambat="<%= late.text %>"
+                data-kondisi="<%= r.kondisi_fisik || '-' %>"
+                data-catatan="<%= r.catatan_pengembali || '' %>"
+                data-denda="<%= Number(r.denda || 0) %>"
+                data-catatan-petugas="<%= r.catatan_petugas || '' %>"
+                data-status="<%= status %>"
+                data-status-verifikasi="<%= r.status_verifikasi || '' %>"
+                data-status-denda="<%= r.status_denda || 'Tidak Ada' %>"
+                data-dibayar="<%= paid ? '1' : '0' %>"
+                data-tgl-bayar="<%= r.tanggal_bayar_denda ? fmtDate(r.tanggal_bayar_denda) : '-' %>"
+                data-petugas="<%= r.petugas_nama || '-' %>"
+                data-search="<%= [r.kode_peminjaman, r.nama_lengkap, r.username, r.alat_nama, r.nama_lab, r.kondisi_fisik, status, r.petugas_nama].filter(Boolean).join(' ').toLowerCase() %>">
               <td class="px-4 py-3.5 text-center text-slate-500 font-mono text-xs"><%= idx + 1 %></td>
               <td class="px-4 py-3.5">
                 <div class="font-semibold text-slate-900"><%= r.nama_lengkap || '-' %></div>
                 <div class="text-xs text-slate-500 font-mono mt-0.5"><%= r.kode_peminjaman || '-' %></div>
               </td>
               <td class="px-4 py-3.5">
-                <div class="font-medium text-slate-800"><%= r.nama_alat || '-' %></div>
+                <div class="font-medium text-slate-800"><%= r.alat_nama || '-' %></div>
                 <div class="text-xs text-slate-500"><%= r.nama_lab || '-' %> · <%= r.jumlah_pinjam || 1 %> unit</div>
               </td>
               <td class="px-4 py-3.5 whitespace-nowrap">
@@ -107,11 +148,34 @@
               </td>
               <td class="px-4 py-3.5 whitespace-nowrap <%= late.cls %> text-xs"><%= late.text %></td>
               <td class="px-4 py-3.5 text-slate-700"><%= r.kondisi_fisik || '-' %></td>
+              <td class="px-4 py-3.5 whitespace-nowrap text-sm font-semibold <%= Number(r.denda || 0) > 0 ? 'text-rose-600' : 'text-slate-400' %>"><%= Number(r.denda || 0) > 0 ? rupiah(r.denda) : '-' %></td>
+              <td class="px-4 py-3.5 whitespace-nowrap">
+                <% if (paid) { %>
+                  <div class="flex flex-col gap-0.5">
+                    <span class="inline-flex items-center gap-1 text-xs font-semibold text-blue-700"><span class="material-symbols-outlined text-[14px]">verified</span>Sudah Dibayarkan</span>
+                    <span class="text-[11px] text-slate-400"><%= fmtDate(r.tanggal_bayar_denda) %></span>
+                  </div>
+                <% } else if (status === 'Bayar Denda') { %>
+                  <span class="text-xs font-semibold text-rose-600">Belum Dibayar</span>
+                <% } else { %>
+                  <span class="text-xs text-slate-400">-</span>
+                <% } %>
+              </td>
               <td class="px-4 py-3.5 text-slate-700"><%= r.petugas_nama || '-' %></td>
               <td class="px-4 py-3.5 whitespace-nowrap">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border <%= badge %>">
-                  <span class="w-1.5 h-1.5 rounded-full <%= dot %>"></span><%= status %>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border <%= ss.badge %>">
+                  <span class="w-1.5 h-1.5 rounded-full <%= ss.dot %>"></span><%= status %>
                 </span>
+              </td>
+              <td class="px-4 py-3.5 text-center">
+                <div class="inline-flex items-center justify-center gap-1.5">
+                  <button type="button" class="btn-view-return inline-flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 text-slate-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-colors" title="Lihat detail" aria-label="Lihat detail">
+                    <span class="material-symbols-outlined text-[18px]">visibility</span>
+                  </button>
+                  <button type="button" class="btn-delete-return inline-flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 text-slate-500 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-colors" title="Hapus data" aria-label="Hapus data">
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
+                </div>
               </td>
             </tr>
           <% }); %>
@@ -120,7 +184,7 @@
     </div>
     <div class="px-5 py-3.5 border-t border-slate-100 bg-slate-50/60 flex items-center justify-between text-xs text-slate-500">
       <span>Menampilkan <span id="admin-return-count" class="font-semibold text-slate-700"><%= _items.length %></span> data</span>
-      <span>Mode pantau (read-only)</span>
+      <span>Mode pantau (read-only) · hapus data tersedia</span>
     </div>
   </div>
 </div>
@@ -131,18 +195,94 @@ document.addEventListener('DOMContentLoaded', function () {
   const searchInput = document.getElementById('admin-return-search');
   const statusFilter = document.getElementById('admin-filter-status');
   const countEl = document.getElementById('admin-return-count');
+  const modalApi = window.sipatModal;
+
+  function rupiah(value) {
+    return 'Rp ' + Number(value || 0).toLocaleString('id-ID');
+  }
 
   function applyFilters() {
     const q = (searchInput?.value || '').toLowerCase().trim();
     const st = statusFilter?.value || '';
     let visible = 0;
     rows.forEach(row => {
-      const show = (!q || (row.dataset.search || '').includes(q)) && (!st || row.dataset.status === st);
+      const matchStatus = !st ||
+        row.dataset.status === st ||
+        (st === 'Sudah Dibayarkan' && row.dataset.dibayar === '1');
+      const show = (!q || (row.dataset.search || '').includes(q)) && matchStatus;
       row.classList.toggle('hidden', !show);
       if (show) visible++;
     });
     if (countEl) countEl.textContent = String(visible);
   }
+
+  function openDetail(row) {
+    if (!modalApi || typeof modalApi.info !== 'function') return;
+    const d = row.dataset;
+    const paid = d.dibayar === '1';
+    let statusHtml = modalApi.statusBadge(d.status,
+      d.status === 'Terverifikasi' ? 'success' : d.status === 'Ditolak' || d.status === 'Bayar Denda' ? 'danger' : 'warning');
+    if (paid) statusHtml += ' ' + modalApi.statusBadge('Sudah Dibayarkan', 'info');
+
+    const fields = [
+      { label: 'Kode Pengembalian', value: d.kode, mono: true },
+      { label: 'Kode Peminjaman', value: d.kodePinjam, mono: true },
+      { label: 'Peminjam', value: d.peminjam + (d.username !== '-' ? ' (@' + d.username + ')' : '') },
+      { label: 'Alat', value: d.alat },
+      { label: 'Kode Alat', value: d.kodeAlat, mono: true },
+      { label: 'Laboratorium', value: d.lab },
+      { label: 'Jumlah', value: d.jumlah + ' unit' },
+      { label: 'Tanggal Pinjam', value: d.pinjam },
+      { label: 'Jatuh Tempo', value: d.tempo },
+      { label: 'Tanggal Kembali Aktual', value: d.aktual },
+      { label: 'Keterlambatan', value: d.terlambat },
+      { label: 'Kondisi Barang', value: d.kondisi },
+      { label: 'Keterangan Peminjam', value: d.catatan || '-' },
+      { label: 'Denda', value: Number(d.denda || 0) > 0 ? rupiah(d.denda) : '-' },
+      { label: 'Catatan Pelanggaran', value: d.catatanPetugas || '-' },
+      { label: 'Pembayaran Denda', value: paid ? 'Sudah Dibayarkan' : (d.status === 'Bayar Denda' ? 'Belum Dibayar' : '-') },
+      { label: 'Tanggal Bayar Denda', value: paid ? d.tglBayar : '-' },
+      { label: 'Petugas Verifikator', value: d.petugas },
+      { label: 'Status', html: statusHtml }
+    ];
+
+    modalApi.info({
+      title: 'Detail Pengembalian',
+      subtitle: d.kode + ' · ' + d.peminjam,
+      tone: 'info',
+      message: modalApi.detailList(fields)
+    });
+  }
+
+  function deleteItem(row) {
+    if (!modalApi || typeof modalApi.confirm !== 'function') return;
+    const d = row.dataset;
+    modalApi.confirm({
+      title: 'Hapus Data Pengembalian',
+      subtitle: d.kode,
+      tone: 'danger',
+      message: '<p class="text-sm text-slate-700">Hapus data pengembalian <span class="font-semibold">' +
+        modalApi.escape(d.kode) + '</span> milik <span class="font-semibold">' +
+        modalApi.escape(d.peminjam) + '</span>?</p><p class="text-xs text-slate-500 mt-2">Tindakan ini tidak dapat dibatalkan.</p>',
+      confirmText: 'Hapus',
+      loadingText: 'Menghapus...',
+      onConfirm: async function () {
+        const res = await fetch('/pengembalian/admin/' + encodeURIComponent(d.id), { method: 'DELETE' });
+        const data = await res.json().catch(function () { return {}; });
+        if (!res.ok || !data.ok) throw new Error(data.message || 'Gagal menghapus data pengembalian.');
+        modalApi.toast(data.message || 'Data pengembalian berhasil dihapus.', 'success');
+        row.remove();
+        if (countEl) countEl.textContent = String(document.querySelectorAll('.admin-return-row').length);
+      }
+    });
+  }
+
+  rows.forEach(row => {
+    const viewBtn = row.querySelector('.btn-view-return');
+    const delBtn = row.querySelector('.btn-delete-return');
+    if (viewBtn) viewBtn.addEventListener('click', () => openDetail(row));
+    if (delBtn) delBtn.addEventListener('click', () => deleteItem(row));
+  });
 
   if (searchInput) searchInput.addEventListener('input', applyFilters);
   if (statusFilter) statusFilter.addEventListener('change', applyFilters);

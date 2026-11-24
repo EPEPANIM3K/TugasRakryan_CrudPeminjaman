@@ -90,6 +90,11 @@ const LogAktivitas = {
       'SELECT DISTINCT modul FROM log_aktivitas WHERE modul IS NOT NULL ORDER BY modul ASC'
     );
     return rows.map((row) => row.modul);
+  },
+
+  async remove(id) {
+    const [result] = await db.execute('DELETE FROM log_aktivitas WHERE id = ?', [id]);
+    return result.affectedRows > 0;
   }
 };
 

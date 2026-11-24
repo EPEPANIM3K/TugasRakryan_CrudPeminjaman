@@ -16,6 +16,19 @@ function success(res, data, message) {
   res.json({ ok: true, data, message });
 }
 
+function isPaid(item) {
+  return Boolean(item) && (Number(item.denda_dibayar) === 1 || item.status_denda === 'Lunas');
+}
+
+// Status efektif yang ditampilkan di UI (Bayar Denda tidak disimpan di status_verifikasi).
+function effectiveStatus(item) {
+  if (!item) return 'Menunggu Verifikasi';
+  if (item.status_verifikasi === 'Terverifikasi') return 'Terverifikasi';
+  if (item.status_verifikasi === 'Ditolak') return 'Ditolak';
+  if (item.status_denda === 'Belum Lunas' && Number(item.denda) > 0) return 'Bayar Denda';
+  return 'Menunggu Verifikasi';
+}
+
 // ---------- USER: Halaman Pengembalian ----------
 exports.userPage = async (req, res) => {
   try {
@@ -35,15 +48,24 @@ exports.userPage = async (req, res) => {
       eligibleStatuses.includes(l.status) && !blocking.has(Number(l.id))
     );
 
-    const pendingReturns = myPengembalian.filter(p => p.status_verifikasi === 'Menunggu Verifikasi');
+    const penaltyReturns = myPengembalian.filter(p => effectiveStatus(p) === 'Bayar Denda');
+    const pendingReturns = myPengembalian.filter(p => effectiveStatus(p) === 'Menunggu Verifikasi' && !isPaid(p));
+    const paidReturns = myPengembalian.filter(p => effectiveStatus(p) === 'Menunggu Verifikasi' && isPaid(p));
+
     const returnCards = [
       ...eligibleLoans.map(l => ({ type: 'loan', loan: l, pengembalian: null })),
-      ...pendingReturns.map(p => ({ type: 'pending', loan: p, pengembalian: p }))
+      ...penaltyReturns.map(p => ({ type: 'penalty', loan: p, pengembalian: p })),
+      ...pendingReturns.map(p => ({ type: 'pending', loan: p, pengembalian: p })),
+      ...paidReturns.map(p => ({ type: 'paid', loan: p, pengembalian: p }))
     ];
 
-    const pendingVerify = pendingReturns.length;
-    const doneCount = myPengembalian.filter(p => p.status_verifikasi === 'Terverifikasi').length;
-    const rejectedCount = myPengembalian.filter(p => p.status_verifikasi === 'Ditolak').length;
+    const stats = {
+      pendingVerify: pendingReturns.length + paidReturns.length,
+      penaltyCount: penaltyReturns.length,
+      paidCount: paidReturns.length,
+      doneCount: myPengembalian.filter(p => effectiveStatus(p) === 'Terverifikasi').length,
+      rejectedCount: myPengembalian.filter(p => effectiveStatus(p) === 'Ditolak').length
+    };
 
     res.render('pages/peminjam/pengembalian', {
       layout: 'layouts/peminjam',
@@ -53,7 +75,7 @@ exports.userPage = async (req, res) => {
       returnCards,
       myPengembalian,
       formatTanggal: formatTanggalSaja,
-      stats: { pendingVerify, doneCount, rejectedCount }
+      stats
     });
   } catch (error) {
     console.error('Halaman pengembalian user error:', error);
@@ -100,6 +122,38 @@ exports.create = async (req, res) => {
   }
 };
 
+// ---------- USER: Konfirmasi Pembayaran Denda ----------
+exports.pay = async (req, res) => {
+  try {
+    const user = req.session.user;
+    const id = Number(req.params.id);
+    if (!id) return res.status(400).json({ ok: false, message: 'ID pengembalian wajib diisi.' });
+
+    const paidId = await Pengembalian.pay(id, user.id);
+    const item = await Pengembalian.findById(paidId);
+
+    await LogAktivitas.record({
+      req,
+      aksi: 'Konfirmasi Pembayaran Denda',
+      modul: 'Pengembalian',
+      referensiTipe: 'pengembalian',
+      referensiId: item.id,
+      deskripsi: 'Peminjam ' + (user.nama_lengkap || user.username || '-') +
+        ' mengonfirmasi pembayaran denda ' + item.kode_pengembalian +
+        ' sebesar Rp ' + Number(item.denda || 0).toLocaleString('id-ID') + '.',
+      metadata: {
+        denda: Number(item.denda || 0),
+        status_denda: item.status_denda,
+        denda_dibayar: item.denda_dibayar
+      }
+    });
+
+    success(res, item, 'Pembayaran denda dikonfirmasi. Menunggu verifikasi petugas.');
+  } catch (error) {
+    fail(res, error);
+  }
+};
+
 // ---------- PETUGAS: Verifikasi Pengembalian ----------
 exports.verify = async (req, res) => {
   try {
@@ -110,31 +164,59 @@ exports.verify = async (req, res) => {
 
     const body = req.body && typeof req.body === 'object' ? req.body : {};
     const status = body.status || body.status_verifikasi;
-    const { kondisi_fisik, catatan, tanggal_kembali_aktual } = body;
+    const kondisi_fisik = body.kondisi_fisik;
+    const catatan = body.catatan || body.catatan_pelanggaran;
+    const denda = Math.max(0, Number(body.denda) || 0);
+    const tanggal_kembali_aktual = body.tanggal_kembali_aktual;
+
     if (status !== 'Terverifikasi' && status !== 'Ditolak') {
       return res.status(400).json({
         ok: false,
         message: 'Status verifikasi harus Terverifikasi atau Ditolak.'
       });
     }
+    if (status === 'Terverifikasi' && denda > 0) {
+      return res.status(400).json({
+        ok: false,
+        message: 'Nominal denda sudah diisi. Gunakan tombol Tolak untuk mengirim pengajuan denda.'
+      });
+    }
 
     const verifiedId = await Pengembalian.verify(Number(req.params.id), petugas.id, {
-      status, kondisi_fisik, catatan, tanggal_kembali_aktual
+      status, kondisi_fisik, catatan, denda, tanggal_kembali_aktual
     });
 
     const verified = await Pengembalian.findById(verifiedId);
+    const isPenaltyRequest = status === 'Ditolak' && denda > 0;
+    const aksi = isPenaltyRequest
+      ? 'Pengajuan Denda Pengembalian'
+      : 'Verifikasi Pengembalian - ' + status;
+    const message = isPenaltyRequest
+      ? 'Pengajuan denda dikirim ke peminjam. Menunggu pembayaran.'
+      : 'Pengembalian ' + status + '.';
+
     await LogAktivitas.record({
       req,
-      aksi: 'Verifikasi Pengembalian - ' + status,
+      aksi,
       modul: 'Pengembalian',
       referensiTipe: 'pengembalian',
       referensiId: verified.id,
-      deskripsi: 'Verifikasi pengembalian ' + verified.kode_pengembalian +
-        ' oleh petugas ' + petugas.nama_lengkap + ': ' + status,
-      metadata: { status, kondisi_fisik: kondisi_fisik || null, catatan: catatan || null }
+      deskripsi: isPenaltyRequest
+        ? 'Petugas ' + petugas.nama_lengkap + ' mengajukan denda Rp ' +
+          Number(verified.denda || 0).toLocaleString('id-ID') +
+          ' untuk pengembalian ' + verified.kode_pengembalian + '.'
+        : 'Verifikasi pengembalian ' + verified.kode_pengembalian +
+          ' oleh petugas ' + petugas.nama_lengkap + ': ' + status,
+      metadata: {
+        status,
+        kondisi_fisik: kondisi_fisik || null,
+        catatan: catatan || null,
+        denda: Number(verified.denda || 0),
+        status_denda: verified.status_denda
+      }
     });
 
-    success(res, verified, 'Pengembalian ' + status + '.');
+    success(res, verified, message);
   } catch (error) {
     fail(res, error);
   }
@@ -144,16 +226,21 @@ exports.verify = async (req, res) => {
 exports.petugasPage = async (req, res) => {
   try {
     const items = await Pengembalian.getAll({});
-    const pending = items.filter(p => p.status_verifikasi === 'Menunggu Verifikasi').length;
-    const verified = items.filter(p => p.status_verifikasi === 'Terverifikasi').length;
-    const rejected = items.filter(p => p.status_verifikasi === 'Ditolak').length;
+    const stats = {
+      pending: items.filter(p => effectiveStatus(p) === 'Menunggu Verifikasi' && !isPaid(p)).length,
+      penalty: items.filter(p => effectiveStatus(p) === 'Bayar Denda').length,
+      paid: items.filter(p => effectiveStatus(p) === 'Menunggu Verifikasi' && isPaid(p)).length,
+      verified: items.filter(p => effectiveStatus(p) === 'Terverifikasi').length,
+      rejected: items.filter(p => effectiveStatus(p) === 'Ditolak').length,
+      total: items.length
+    };
 
     res.render('pages/petugas/pengembalian', {
       layout: 'layouts/petugas',
-      pageTitle: 'Memantau Pengembalian',
+      pageTitle: 'Verifikasi Pengembalian',
       currentPath: '/petugas/pengembalian',
       items,
-      stats: { pending, verified, rejected },
+      stats,
       formatTanggal: formatTanggalSaja
     });
   } catch (error) {
@@ -162,19 +249,35 @@ exports.petugasPage = async (req, res) => {
   }
 };
 
-// ---------- ADMIN: Halaman Kelola Pengembalian ----------
+// ---------- ADMIN: Halaman Kelola Pengembalian (read-only + hapus) ----------
 exports.adminPage = async (req, res) => {
   try {
+    const status = String(req.query.status || '').trim();
     const filters = {
-      statusVerifikasi: req.query.status || undefined,
+      statusVerifikasi: undefined,
+      statusDenda: undefined,
       search: req.query.search || undefined
     };
-    const items = await Pengembalian.getAll(filters);
+    let paidOnly = false;
+
+    if (status === 'Bayar Denda') {
+      filters.statusDenda = 'Belum Lunas';
+    } else if (status === 'Sudah Dibayarkan') {
+      paidOnly = true;
+    } else if (status) {
+      filters.statusVerifikasi = status;
+    }
+
+    let items = await Pengembalian.getAll(filters);
+    if (paidOnly) items = items.filter(isPaid);
+
     const stats = {
-      pending: items.filter(p => p.status_verifikasi === 'Menunggu Verifikasi').length,
-      verified: items.filter(p => p.status_verifikasi === 'Terverifikasi').length,
-      rejected: items.filter(p => p.status_verifikasi === 'Ditolak').length,
-      total: items.length
+      total: (await Pengembalian.getAll({ search: filters.search })).length,
+      pending: items.filter(p => effectiveStatus(p) === 'Menunggu Verifikasi' && !isPaid(p)).length,
+      penalty: items.filter(p => effectiveStatus(p) === 'Bayar Denda').length,
+      paid: items.filter(p => effectiveStatus(p) === 'Menunggu Verifikasi' && isPaid(p)).length,
+      verified: items.filter(p => effectiveStatus(p) === 'Terverifikasi').length,
+      rejected: items.filter(p => effectiveStatus(p) === 'Ditolak').length
     };
 
     res.render('pages/admin/pengembalian', {
@@ -183,7 +286,7 @@ exports.adminPage = async (req, res) => {
       currentPath: '/admin/pengembalian',
       items,
       stats,
-      filters,
+      filters: { status, search: filters.search || '' },
       formatTanggal: formatTanggalSaja
     });
   } catch (error) {
@@ -198,6 +301,7 @@ exports.list = async (req, res) => {
     const filters = {
       userId: req.query.userId ? Number(req.query.userId) : undefined,
       statusVerifikasi: req.query.status || undefined,
+      statusDenda: req.query.status_denda || undefined,
       search: req.query.search || undefined
     };
     const items = await Pengembalian.getAll(filters);
@@ -225,8 +329,24 @@ exports.remove = async (req, res) => {
   try {
     const id = Number(req.params.id);
     if (!id) return res.status(400).json({ ok: false, message: 'ID wajib diisi.' });
+
+    const item = await Pengembalian.findById(id);
+    if (!item) return res.status(404).json({ ok: false, message: 'Pengembalian tidak ditemukan.' });
+
     const removed = await Pengembalian.remove(id);
     if (!removed) return res.status(404).json({ ok: false, message: 'Pengembalian tidak ditemukan.' });
+
+    await LogAktivitas.record({
+      req,
+      aksi: 'Hapus Pengembalian',
+      modul: 'Pengembalian',
+      referensiTipe: 'pengembalian',
+      referensiId: item.id,
+      deskripsi: 'Menghapus data pengembalian ' + (item.kode_pengembalian || '-') +
+        ' milik ' + (item.nama_lengkap || 'peminjam') + '.',
+      metadata: { status_verifikasi: item.status_verifikasi, denda: Number(item.denda || 0) }
+    });
+
     success(res, null, 'Pengembalian berhasil dihapus.');
   } catch (error) {
     fail(res, error);

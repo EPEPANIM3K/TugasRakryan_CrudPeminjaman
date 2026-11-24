@@ -115,8 +115,7 @@ exports.removePeminjaman = async (req, res) => {
   }
 };
 
-exports.aktivitasPage = async (req, res) => {
-  try {
+exports.aktivitasPage = async (req, res) => {  try {
     const filters = {
       search: String(req.query.search || '').trim(),
       role: String(req.query.role || '').trim(),
@@ -141,5 +140,29 @@ exports.aktivitasPage = async (req, res) => {
   } catch (error) {
     console.error('Halaman log aktivitas error:', error);
     res.status(500).send('Gagal memuat log aktivitas.');
+  }
+};
+
+exports.removeAktivitas = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!id) return res.status(400).json({ ok: false, message: 'ID log wajib diisi.' });
+
+    const removed = await LogAktivitas.remove(id);
+    if (!removed) return res.status(404).json({ ok: false, message: 'Log aktivitas tidak ditemukan.' });
+
+    await LogAktivitas.record({
+      req,
+      aksi: 'Hapus Log Aktivitas',
+      modul: 'Log Aktivitas',
+      referensiTipe: 'log_aktivitas',
+      referensiId: id,
+      deskripsi: 'Admin menghapus log aktivitas #' + id + '.',
+      metadata: { log_id: id }
+    });
+
+    res.json({ ok: true, message: 'Log aktivitas berhasil dihapus.' });
+  } catch (error) {
+    fail(res, error);
   }
 };

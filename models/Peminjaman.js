@@ -130,7 +130,8 @@ const Peminjaman = {
       rejected: 0,
       borrowed: 0,
       done: 0,
-      cancelled: 0
+      cancelled: 0,
+      bayarDenda: 0
     };
 
     rows.forEach((row) => {
@@ -140,6 +141,8 @@ const Peminjaman = {
       else if (row.status === 'Disetujui') stats.approved += count;
       else if (row.status === 'Ditolak') stats.rejected += count;
       else if (row.status === 'Dipinjam' || row.status === 'Terlambat') stats.borrowed += count;
+      else if (row.status === 'Menunggu Verifikasi') stats.pendingVerify = (stats.pendingVerify || 0) + count;
+      else if (row.status === 'Bayar Denda') stats.bayarDenda += count;
       else if (row.status === 'Selesai') stats.done += count;
       else if (row.status === 'Dibatalkan') stats.cancelled += count;
     });

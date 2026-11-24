@@ -52,6 +52,12 @@ const STATUS_META = {
     textClass: 'text-amber-600',
     dotClass: 'bg-amber-500'
   },
+  'Bayar Denda': {
+    label: 'Bayar Denda',
+    badgeClass: 'bg-rose-50 text-rose-700 border border-rose-200',
+    textClass: 'text-rose-600',
+    dotClass: 'bg-rose-500'
+  },
   'Selesai': {
     label: 'Selesai',
     badgeClass: 'bg-slate-50 text-slate-700 border border-slate-200',

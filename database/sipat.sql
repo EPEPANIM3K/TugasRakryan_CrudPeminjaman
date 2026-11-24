@@ -135,6 +135,7 @@ CREATE TABLE peminjaman (
                         'Dipinjam',
                         'Terlambat',
                         'Menunggu Verifikasi',
+                        'Bayar Denda',
                         'Selesai',
                         'Dibatalkan'
                       ) NOT NULL DEFAULT 'Menunggu Persetujuan',
@@ -208,6 +209,9 @@ CREATE TABLE pengembalian (
   catatan_petugas     TEXT            DEFAULT NULL,
   terlambat_hari      INT UNSIGNED    NOT NULL DEFAULT 0,
   denda               DECIMAL(12,2)   NOT NULL DEFAULT 0.00,
+  status_denda        ENUM('Tidak Ada','Belum Lunas','Lunas') NOT NULL DEFAULT 'Tidak Ada',
+  tanggal_bayar_denda DATETIME        DEFAULT NULL,
+  denda_dibayar       TINYINT(1)      NOT NULL DEFAULT 0,
   status_verifikasi   ENUM('Menunggu Verifikasi','Terverifikasi','Ditolak') NOT NULL DEFAULT 'Menunggu Verifikasi',
   diverifikasi_oleh   BIGINT UNSIGNED DEFAULT NULL,     -- petugas/admin
   diverifikasi_at     DATETIME        DEFAULT NULL,

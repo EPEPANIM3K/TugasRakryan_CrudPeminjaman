@@ -3,13 +3,13 @@
   <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
     <div class="flex flex-col gap-1">
       <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Verifikasi Pengembalian</h1>
-      <p class="text-slate-500 text-sm mt-1">Pantau pengajuan pengembalian dari peminjam, lalu verifikasi atau tolak sesuai kondisi barang.</p>
+      <p class="text-slate-500 text-sm mt-1">Periksa detail pengembalian dari peminjam. Konfirmasi jika barang normal, atau kirim pengajuan denda bila ada kerusakan / keterlambatan.</p>
     </div>
   </div>
 
   <%
     const _items = Array.isArray(items) ? items : [];
-    const _stats = stats || { total: 0, pending: 0, verified: 0, rejected: 0 };
+    const _stats = stats || { pending: 0, penalty: 0, paid: 0, verified: 0, rejected: 0 };
     const fmtDate = (v) => {
       if (!v) return '-';
       const d = new Date(v);
@@ -19,16 +19,30 @@
     const lateInfo = (r) => {
       const due = r.tanggal_kembali_rencana ? new Date(r.tanggal_kembali_rencana) : null;
       const act = r.tanggal_kembali_aktual ? new Date(r.tanggal_kembali_aktual) : null;
-      if (!due || !act) return { text: '-', cls: 'text-slate-500', late: false };
+      if (!due || !act) return { text: '-', cls: 'text-slate-500' };
       const d0 = new Date(due.getFullYear(), due.getMonth(), due.getDate());
       const a0 = new Date(act.getFullYear(), act.getMonth(), act.getDate());
       const diff = Math.round((a0 - d0) / 86400000);
-      if (diff > 0) return { text: diff + ' Hari', cls: 'text-rose-600 font-semibold', late: true };
-      return { text: 'Tepat waktu', cls: 'text-slate-500', late: false };
+      if (diff > 0) return { text: diff + ' Hari', cls: 'text-rose-600 font-semibold' };
+      return { text: 'Tepat waktu', cls: 'text-slate-500' };
     };
+    const isPaid = (r) => Number(r.denda_dibayar) === 1 || r.status_denda === 'Lunas';
+    const effectiveStatus = (r) => {
+      if (r.status_verifikasi === 'Terverifikasi') return 'Terverifikasi';
+      if (r.status_verifikasi === 'Ditolak') return 'Ditolak';
+      if (r.status_denda === 'Belum Lunas' && Number(r.denda) > 0) return 'Bayar Denda';
+      return 'Menunggu Verifikasi';
+    };
+    const statusStyle = (status) => {
+      if (status === 'Terverifikasi') return { badge: 'bg-emerald-50 text-emerald-700 border-emerald-100', dot: 'bg-emerald-500' };
+      if (status === 'Ditolak') return { badge: 'bg-red-50 text-red-700 border-red-100', dot: 'bg-red-500' };
+      if (status === 'Bayar Denda') return { badge: 'bg-rose-50 text-rose-700 border-rose-100', dot: 'bg-rose-500' };
+      return { badge: 'bg-amber-50 text-amber-700 border-amber-100', dot: 'bg-amber-500' };
+    };
+    const rupiah = (v) => 'Rp ' + Number(v || 0).toLocaleString('id-ID');
   %>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
     <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
       <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center shrink-0">
         <span class="material-symbols-outlined text-[26px]">hourglass_top</span>
@@ -39,21 +53,30 @@
       </div>
     </div>
     <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
+      <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined text-[26px]">payments</span>
+      </div>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-0.5">Bayar Denda</p>
+        <div class="text-3xl font-extrabold text-slate-900 font-mono leading-none" id="stat-penalty"><%= _stats.penalty || 0 %></div>
+      </div>
+    </div>
+    <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
+      <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined text-[26px]">verified</span>
+      </div>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-0.5">Sudah Dibayarkan</p>
+        <div class="text-3xl font-extrabold text-slate-900 font-mono leading-none" id="stat-paid"><%= _stats.paid || 0 %></div>
+      </div>
+    </div>
+    <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
       <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
         <span class="material-symbols-outlined text-[26px]">check_circle</span>
       </div>
       <div>
         <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-0.5">Terverifikasi</p>
         <div class="text-3xl font-extrabold text-slate-900 font-mono leading-none" id="stat-verified"><%= _stats.verified || 0 %></div>
-      </div>
-    </div>
-    <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
-      <div class="w-12 h-12 rounded-xl bg-red-50 text-red-600 border border-red-100 flex items-center justify-center shrink-0">
-        <span class="material-symbols-outlined text-[26px]">cancel</span>
-      </div>
-      <div>
-        <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-0.5">Ditolak</p>
-        <div class="text-3xl font-extrabold text-slate-900 font-mono leading-none" id="stat-rejected"><%= _stats.rejected || 0 %></div>
       </div>
     </div>
   </div>
@@ -68,6 +91,7 @@
         <select id="filter-status" class="w-full sm:w-52 pl-3 pr-10 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all cursor-pointer">
           <option value="">Semua Status</option>
           <option value="Menunggu Verifikasi">Menunggu Verifikasi</option>
+          <option value="Bayar Denda">Bayar Denda</option>
           <option value="Terverifikasi">Terverifikasi</option>
           <option value="Ditolak">Ditolak</option>
         </select>
@@ -85,34 +109,49 @@
             <th class="px-4 py-3.5">Keterlambatan</th>
             <th class="px-4 py-3.5">Kondisi</th>
             <th class="px-4 py-3.5">Status</th>
-            <th class="px-4 py-3.5 text-center w-40">Aksi</th>
+            <th class="px-4 py-3.5 text-center w-24">Aksi</th>
           </tr>
         </thead>
         <tbody id="return-tbody" class="divide-y divide-slate-100 text-sm bg-white">
           <% if (!_items.length) { %>
             <tr><td colspan="8" class="px-4 py-12 text-center text-slate-500">Belum ada data pengembalian.</td></tr>
           <% } %>
-          <% _items.forEach((r, idx) => { 
+          <% _items.forEach((r, idx) => {
                const late = lateInfo(r);
-               const status = r.status_verifikasi || 'Menunggu Verifikasi';
-               const badge = status === 'Terverifikasi'
-                 ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
-                 : status === 'Ditolak'
-                   ? 'bg-red-50 text-red-700 border-red-100'
-                   : 'bg-amber-50 text-amber-700 border-amber-100';
-               const dot = status === 'Terverifikasi' ? 'bg-emerald-500' : status === 'Ditolak' ? 'bg-red-500' : 'bg-amber-500';
+               const status = effectiveStatus(r);
+               const ss = statusStyle(status);
           %>
             <tr class="return-row hover:bg-slate-50/80 transition-colors"
                 data-id="<%= r.id %>"
-                data-search="<%= [r.kode_peminjaman, r.nama_lengkap, r.username, r.nama_alat, r.nama_lab, r.kondisi_fisik, status].filter(Boolean).join(' ').toLowerCase() %>"
-                data-status="<%= status %>">
+                data-kode="<%= r.kode_pengembalian || '-' %>"
+                data-peminjam="<%= r.nama_lengkap || '-' %>"
+                data-username="<%= r.username || '-' %>"
+                data-alat="<%= r.alat_nama || '-' %>"
+                data-kode-alat="<%= r.alat_kode || '-' %>"
+                data-lab="<%= r.nama_lab || '-' %>"
+                data-jumlah="<%= r.jumlah_pinjam || 1 %>"
+                data-pinjam="<%= fmtDate(r.tanggal_pinjam) %>"
+                data-tempo="<%= fmtDate(r.tanggal_kembali_rencana) %>"
+                data-aktual="<%= fmtDate(r.tanggal_kembali_aktual) %>"
+                data-terlambat="<%= late.text %>"
+                data-kondisi="<%= r.kondisi_fisik || '-' %>"
+                data-catatan="<%= r.catatan_pengembali || '' %>"
+                data-denda="<%= Number(r.denda || 0) %>"
+                data-catatan-petugas="<%= r.catatan_petugas || '' %>"
+                data-status="<%= status %>"
+                data-status-verifikasi="<%= r.status_verifikasi || '' %>"
+                data-status-denda="<%= r.status_denda || 'Tidak Ada' %>"
+                data-dibayar="<%= isPaid(r) ? '1' : '0' %>"
+                data-tgl-bayar="<%= r.tanggal_bayar_denda ? fmtDate(r.tanggal_bayar_denda) : '-' %>"
+                data-petugas="<%= r.petugas_nama || '-' %>"
+                data-search="<%= [r.kode_peminjaman, r.nama_lengkap, r.username, r.alat_nama, r.nama_lab, r.kondisi_fisik, status].filter(Boolean).join(' ').toLowerCase() %>">
               <td class="px-4 py-3.5 text-center text-slate-500 font-mono text-xs"><%= idx + 1 %></td>
               <td class="px-4 py-3.5">
                 <div class="font-semibold text-slate-900"><%= r.nama_lengkap || '-' %></div>
                 <div class="text-xs text-slate-500 font-mono mt-0.5"><%= r.kode_peminjaman || '-' %></div>
               </td>
               <td class="px-4 py-3.5">
-                <div class="font-medium text-slate-800"><%= r.nama_alat || '-' %></div>
+                <div class="font-medium text-slate-800"><%= r.alat_nama || '-' %></div>
                 <div class="text-xs text-slate-500"><%= r.nama_lab || '-' %> · <%= r.jumlah_pinjam || 1 %> unit</div>
               </td>
               <td class="px-4 py-3.5 whitespace-nowrap">
@@ -122,23 +161,21 @@
               <td class="px-4 py-3.5 whitespace-nowrap <%= late.cls %> text-xs"><%= late.text %></td>
               <td class="px-4 py-3.5 text-slate-700"><%= r.kondisi_fisik || '-' %></td>
               <td class="px-4 py-3.5 whitespace-nowrap">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border <%= badge %>">
-                  <span class="w-1.5 h-1.5 rounded-full <%= dot %>"></span><%= status %>
-                </span>
+                <div class="flex flex-col gap-1 items-start">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border <%= ss.badge %>">
+                    <span class="w-1.5 h-1.5 rounded-full <%= ss.dot %>"></span><%= status %>
+                  </span>
+                  <% if (isPaid(r) && status !== 'Terverifikasi') { %>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-100">
+                      <span class="material-symbols-outlined text-[12px]">verified</span>Sudah Dibayarkan
+                    </span>
+                  <% } %>
+                </div>
               </td>
               <td class="px-4 py-3.5 text-center">
-                <% if (status === 'Menunggu Verifikasi') { %>
-                  <div class="inline-flex items-center gap-2">
-                    <button type="button" class="btn-verify inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors" data-id="<%= r.id %>">
-                      <span class="material-symbols-outlined text-[15px]">check</span>Verifikasi
-                    </button>
-                    <button type="button" class="btn-reject inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white border border-red-200 text-red-600 hover:bg-red-50 transition-colors" data-id="<%= r.id %>">
-                      <span class="material-symbols-outlined text-[15px]">close</span>Tolak
-                    </button>
-                  </div>
-                <% } else { %>
-                  <span class="text-xs text-slate-400">-</span>
-                <% } %>
+                <button type="button" class="btn-view-return inline-flex items-center justify-center w-9 h-9 rounded-lg border border-slate-200 text-slate-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-colors" data-id="<%= r.id %>" title="Lihat detail pengembalian" aria-label="Lihat detail pengembalian">
+                  <span class="material-symbols-outlined text-[20px]">visibility</span>
+                </button>
               </td>
             </tr>
           <% }); %>
@@ -147,7 +184,95 @@
     </div>
     <div class="px-5 py-3.5 border-t border-slate-100 bg-slate-50/60 flex items-center justify-between text-xs text-slate-500">
       <span>Menampilkan <span id="return-count" class="font-semibold text-slate-700"><%= _items.length %></span> data</span>
-      <span>Petugas: verifikasi / tolak pengajuan</span>
+      <span>Petugas: verifikasi / pengajuan denda</span>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Detail Pengembalian -->
+<div id="detail-modal" class="fixed inset-0 z-[100] hidden">
+  <div id="detail-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"></div>
+  <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none">
+    <div id="detail-content" class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col overflow-hidden pointer-events-auto transform transition-all duration-300 scale-95 opacity-0 translate-y-4 max-h-[92vh]">
+      <div class="px-6 py-5 border-b border-slate-100 flex items-start justify-between bg-white shrink-0 gap-4">
+        <div class="flex items-start gap-3.5">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-[22px]">fact_check</span>
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-slate-900 leading-tight">Detail Pengembalian</h2>
+            <p id="detail-subtitle" class="text-xs text-slate-500 mt-1">Periksa kondisi dan keterangan dari peminjam.</p>
+          </div>
+        </div>
+        <button id="btn-close-detail" type="button" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors shrink-0" aria-label="Tutup modal">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4 overflow-y-auto">
+        <div id="detail-info" class="space-y-4"></div>
+
+        <div id="verify-panel" class="hidden border-t border-slate-100 pt-4 space-y-4">
+          <div id="penalty-form">
+            <div class="flex flex-col gap-1 mb-3">
+              <h3 class="text-sm font-bold text-slate-900">Verifikasi Petugas</h3>
+              <p class="text-xs text-slate-500">Biarkan nominal denda kosong / 0 jika barang normal. Isi nominal denda bila ada kerusakan, barang tidak sesuai, atau keterlambatan.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="input-denda" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Nominal Denda</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-3.5 flex items-center text-sm font-semibold text-slate-400 pointer-events-none">Rp</span>
+                  <input id="input-denda" type="number" min="0" step="1000" value="0" class="w-full h-11 pl-11 pr-3.5 bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:outline-none focus:border-blue-600 transition-colors">
+                </div>
+              </div>
+              <div class="sm:col-span-2">
+                <label for="input-catatan-petugas" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Catatan Pelanggaran</label>
+                <textarea id="input-catatan-petugas" rows="3" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:outline-none focus:border-blue-600 transition-colors resize-none placeholder:text-slate-400" placeholder="Contoh: lensa retak, kabel tidak dikembalikan, atau terlambat 3 hari."></textarea>
+              </div>
+            </div>
+            <p id="denda-hint" class="hidden mt-3 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3.5 py-2.5">
+              Nominal denda sudah diisi. Tombol Konfirmasi dinonaktifkan — gunakan tombol Tolak untuk mengirim pengajuan denda kepada peminjam.
+            </p>
+          </div>
+
+          <div id="paid-panel" class="hidden bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 flex items-start gap-2.5">
+            <span class="material-symbols-outlined text-[20px] text-emerald-600 shrink-0 mt-0.5">verified</span>
+            <div>
+              <p class="text-sm font-bold text-emerald-800">Sudah Dibayarkan</p>
+              <p id="paid-note" class="text-xs text-emerald-700 mt-0.5">Peminjam sudah mengonfirmasi pembayaran denda. Periksa kembali lalu konfirmasi pengembalian.</p>
+            </div>
+          </div>
+
+          <div id="waiting-penalty-panel" class="hidden bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-start gap-2.5">
+            <span class="material-symbols-outlined text-[20px] text-amber-600 shrink-0 mt-0.5">hourglass_top</span>
+            <div>
+              <p class="text-sm font-bold text-amber-800">Menunggu Pembayaran Denda</p>
+              <p class="text-xs text-amber-700 mt-0.5">Pengajuan denda sudah dikirim. Peminjam belum mengonfirmasi pembayaran.</p>
+            </div>
+          </div>
+
+          <div id="done-panel" class="hidden bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-start gap-2.5">
+            <span class="material-symbols-outlined text-[20px] text-slate-500 shrink-0 mt-0.5">task_alt</span>
+            <div>
+              <p id="done-title" class="text-sm font-bold text-slate-800">Pengembalian Selesai Diproses</p>
+              <p id="done-desc" class="text-xs text-slate-600 mt-0.5">Tidak ada tindakan lanjutan yang diperlukan.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 bg-slate-50/70 border-t border-slate-100 flex flex-col-reverse sm:flex-row items-center justify-end gap-2.5 shrink-0">
+        <button id="btn-cancel-detail" type="button" class="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 border border-slate-200 bg-white transition">Tutup</button>
+        <button id="btn-reject-detail" type="button" class="hidden w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-white border border-red-200 text-red-600 hover:bg-red-50 text-sm font-semibold transition-colors">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+          <span id="btn-reject-label">Tolak</span>
+        </button>
+        <button id="btn-confirm-detail" type="button" class="hidden w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-sm font-semibold text-white transition-colors">
+          <span class="material-symbols-outlined text-[18px]">check</span>
+          <span>Konfirmasi</span>
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -178,6 +303,43 @@ document.addEventListener('DOMContentLoaded', function () {
   const toastMsg = document.getElementById('return-toast-message');
   let toastTimer;
 
+  const modal = document.getElementById('detail-modal');
+  const modalContent = document.getElementById('detail-content');
+  const modalOverlay = document.getElementById('detail-overlay');
+  const btnClose = document.getElementById('btn-close-detail');
+  const btnCancel = document.getElementById('btn-cancel-detail');
+  const btnReject = document.getElementById('btn-reject-detail');
+  const btnRejectLabel = document.getElementById('btn-reject-label');
+  const btnConfirm = document.getElementById('btn-confirm-detail');
+  const verifyPanel = document.getElementById('verify-panel');
+  const penaltyForm = document.getElementById('penalty-form');
+  const paidPanel = document.getElementById('paid-panel');
+  const paidNote = document.getElementById('paid-note');
+  const waitingPenaltyPanel = document.getElementById('waiting-penalty-panel');
+  const donePanel = document.getElementById('done-panel');
+  const doneTitle = document.getElementById('done-title');
+  const doneDesc = document.getElementById('done-desc');
+  const doneIcon = donePanel ? donePanel.querySelector('.material-symbols-outlined') : null;
+  const inputDenda = document.getElementById('input-denda');
+  const inputCatatan = document.getElementById('input-catatan-petugas');
+  const dendaHint = document.getElementById('denda-hint');
+  const detailInfo = document.getElementById('detail-info');
+  const detailSubtitle = document.getElementById('detail-subtitle');
+
+  let activeRow = null;
+  let activeMode = 'none';
+  let submitting = false;
+
+  function esc(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function rupiah(value) {
+    return 'Rp ' + Number(value || 0).toLocaleString('id-ID');
+  }
+
   function showToast(type, title, message) {
     const ok = type !== 'error';
     toastInner.className = 'bg-white border rounded-xl shadow-lg p-4 flex items-start gap-3 ' + (ok ? 'border-emerald-200' : 'border-red-200');
@@ -187,7 +349,246 @@ document.addEventListener('DOMContentLoaded', function () {
     toastMsg.textContent = message || '';
     toast.classList.remove('hidden');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.add('hidden'), 2800);
+    toastTimer = setTimeout(() => toast.classList.add('hidden'), 3200);
+  }
+
+  function statusPill(text, tone) {
+    const map = {
+      green: 'bg-emerald-50 text-emerald-700 border-emerald-100',
+      red: 'bg-red-50 text-red-700 border-red-100',
+      amber: 'bg-amber-50 text-amber-700 border-amber-100',
+      blue: 'bg-blue-50 text-blue-700 border-blue-100',
+      slate: 'bg-slate-50 text-slate-600 border-slate-200'
+    };
+    return '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border ' + (map[tone] || map.slate) + '">' + esc(text) + '</span>';
+  }
+
+  function infoRow(label, value, mono) {
+    return '<div class="flex items-start justify-between gap-4 px-4 py-2.5">' +
+      '<span class="text-xs text-slate-500 shrink-0 pt-0.5">' + esc(label) + '</span>' +
+      '<span class="text-right break-words ' + (mono ? 'font-mono text-xs' : 'text-sm font-medium') + ' text-slate-900">' + esc(value || '-') + '</span>' +
+      '</div>';
+  }
+
+  function renderDetail(d) {
+    const status = d.status;
+    const statusTone = status === 'Terverifikasi' ? 'green' : status === 'Ditolak' ? 'red' : status === 'Bayar Denda' ? 'red' : 'amber';
+    let html = '';
+
+    html += '<div class="rounded-xl border border-slate-200 overflow-hidden divide-y divide-slate-100 bg-white">';
+    html += infoRow('Kode Pengembalian', d.kode, true);
+    html += infoRow('Peminjam', d.peminjam + (d.username !== '-' ? ' (@' + d.username + ')' : ''));
+    html += infoRow('Alat', d.alat);
+    html += infoRow('Kode Alat', d.kodeAlat, true);
+    html += infoRow('Laboratorium', d.lab);
+    html += infoRow('Jumlah', d.jumlah + ' unit');
+    html += infoRow('Tanggal Pinjam', d.pinjam);
+    html += infoRow('Jatuh Tempo', d.tempo);
+    html += infoRow('Tanggal Kembali Aktual', d.aktual);
+    html += infoRow('Keterlambatan', d.terlambat);
+    html += '</div>';
+
+    html += '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">';
+    html += '<div class="rounded-xl border border-slate-200 bg-slate-50/60 p-4">' +
+      '<p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Kondisi Barang</p>' +
+      '<p class="text-sm font-semibold text-slate-900">' + esc(d.kondisi || '-') + '</p>' +
+      '</div>';
+    html += '<div class="rounded-xl border border-slate-200 bg-slate-50/60 p-4">' +
+      '<p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Status</p>' +
+      '<div class="flex flex-wrap gap-1.5">' + statusPill(status, statusTone) +
+      (d.dibayar ? statusPill('Sudah Dibayarkan', 'blue') : '') +
+      '</div></div>';
+    html += '</div>';
+
+    html += '<div class="rounded-xl border border-blue-100 bg-blue-50/50 p-4">' +
+      '<p class="text-[11px] font-bold uppercase tracking-wider text-blue-700 mb-1.5">Keterangan / Kondisi dari Peminjam</p>' +
+      '<p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">' + esc(d.catatan || 'Tidak ada catatan dari peminjam.') + '</p>' +
+      '</div>';
+
+    if (Number(d.denda) > 0 || d.catatanPetugas) {
+      html += '<div class="rounded-xl border border-rose-100 bg-rose-50/50 p-4">' +
+        '<p class="text-[11px] font-bold uppercase tracking-wider text-rose-700 mb-1.5">Denda &amp; Catatan Pelanggaran</p>' +
+        '<div class="flex flex-col gap-1.5 text-sm text-slate-700">' +
+        '<div class="flex items-center justify-between gap-3"><span>Nominal denda</span><span class="font-bold text-rose-700">' + esc(rupiah(d.denda)) + '</span></div>' +
+        '<div><span class="text-xs text-slate-500">Catatan petugas:</span><p class="mt-0.5 whitespace-pre-line">' + esc(d.catatanPetugas || '-') + '</p></div>' +
+        (d.dibayar ? '<div class="text-xs text-emerald-700 font-semibold">Dibayarkan pada ' + esc(d.tglBayar) + '</div>' : '') +
+        '</div></div>';
+    }
+
+    detailInfo.innerHTML = html;
+    detailSubtitle.textContent = d.kode + ' · ' + d.peminjam;
+  }
+
+  function setMode(mode) {
+    activeMode = mode;
+    verifyPanel.classList.remove('hidden');
+    penaltyForm.classList.add('hidden');
+    paidPanel.classList.add('hidden');
+    waitingPenaltyPanel.classList.add('hidden');
+    donePanel.classList.add('hidden');
+    btnReject.classList.add('hidden');
+    btnConfirm.classList.add('hidden');
+    btnConfirm.disabled = false;
+    btnConfirm.classList.remove('opacity-60');
+
+    if (mode === 'verify') {
+      penaltyForm.classList.remove('hidden');
+      btnReject.classList.remove('hidden');
+      btnConfirm.classList.remove('hidden');
+      btnRejectLabel.textContent = 'Tolak';
+      inputDenda.value = '0';
+      inputCatatan.value = '';
+      dendaHint.classList.add('hidden');
+    } else if (mode === 'paid') {
+      paidPanel.classList.remove('hidden');
+      btnConfirm.classList.remove('hidden');
+    } else if (mode === 'waiting') {
+      waitingPenaltyPanel.classList.remove('hidden');
+    } else if (mode === 'done') {
+      donePanel.classList.remove('hidden');
+      // Set content based on return status
+      if (activeRow) {
+        var status = activeRow.dataset.statusVerifikasi;
+        var catNota = activeRow.dataset.catatanPetugas || '';
+        if (status === 'Ditolak') {
+          doneTitle.className = 'text-sm font-bold text-red-900';
+          doneTitle.textContent = 'Pengembalian Ditolak';
+          if (doneIcon) { doneIcon.className = 'material-symbols-outlined text-[20px] text-red-500 shrink-0 mt-0.5'; doneIcon.textContent = 'cancel'; }
+          doneDesc.className = 'text-xs mt-0.5 text-red-700';
+          doneDesc.textContent = catNota
+            ? ('Catatan petugas: ' + catNota)
+            : 'Tidak ada tindakan lanjutan yang diperlukan.';
+        } else {
+          doneTitle.className = 'text-sm font-bold text-slate-800';
+          doneTitle.textContent = 'Pengembalian Selesai Diproses';
+          if (doneIcon) { doneIcon.className = 'material-symbols-outlined text-[20px] text-slate-500 shrink-0 mt-0.5'; doneIcon.textContent = 'task_alt'; }
+          doneDesc.className = 'text-xs mt-0.5 text-slate-600';
+          doneDesc.textContent = catNota
+            ? ('Catatan petugas: ' + catNota)
+            : 'Tidak ada tindakan lanjutan yang diperlukan.';
+        }
+      }
+    }
+  }
+
+  function openDetail(row) {
+    activeRow = row;
+    const d = {
+      id: row.dataset.id,
+      kode: row.dataset.kode,
+      peminjam: row.dataset.peminjam,
+      username: row.dataset.username,
+      alat: row.dataset.alat,
+      kodeAlat: row.dataset.kodeAlat,
+      lab: row.dataset.lab,
+      jumlah: row.dataset.jumlah,
+      pinjam: row.dataset.pinjam,
+      tempo: row.dataset.tempo,
+      aktual: row.dataset.aktual,
+      terlambat: row.dataset.terlambat,
+      kondisi: row.dataset.kondisi,
+      catatan: row.dataset.catatan,
+      denda: row.dataset.denda,
+      catatanPetugas: row.dataset.catatanPetugas,
+      status: row.dataset.status,
+      statusVerifikasi: row.dataset.statusVerifikasi,
+      statusDenda: row.dataset.statusDenda,
+      dibayar: row.dataset.dibayar === '1',
+      tglBayar: row.dataset.tglBayar,
+      petugas: row.dataset.petugas
+    };
+
+    renderDetail(d);
+
+    if (d.statusVerifikasi === 'Terverifikasi' || d.statusVerifikasi === 'Ditolak') {
+      setMode('done');
+    } else if (d.statusDenda === 'Belum Lunas' && Number(d.denda) > 0) {
+      setMode('waiting');
+    } else if (d.dibayar) {
+      setMode('paid');
+      if (paidNote) paidNote.textContent = 'Sudah dibayarkan pada ' + d.tglBayar + '. Periksa kembali lalu konfirmasi pengembalian.';
+    } else {
+      setMode('verify');
+    }
+
+    modal.classList.remove('hidden');
+    void modalContent.offsetWidth;
+    modalContent.classList.remove('scale-95', 'opacity-0', 'translate-y-4');
+    modalContent.classList.add('scale-100', 'opacity-100', 'translate-y-0');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
+    modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
+    setTimeout(function () {
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+      activeRow = null;
+    }, 250);
+  }
+
+  function updateDendaState() {
+    const value = Number(inputDenda.value) || 0;
+    if (activeMode === 'paid') {
+      btnConfirm.disabled = false;
+      btnConfirm.classList.remove('opacity-60');
+      return;
+    }
+    if (value > 0) {
+      btnConfirm.disabled = true;
+      btnConfirm.classList.add('opacity-60');
+      btnRejectLabel.textContent = 'Kirim Pengajuan Denda';
+      dendaHint.classList.remove('hidden');
+    } else {
+      btnConfirm.disabled = false;
+      btnConfirm.classList.remove('opacity-60');
+      btnRejectLabel.textContent = 'Tolak';
+      dendaHint.classList.add('hidden');
+    }
+  }
+
+  async function submitVerify(status) {
+    if (!activeRow || submitting) return;
+    const id = activeRow.dataset.id;
+    const denda = activeMode === 'verify' ? (Number(inputDenda.value) || 0) : 0;
+    const catatan = activeMode === 'verify' ? (inputCatatan.value || '').trim() : '';
+
+    if (status === 'Terverifikasi' && denda > 0) {
+      showToast('error', 'Gagal', 'Nominal denda sudah diisi. Gunakan tombol Tolak untuk mengirim pengajuan denda.');
+      return;
+    }
+
+    if (status === 'Ditolak' && denda <= 0) {
+      const ok = await (window.sipatModal ? window.sipatModal.confirm({
+        title: 'Tolak Pengembalian',
+        message: 'Tolak pengajuan pengembalian ini? Peminjaman akan kembali aktif.',
+        confirmText: 'Tolak',
+        danger: true
+      }) : Promise.resolve(confirm('Tolak pengajuan pengembalian ini?')));
+      if (!ok) return;
+    }
+
+    submitting = true;
+    btnConfirm.disabled = true;
+    btnReject.disabled = true;
+    try {
+      const res = await fetch('/pengembalian/petugas/' + encodeURIComponent(id) + '/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: status, denda: denda, catatan: catatan })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error(data.message || 'Gagal memproses pengembalian.');
+      showToast('success', 'Berhasil', data.message || 'Pengembalian berhasil diproses.');
+      setTimeout(() => window.location.reload(), 800);
+    } catch (err) {
+      submitting = false;
+      btnConfirm.disabled = false;
+      btnReject.disabled = false;
+      updateDendaState();
+      showToast('error', 'Gagal', err.message || 'Terjadi kesalahan.');
+    }
   }
 
   function applyFilters() {
@@ -204,40 +605,24 @@ document.addEventListener('DOMContentLoaded', function () {
     if (countEl) countEl.textContent = String(visible);
   }
 
-  async function postVerify(id, status) {
-    const label = status === 'Terverifikasi' ? 'memverifikasi' : 'menolak';
-    if (status === 'Ditolak') {
-      const ok = await (window.sipatModal ? window.sipatModal.confirm({
-        title: 'Tolak Pengembalian',
-        message: 'Tolak pengajuan pengembalian ini? Stok alat akan dikembalikan.',
-        confirmText: 'Tolak',
-        danger: true
-      }) : Promise.resolve(confirm('Tolak pengajuan pengembalian ini?')));
-      if (!ok) return;
-    }
-    try {
-      const res = await fetch('/pengembalian/petugas/' + encodeURIComponent(id) + '/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status })
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.ok) throw new Error(data.message || 'Gagal ' + label + ' pengembalian.');
-      showToast('success', 'Berhasil', data.message || 'Pengembalian berhasil diproses.');
-      setTimeout(() => window.location.reload(), 700);
-    } catch (err) {
-      showToast('error', 'Gagal', err.message || 'Terjadi kesalahan.');
-    }
-  }
+  rows.forEach(row => {
+    const btn = row.querySelector('.btn-view-return');
+    if (btn) btn.addEventListener('click', () => openDetail(row));
+  });
 
-  document.querySelectorAll('.btn-verify').forEach(btn => {
-    btn.addEventListener('click', () => postVerify(btn.dataset.id, 'Terverifikasi'));
-  });
-  document.querySelectorAll('.btn-reject').forEach(btn => {
-    btn.addEventListener('click', () => postVerify(btn.dataset.id, 'Ditolak'));
-  });
   if (searchInput) searchInput.addEventListener('input', applyFilters);
   if (statusFilter) statusFilter.addEventListener('change', applyFilters);
+  if (btnClose) btnClose.addEventListener('click', closeModal);
+  if (btnCancel) btnCancel.addEventListener('click', closeModal);
+  if (modalOverlay) modalOverlay.addEventListener('click', closeModal);
+  if (inputDenda) inputDenda.addEventListener('input', updateDendaState);
+  btnConfirm.addEventListener('click', () => submitVerify('Terverifikasi'));
+  btnReject.addEventListener('click', () => submitVerify('Ditolak'));
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeModal();
+  });
+
   applyFilters();
 });
 </script>

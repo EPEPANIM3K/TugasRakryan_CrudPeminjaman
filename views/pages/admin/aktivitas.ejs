@@ -115,6 +115,7 @@
           <% } %>
           <% logs.forEach(function(log, idx) { var waktu = formatTanggal(log.created_at); var identitas = log.username ? '@' + log.username + ' \u2022 ' + (log.email || '-') : 'Sistem'; %>
           <tr class="log-row hover:bg-slate-50/80 transition-colors group"
+              data-id="<%= log.id %>"
               data-kode="LOG-<%= String(log.id).padStart(6, '0') %>"
               data-nama="<%= (log.nama_lengkap || 'Sistem').replace(/"/g,'&quot;') %>"
               data-identity="<%= identitas.replace(/"/g,'&quot;') %>"
@@ -155,6 +156,9 @@
               <div class="inline-flex items-center justify-center gap-1">
                 <button class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-brand-700 transition-colors btn-detail-log" title="Lihat Detail Log" type="button">
                   <span class="material-symbols-outlined text-[18px]">visibility</span>
+                </button>
+                <button class="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors btn-delete-log" title="Hapus Log" type="button">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
                 </button>
               </div>
             </td>
@@ -204,6 +208,37 @@ document.addEventListener('DOMContentLoaded', function () {
         message: typeof modalApi.detailList === 'function'
           ? modalApi.detailList(fields)
           : fields.map(function (f) { return '<div><strong>' + f.label + ':</strong> ' + f.value + '</div>'; }).join('')
+      });
+    });
+  });
+
+  // Hapus log aktivitas (admin)
+  document.querySelectorAll('.btn-delete-log').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var row = btn.closest('.log-row');
+      if (!row || !modalApi || typeof modalApi.confirm !== 'function') return;
+      var d = row.dataset;
+
+      modalApi.confirm({
+        title: 'Hapus Log Aktivitas',
+        subtitle: d.kode,
+        tone: 'danger',
+        message: '<p class="text-sm text-slate-700">Hapus log <span class="font-semibold">' +
+          modalApi.escape(d.kode) + '</span> (' + modalApi.escape(d.aksi) + ')?</p>' +
+          '<p class="text-xs text-slate-500 mt-2">Tindakan ini tidak dapat dibatalkan.</p>',
+        confirmText: 'Hapus',
+        loadingText: 'Menghapus...',
+        onConfirm: async function () {
+          var res = await fetch('/admin/aktivitas/' + encodeURIComponent(d.id) + '/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+          });
+          var data = await res.json().catch(function () { return {}; });
+          if (!res.ok || !data.ok) throw new Error(data.message || 'Gagal menghapus log aktivitas.');
+          row.remove();
+          if (modalApi.toast) modalApi.toast(data.message || 'Log aktivitas berhasil dihapus.', 'success');
+        }
       });
     });
   });

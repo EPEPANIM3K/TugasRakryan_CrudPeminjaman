@@ -7,6 +7,9 @@ const { requireAuth } = require('../middleware/auth');
 // User: ajukan pengembalian untuk peminjaman tertentu
 router.post('/user/:peminjamanId', requireRole('user'), pengembalianController.create);
 
+// User: konfirmasi pembayaran denda (tanpa payment gateway)
+router.post('/user/:id/pay', requireRole('user'), pengembalianController.pay);
+
 // Petugas: verifikasi pengembalian
 router.post('/petugas/:id/verify', requireRole('petugas'), pengembalianController.verify);
 

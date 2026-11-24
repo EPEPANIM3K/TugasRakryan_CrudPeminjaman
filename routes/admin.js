@@ -31,5 +31,6 @@ router.post('/peminjaman/:id/status', AdminController.updateStatus);
 router.post('/peminjaman/:id/delete', AdminController.removePeminjaman);
 
 router.get('/aktivitas', AdminController.aktivitasPage);
+router.post('/aktivitas/:id/delete', AdminController.removeAktivitas);
 
 module.exports = router;
