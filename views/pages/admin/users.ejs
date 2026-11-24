@@ -1,6 +1,5 @@
 <!-- Main Content -->
 <div class="flex flex-col w-full space-y-6">
-  <!-- Header Section -->
   <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
     <div>
       <div class="flex items-center gap-2 mb-1">
@@ -9,337 +8,178 @@
       <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Kelola Akun Pengguna</h1>
       <p class="text-sm text-slate-500 mt-1">Daftar seluruh pengguna sistem, perizinan akses akun, dan status validitas civitas laboratorium.</p>
     </div>
-    <!-- Action Buttons Right-Aligned -->
     <div class="flex flex-wrap items-center gap-2.5 shrink-0">
       <button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm shadow-sm hover:bg-blue-700 transition-all active:scale-[0.99]" id="btn-open-modal" type="button">
         <span class="material-symbols-outlined text-[18px]">add</span>
-        <span class="">Tambah User</span>
+        <span>Tambah User</span>
       </button>
       <button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors shadow-sm" id="btn-open-export" type="button">
         <span class="material-symbols-outlined text-[18px] text-slate-500">file_download</span>
-        <span class="">Ekspor Excel</span>
+        <span>Ekspor Excel</span>
       </button>
-
     </div>
   </div>
 
-  <!-- 3 Stat Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-    <!-- Card 1 -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
     <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
       <div class="flex items-center justify-between mb-3">
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-brand-700">Statistik User</span>
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-brand-700">Total User</span>
       </div>
       <div class="my-2">
-        <div class="text-3xl font-extrabold text-slate-900 tracking-tight">348</div>
-        <div class="text-xs font-medium text-slate-400 mt-1">Tersebar di Mahasiswa, Dosen, &amp; Staf Lab</div>
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-total"><%= (stats.total || 0).toLocaleString('id-ID') %></div>
+        <div class="text-xs font-medium text-slate-400 mt-1">Seluruh akun terdaftar</div>
       </div>
     </div>
-    <!-- Card 2 -->
     <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
       <div class="flex items-center justify-between mb-3">
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700">Akun Tervalidasi</span>
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700">Akun Aktif</span>
       </div>
       <div class="my-2">
-        <div class="text-3xl font-extrabold text-slate-900 tracking-tight">326</div>
-        <div class="text-xs font-medium text-slate-400 mt-1">Akses SSO &amp; Laboratorium Terverifikasi</div>
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-aktif"><%= (stats.aktif || 0).toLocaleString('id-ID') %></div>
+        <div class="text-xs font-medium text-slate-400 mt-1">Akses sistem terverifikasi</div>
       </div>
     </div>
-    <!-- Card 3 -->
+    <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
+      <div class="flex items-center justify-between mb-3">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-50 text-amber-700">Pending</span>
+      </div>
+      <div class="my-2">
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-pending"><%= (stats.pending || 0).toLocaleString('id-ID') %></div>
+        <div class="text-xs font-medium text-slate-400 mt-1">Menunggu aktivasi/validasi</div>
+      </div>
+    </div>
     <div class="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
       <div class="flex items-center justify-between mb-3">
         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-purple-50 text-purple-700">Sedang Meminjam</span>
       </div>
       <div class="my-2">
-        <div class="text-3xl font-extrabold text-slate-900 tracking-tight">84</div>
-        <div class="text-xs font-medium text-slate-400 mt-1">Peminjam Aktif Instrumen Lab Terjadwal</div>
+        <div class="text-3xl font-extrabold text-slate-900 tracking-tight" id="stat-pinjam"><%= (stats.sedangMeminjam || 0).toLocaleString('id-ID') %></div>
+        <div class="text-xs font-medium text-slate-400 mt-1">Peminjam aktif saat ini</div>
       </div>
     </div>
   </div>
 
-  <!-- Search & Filter Toolbar -->
-  <div class="rounded-xl flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+  <form method="GET" action="/admin/users" id="filter-form" class="rounded-xl flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
     <div class="relative flex-1">
       <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] pointer-events-none select-none">search</span>
-      <input class="w-full pl-10 pr-4 h-10 border border-slate-200 text-slate-700 text-sm rounded-lg placeholder-slate-400 focus:outline-none focus:bg-white focus:border-brand-700 transition-colors bg-white" placeholder="Cari nama pengguna, NIP/NIM, email, atau username..." type="text">
+      <input name="search" value="<%= filters.search || '' %>" class="w-full pl-10 pr-4 h-10 border border-slate-200 text-slate-700 text-sm rounded-lg placeholder-slate-400 focus:outline-none focus:bg-white focus:border-brand-700 transition-colors bg-white" placeholder="Cari nama pengguna, NIP/NIM, email, atau username..." type="text">
     </div>
     <div class="flex flex-col sm:flex-row items-center gap-3">
-      <div class="relative w-full sm:w-auto min-w-[200px]">
-        <select class="w-full h-10 appearance-none pl-3.5 pr-9 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg cursor-pointer focus:outline-none focus:border-brand-700 transition-colors">
-          <option value="">Semua Role</option>
-          <option value="admin">Admin</option>
-          <option value="petugas">Petugas Lab</option>
-          <option value="dosen">Dosen Peneliti</option>
-          <option value="mahasiswa">Mahasiswa</option>
-        </select>
-        <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
-      </div>
       <div class="relative w-full sm:w-auto min-w-[180px]">
-        <select class="w-full h-10 appearance-none pl-3.5 pr-9 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg cursor-pointer focus:outline-none focus:border-brand-700 transition-colors">
-          <option value="">Semua Status</option>
-          <option value="aktif">Aktif</option>
-          <option value="pending">Pending</option>
-          <option value="non-aktif">Non-Aktif</option>
+        <select name="role" onchange="this.form.submit()" class="w-full h-10 appearance-none pl-3.5 pr-9 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg cursor-pointer focus:outline-none focus:border-brand-700 transition-colors">
+          <option value="">Semua Role</option>
+          <option value="admin" <%= filters.role === 'admin' ? 'selected' : '' %>>Admin</option>
+          <option value="petugas" <%= filters.role === 'petugas' ? 'selected' : '' %>>Petugas</option>
+          <option value="user" <%= filters.role === 'user' ? 'selected' : '' %>>User</option>
         </select>
         <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
       </div>
+      <div class="relative w-full sm:w-auto min-w-[170px]">
+        <select name="status" onchange="this.form.submit()" class="w-full h-10 appearance-none pl-3.5 pr-9 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg cursor-pointer focus:outline-none focus:border-brand-700 transition-colors">
+          <option value="">Semua Status</option>
+          <option value="Aktif" <%= filters.status === 'Aktif' ? 'selected' : '' %>>Aktif</option>
+          <option value="Pending" <%= filters.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+          <option value="Suspend" <%= filters.status === 'Suspend' ? 'selected' : '' %>>Suspend</option>
+        </select>
+        <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
+      </div>
+      <% if (filters.search || filters.role || filters.status) { %>
+      <a href="/admin/users" class="inline-flex items-center gap-1.5 h-10 px-3.5 rounded-lg text-xs font-semibold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 transition-colors whitespace-nowrap">
+        <span class="material-symbols-outlined text-[16px]">filter_alt_off</span>Reset
+      </a>
+      <% } %>
     </div>
-  </div>
+  </form>
 
-  <!-- Data Table Container -->
   <div class="bg-white rounded-xl border border-slate-200/90 shadow-sm overflow-hidden flex flex-col">
     <div class="w-full overflow-x-auto overflow-y-auto max-h-[440px]">
       <table class="w-full text-left border-collapse">
         <thead class="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider text-[11px] font-semibold">
           <tr>
-            <th class="w-12 px-3 py-3.5 text-center bg-slate-50 whitespace-nowrap" scope="col">NO</th>
-            <th class="w-36 px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">NIP / NIM</th>
-            <th class="min-w-[280px] w-[320px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">NAMA LENGKAP &amp; USERNAME</th>
-            <th class="min-w-[140px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">ROLE / PERAN</th>
-            <th class="min-w-[160px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">FAKULTAS / UNIT</th>
-            <th class="min-w-[140px] px-4 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">TGL DIBUAT</th>
-            <th class="min-w-[130px] pl-6 pr-3 py-3.5 bg-slate-50 whitespace-nowrap" scope="col">STATUS</th>
-            <th class="min-w-[90px] w-24 px-4 py-3.5 text-center bg-slate-50 whitespace-nowrap" scope="col">AKSI</th>
+            <th class="w-12 px-3 py-3.5 text-center bg-slate-50 whitespace-nowrap">NO</th>
+            <th class="w-36 px-4 py-3.5 bg-slate-50 whitespace-nowrap">NIP / NIM</th>
+            <th class="min-w-[280px] w-[320px] px-4 py-3.5 bg-slate-50 whitespace-nowrap">NAMA LENGKAP &amp; USERNAME</th>
+            <th class="min-w-[120px] px-4 py-3.5 bg-slate-50 whitespace-nowrap">ROLE</th>
+            <th class="min-w-[160px] px-4 py-3.5 bg-slate-50 whitespace-nowrap">FAKULTAS / UNIT</th>
+            <th class="min-w-[140px] px-4 py-3.5 bg-slate-50 whitespace-nowrap">TGL DIBUAT</th>
+            <th class="min-w-[120px] pl-6 pr-3 py-3.5 bg-slate-50 whitespace-nowrap">STATUS</th>
+            <th class="min-w-[90px] w-24 px-4 py-3.5 text-center bg-slate-50 whitespace-nowrap">AKSI</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100 text-sm bg-white">
-          <!-- Row 1 -->
-          <tr class="hover:bg-slate-50/80 transition-colors duration-150 group">
-            <td class="w-12 px-3 py-3.5 text-center font-mono text-xs text-slate-400">01</td>
-            <td class="w-36 px-4 py-3.5 font-mono text-xs font-semibold text-slate-700 whitespace-nowrap">198503142010121001</td>
+        <tbody id="users-tbody" class="divide-y divide-slate-100 text-sm bg-white">
+          <% if (!items.length) { %>
+          <tr>
+            <td colspan="8" class="px-4 py-12 text-center text-sm text-slate-400">
+              <span class="material-symbols-outlined text-[40px] mb-2 block">group_off</span>
+              Tidak ada pengguna yang cocok dengan filter.
+            </td>
+          </tr>
+          <% } %>
+          <% items.forEach(function(u, idx) { 
+               var tgl = formatTanggal(u.created_at);
+               var roleLabel = u.role === 'admin' ? 'Admin' : (u.role === 'petugas' ? 'Petugas' : 'User');
+               var statusCls = u.status_akun === 'Aktif' ? 'text-emerald-600' : (u.status_akun === 'Pending' ? 'text-amber-600' : 'text-rose-600');
+               var dotCls = u.status_akun === 'Aktif' ? 'bg-emerald-500' : (u.status_akun === 'Pending' ? 'bg-amber-500' : 'bg-rose-500');
+          %>
+          <tr class="hover:bg-slate-50/80 transition-colors duration-150 group user-row"
+              data-id="<%= u.id %>"
+              data-nama="<%= (u.nama_lengkap||'').replace(/"/g,'&quot;') %>"
+              data-username="<%= (u.username||'').replace(/"/g,'&quot;') %>"
+              data-email="<%= (u.email||'').replace(/"/g,'&quot;') %>"
+              data-nip="<%= (u.nip_nim||'').replace(/"/g,'&quot;') %>"
+              data-role="<%= u.role %>"
+              data-tipe="<%= (u.tipe_pengguna||'').replace(/"/g,'&quot;') %>"
+              data-fakultas="<%= (u.fakultas_unit||'').replace(/"/g,'&quot;') %>"
+              data-status="<%= u.status_akun %>">
+            <td class="w-12 px-3 py-3.5 text-center font-mono text-xs text-slate-400 row-no"><%= String(idx + 1).padStart(2, '0') %></td>
+            <td class="w-36 px-4 py-3.5 font-mono text-xs font-semibold text-slate-700 whitespace-nowrap"><%= u.nip_nim || '-' %></td>
             <td class="min-w-[280px] w-[320px] px-4 py-3.5 whitespace-nowrap">
               <div class="flex flex-col whitespace-nowrap">
-                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Dr. Ir. Hendra Wijaya, M.T.</span>
-                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@hendrawijaya • hendra@univ.ac.id</span>
+                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap"><%= u.nama_lengkap %></span>
+                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@<%= u.username %> • <%= u.email %></span>
               </div>
             </td>
-            <td class="min-w-[140px] px-4 py-3.5 text-slate-600 font-medium text-xs whitespace-nowrap">Dosen Peneliti</td>
-            <td class="min-w-[160px] px-4 py-3.5 text-slate-600 text-xs whitespace-nowrap">Teknik Elektro</td>
+            <td class="min-w-[120px] px-4 py-3.5 text-slate-600 font-medium text-xs whitespace-nowrap"><%= roleLabel %></td>
+            <td class="min-w-[160px] px-4 py-3.5 text-slate-600 text-xs whitespace-nowrap"><%= u.fakultas_unit || '-' %></td>
             <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">10 Jan 2024</div>
-              <div class="text-slate-400">08:15 WIB</div>
+              <div class="font-medium"><%= tgl.tanggal %></div>
+              <div class="text-slate-400"><%= tgl.jam %></div>
             </td>
-            <td class="min-w-[130px] pl-6 pr-3 py-3.5 whitespace-nowrap">
-              <div class="inline-flex items-center gap-2 text-xs font-semibold text-emerald-600">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-                <span class="">Aktif</span>
+            <td class="min-w-[120px] pl-6 pr-3 py-3.5 whitespace-nowrap">
+              <div class="inline-flex items-center gap-2 text-xs font-semibold <%= statusCls %>">
+                <span class="w-2 h-2 rounded-full <%= dotCls %> shrink-0"></span>
+                <span><%= u.status_akun %></span>
               </div>
             </td>
             <td class="min-w-[90px] w-24 px-4 py-3.5 text-center">
               <div class="inline-flex items-center justify-center gap-1.5">
-                <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Ubah Akun" type="button" data-nama="Dr. Ir. Hendra Wijaya, M.T." data-username="@hendrawijaya" data-role="Dosen Peneliti">
+                <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors btn-edit-user" title="Ubah Akun" type="button">
                   <span class="material-symbols-outlined text-[18px]">edit</span>
                 </button>
-                <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus Akun" type="button" data-nama="Dr. Ir. Hendra Wijaya, M.T." data-username="@hendrawijaya">
+                <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors btn-delete-user" title="Hapus Akun" type="button">
                   <span class="material-symbols-outlined text-[18px]">delete</span>
                 </button>
               </div>
             </td>
           </tr>
-          <!-- Row 2 -->
-          <tr class="hover:bg-slate-50/80 transition-colors duration-150 group">
-            <td class="w-12 px-3 py-3.5 text-center font-mono text-xs text-slate-400">02</td>
-            <td class="w-36 px-4 py-3.5 font-mono text-xs font-semibold text-slate-700 whitespace-nowrap">21060120140023</td>
-            <td class="min-w-[280px] w-[320px] px-4 py-3.5 whitespace-nowrap">
-              <div class="flex flex-col whitespace-nowrap">
-                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Fathur Rahman</span>
-                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@fathur.r • fathur@mhs.univ.ac.id</span>
-              </div>
-            </td>
-            <td class="min-w-[140px] px-4 py-3.5 text-slate-600 font-medium text-xs whitespace-nowrap">Mahasiswa</td>
-            <td class="min-w-[160px] px-4 py-3.5 text-slate-600 text-xs whitespace-nowrap">Fisika Instrumentasi</td>
-            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">15 Agu 2024</div>
-              <div class="text-slate-400">14:20 WIB</div>
-            </td>
-            <td class="min-w-[130px] pl-6 pr-3 py-3.5 whitespace-nowrap">
-              <div class="inline-flex items-center gap-2 text-xs font-semibold text-emerald-600">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-                <span class="">Aktif</span>
-              </div>
-            </td>
-            <td class="min-w-[90px] w-24 px-4 py-3.5 text-center">
-              <div class="inline-flex items-center justify-center gap-1.5">
-                <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Ubah Akun" type="button" data-nama="Dr. Ir. Hendra Wijaya, M.T." data-username="@hendrawijaya" data-role="Dosen Peneliti">
-                  <span class="material-symbols-outlined text-[18px]">edit</span>
-                </button>
-                <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-nama="Dr. Ir. Hendra Wijaya, M.T." data-username="@hendrawijaya">
-                  <span class="material-symbols-outlined text-[18px]">delete</span>
-                </button>
-              </div>
-            </td>
-          </tr>
-          <!-- Row 3 -->
-          <tr class="hover:bg-slate-50/80 transition-colors duration-150 group">
-            <td class="w-12 px-3 py-3.5 text-center font-mono text-xs text-slate-400">03</td>
-            <td class="w-36 px-4 py-3.5 font-mono text-xs font-semibold text-slate-700 whitespace-nowrap">199107222019032008</td>
-            <td class="min-w-[280px] w-[320px] px-4 py-3.5 whitespace-nowrap">
-              <div class="flex flex-col whitespace-nowrap">
-                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Siti Nurhaliza, S.Si.</span>
-                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@siti.lab • siti.lab@univ.ac.id</span>
-              </div>
-            </td>
-            <td class="min-w-[140px] px-4 py-3.5 text-slate-600 font-medium text-xs whitespace-nowrap">Petugas Lab</td>
-            <td class="min-w-[160px] px-4 py-3.5 text-slate-600 text-xs whitespace-nowrap">Lab Biologi Terpadu</td>
-            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">02 Sep 2024</div>
-              <div class="text-slate-400">09:40 WIB</div>
-            </td>
-            <td class="min-w-[130px] pl-6 pr-3 py-3.5 whitespace-nowrap">
-              <div class="inline-flex items-center gap-2 text-xs font-semibold text-emerald-600">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-                <span class="">Aktif</span>
-              </div>
-            </td>
-            <td class="min-w-[90px] w-24 px-4 py-3.5 text-center">
-              <div class="inline-flex items-center justify-center gap-1.5">
-                <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Ubah Akun" type="button" data-nama="Fathur Rahman" data-username="@fathur.r" data-role="Mahasiswa">
-                  <span class="material-symbols-outlined text-[18px]">edit</span>
-                </button>
-                <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-nama="Fathur Rahman" data-username="@fathur.r">
-                  <span class="material-symbols-outlined text-[18px]">delete</span>
-                </button>
-              </div>
-            </td>
-          </tr>
-          <!-- Row 4 -->
-          <tr class="hover:bg-slate-50/80 transition-colors duration-150 group">
-            <td class="w-12 px-3 py-3.5 text-center font-mono text-xs text-slate-400">04</td>
-            <td class="w-36 px-4 py-3.5 font-mono text-xs font-semibold text-slate-700 whitespace-nowrap">20060119130045</td>
-            <td class="min-w-[280px] w-[320px] px-4 py-3.5 whitespace-nowrap">
-              <div class="flex flex-col whitespace-nowrap">
-                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Bima Satria Wicaksono</span>
-                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@bimasatria • bima@mhs.univ.ac.id</span>
-              </div>
-            </td>
-            <td class="min-w-[140px] px-4 py-3.5 text-slate-600 font-medium text-xs whitespace-nowrap">Mahasiswa</td>
-            <td class="min-w-[160px] px-4 py-3.5 text-slate-600 text-xs whitespace-nowrap">Teknik Kimia</td>
-            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">20 Okt 2024</div>
-              <div class="text-slate-400">11:05 WIB</div>
-            </td>
-            <td class="min-w-[130px] pl-6 pr-3 py-3.5 whitespace-nowrap">
-              <div class="inline-flex items-center gap-2 text-xs font-semibold text-rose-600">
-                <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
-                <span class="">Suspend</span>
-              </div>
-            </td>
-            <td class="min-w-[90px] w-24 px-4 py-3.5 text-center">
-              <div class="inline-flex items-center justify-center gap-1.5">
-                <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Ubah Akun" type="button" data-nama="Siti Nurhaliza, S.Si." data-username="@siti.lab" data-role="Petugas Lab">
-                  <span class="material-symbols-outlined text-[18px]">edit</span>
-                </button>
-                <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-nama="Siti Nurhaliza, S.Si." data-username="@siti.lab">
-                  <span class="material-symbols-outlined text-[18px]">delete</span>
-                </button>
-              </div>
-            </td>
-          </tr>
-          <!-- Row 5 -->
-          <tr class="hover:bg-slate-50/80 transition-colors duration-150 group">
-            <td class="w-12 px-3 py-3.5 text-center font-mono text-xs text-slate-400">05</td>
-            <td class="w-36 px-4 py-3.5 font-mono text-xs font-semibold text-slate-700 whitespace-nowrap">197011082005011003</td>
-            <td class="min-w-[280px] w-[320px] px-4 py-3.5 whitespace-nowrap">
-              <div class="flex flex-col whitespace-nowrap">
-                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Prof. Dr. Bambang Sudiro</span>
-                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@bambang.s • bambang@univ.ac.id</span>
-              </div>
-            </td>
-            <td class="min-w-[140px] px-4 py-3.5 text-slate-600 font-medium text-xs whitespace-nowrap">Dosen</td>
-            <td class="min-w-[160px] px-4 py-3.5 text-slate-600 text-xs whitespace-nowrap">Teknik Mesin</td>
-            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">05 Nov 2024</div>
-              <div class="text-slate-400">13:50 WIB</div>
-            </td>
-            <td class="min-w-[130px] pl-6 pr-3 py-3.5 whitespace-nowrap">
-              <div class="inline-flex items-center gap-2 text-xs font-semibold text-emerald-600">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-                <span class="">Aktif</span>
-              </div>
-            </td>
-            <td class="min-w-[90px] w-24 px-4 py-3.5 text-center">
-              <div class="inline-flex items-center justify-center gap-1.5">
-                <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Ubah Akun" type="button" data-nama="Bima Satria Wicaksono" data-username="@bimasatria" data-role="Mahasiswa">
-                  <span class="material-symbols-outlined text-[18px]">edit</span>
-                </button>
-                <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-nama="Bima Satria Wicaksono" data-username="@bimasatria">
-                  <span class="material-symbols-outlined text-[18px]">delete</span>
-                </button>
-              </div>
-            </td>
-          </tr>
-          <!-- Row 6 -->
-          <tr class="hover:bg-slate-50/80 transition-colors duration-150 group">
-            <td class="w-12 px-3 py-3.5 text-center font-mono text-xs text-slate-400">06</td>
-            <td class="w-36 px-4 py-3.5 font-mono text-xs font-semibold text-slate-700 whitespace-nowrap">21080121120019</td>
-            <td class="min-w-[280px] w-[320px] px-4 py-3.5 whitespace-nowrap">
-              <div class="flex flex-col whitespace-nowrap">
-                <span class="font-bold text-slate-900 leading-tight whitespace-nowrap">Allya Amanda Putri</span>
-                <span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@allya.p • allya@mhs.univ.ac.id</span>
-              </div>
-            </td>
-            <td class="min-w-[140px] px-4 py-3.5 text-slate-600 font-medium text-xs whitespace-nowrap">Mahasiswa</td>
-            <td class="min-w-[160px] px-4 py-3.5 text-slate-600 text-xs whitespace-nowrap">Farmasi Klinis</td>
-            <td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]">
-              <div class="font-medium">12 Des 2024</div>
-              <div class="text-slate-400">15:10 WIB</div>
-            </td>
-            <td class="min-w-[130px] pl-6 pr-3 py-3.5 whitespace-nowrap">
-              <div class="inline-flex items-center gap-2 text-xs font-semibold text-slate-500">
-                <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0"></span>
-                <span class="">Non-Aktif</span>
-              </div>
-            </td>
-            <td class="min-w-[90px] w-24 px-4 py-3.5 text-center">
-              <div class="inline-flex items-center justify-center gap-1.5">
-                <button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors" title="Ubah Akun" type="button" data-nama="Prof. Dr. Bambang Sudiro" data-username="@bambang.s" data-role="Dosen">
-                  <span class="material-symbols-outlined text-[18px]">edit</span>
-                </button>
-                <button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Hapus" type="button" data-nama="Prof. Dr. Bambang Sudiro" data-username="@bambang.s">
-                  <span class="material-symbols-outlined text-[18px]">delete</span>
-                </button>
-              </div>
-            </td>
-          </tr>
+          <% }); %>
         </tbody>
       </table>
     </div>
-        <!-- Table Pagination Footer -->
-    <div class="px-6 py-4 bg-white border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
+    <div class="px-6 py-4 bg-white border-t border-slate-100 flex items-center justify-between gap-4 shrink-0">
       <div class="text-xs text-slate-500">
-        Menampilkan <span class="font-semibold text-slate-800">1-6</span> dari <span class="font-semibold text-slate-800">348</span> akun pengguna
-      </div>
-      <!-- Pagination Navigation -->
-      <div class="flex items-center gap-1.5">
-        <button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:bg-slate-50 transition-colors border border-slate-200/60" disabled="" type="button">
-          <span class="material-symbols-outlined text-[16px]">chevron_left</span>
-          <span class="">Sebelumnya</span>
-        </button>
-        <button class="w-8 h-8 rounded-lg bg-brand-700 text-white font-semibold text-xs flex items-center justify-center shadow-sm" type="button">1</button>
-        <button class="w-8 h-8 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-xs flex items-center justify-center transition-colors border border-slate-200/60" type="button">2</button>
-        <button class="w-8 h-8 rounded-lg text-slate-600 hover:bg-slate-100 font-medium text-xs flex items-center justify-center transition-colors border border-slate-200/60" type="button">3</button>
-        <span class="px-1 text-slate-400 text-xs">...</span>
-        <button class="w-8 h-8 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-xs flex items-center justify-center transition-colors border border-slate-200/60" type="button">10</button>
-        <button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors border border-slate-200/60" type="button">
-          <span class="">Selanjutnya</span>
-          <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-        </button>
+        Menampilkan <span class="font-semibold text-slate-800" id="count-shown"><%= items.length %></span> dari <span class="font-semibold text-slate-800" id="count-total"><%= stats.total || 0 %></span> akun pengguna
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal Tambah Akun Pengguna -->
+<!-- Modal Tambah/Edit Akun -->
 <div id="modal-tambah-user" class="fixed inset-0 z-[100] hidden">
-  <!-- Overlay with blur effect -->
   <div id="modal-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300"></div>
-
-  <!-- Modal Container -->
   <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none">
     <div id="modal-content" class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[calc(100vh-2rem)] overflow-hidden pointer-events-auto transform transition-all duration-300 scale-95 opacity-0 translate-y-4">
-
-      <!-- Header Form -->
-      <div class="px-6 py-5 border-b border-slate-100 flex items-start justify-between bg-white shrink-0 rounded-t-2xl">
+      <div class="px-6 py-5 border-b border-slate-100 flex items-start justify-between bg-white shrink-0">
         <div>
           <h2 id="modal-user-title" class="text-lg font-bold text-slate-900 tracking-tight">Tambah Akun Pengguna</h2>
           <p id="modal-user-subtitle" class="text-xs text-slate-500 mt-0.5">Lengkapi informasi kredensial dan hak akses civitas laboratorium</p>
@@ -349,18 +189,17 @@
         </button>
       </div>
 
-      <!-- Body Form -->
-      <form id="form-tambah-user" class="p-6 overflow-y-auto space-y-5">
-        <input type="hidden" id="input-user-id" name="id" value="">
+      <form id="form-tambah-user" class="p-6 overflow-y-auto space-y-4">
+        <input type="hidden" id="input-user-id" value="">
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div>
             <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="input-nama-lengkap">Nama Lengkap <span class="text-rose-500">*</span></label>
-            <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="input-nama-lengkap" name="nama" placeholder="Contoh: Dr. Ir. Hendra Wijaya, M.T." required type="text">
+            <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition" id="input-nama-lengkap" placeholder="Contoh: Dr. Ir. Hendra Wijaya, M.T." required type="text">
           </div>
           <div>
             <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="input-nip-nim">NIP / NIM <span class="text-rose-500">*</span></label>
-            <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs font-mono" id="input-nip-nim" name="nip_nim" placeholder="198405122010011005" required type="text">
+            <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition font-mono" id="input-nip-nim" placeholder="198405122010011005" required type="text">
           </div>
         </div>
 
@@ -369,24 +208,24 @@
             <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="input-username">Username <span class="text-rose-500">*</span></label>
             <div class="relative">
               <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-medium">@</span>
-              <input class="w-full pl-8 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="input-username" name="username" placeholder="hendrawijaya" required type="text">
+              <input class="w-full pl-8 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition" id="input-username" placeholder="hendrawijaya" required type="text">
             </div>
           </div>
           <div>
             <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="input-email">Email Institusi <span class="text-rose-500">*</span></label>
-            <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="input-email" name="email" placeholder="nama@institusi.ac.id" required type="email">
+            <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition" id="input-email" placeholder="nama@institusi.ac.id" required type="email">
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
           <div>
             <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="select-role">Role / Peran <span class="text-rose-500">*</span></label>
             <div class="relative">
-              <select class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 appearance-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs cursor-pointer pr-8" id="select-role" name="role" required>
+              <select class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 appearance-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition cursor-pointer pr-8" id="select-role" required>
                 <option value="" disabled selected>Pilih Role</option>
-                <option value="User">User</option>
-                <option value="Pengguna">Pengguna</option>
-                <option value="Admin">Admin</option>
+                <option value="user">User</option>
+                <option value="petugas">Petugas</option>
+                <option value="admin">Admin</option>
               </select>
               <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
             </div>
@@ -394,7 +233,7 @@
           <div>
             <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="select-status">Status Akun <span class="text-rose-500">*</span></label>
             <div class="relative">
-              <select class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 appearance-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs cursor-pointer pr-8" id="select-status" name="status" required>
+              <select class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 appearance-none focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition cursor-pointer pr-8" id="select-status" required>
                 <option value="Aktif">Aktif</option>
                 <option value="Pending">Pending</option>
                 <option value="Suspend">Suspend</option>
@@ -402,17 +241,21 @@
               <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
             </div>
           </div>
+          <div>
+            <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="input-tipe-pengguna">Tipe Pengguna</label>
+            <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition" id="input-tipe-pengguna" placeholder="Mahasiswa/Dosen/Staf" type="text">
+          </div>
         </div>
 
         <div>
           <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="input-fakultas-unit">Fakultas / Unit <span class="text-rose-500">*</span></label>
-          <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs" id="input-fakultas-unit" name="fakultas" placeholder="Contoh: Fakultas Teknik / Lab Komputasi" required type="text">
+          <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition" id="input-fakultas-unit" placeholder="Contoh: Fakultas Teknik / Lab Komputasi" required type="text">
         </div>
 
         <div id="field-password-wrap">
           <label class="block font-semibold text-slate-800 text-xs mb-1.5" for="input-password">Kata Sandi <span class="text-rose-500" id="password-required-mark">*</span></label>
           <div class="relative">
-            <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-2xs pr-10" id="input-password" name="password" placeholder="Minimal 8 karakter" type="password">
+            <input class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition pr-10" id="input-password" placeholder="Minimal 8 karakter" type="password">
             <button class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 transition" id="toggle-password" type="button" aria-label="Tampilkan kata sandi">
               <span class="material-symbols-outlined text-[18px]">visibility</span>
             </button>
@@ -420,609 +263,335 @@
           <p id="password-hint" class="text-[11px] text-slate-400 mt-1.5">Wajib diisi untuk akun baru.</p>
         </div>
 
-        <!-- Footer Form -->
         <div class="flex items-center justify-end gap-3 pt-2 border-t border-slate-100">
-          <button type="button" id="btn-cancel-modal" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 border border-slate-200 transition-colors">
-            Batal
-          </button>
-          <button type="submit" id="btn-submit-user" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm shadow-blue-200 transition-all active:scale-[0.98]">
-            Simpan Akun
-          </button>
+          <button type="button" id="btn-cancel-modal" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 border border-slate-200 transition-colors">Batal</button>
+          <button type="submit" id="btn-submit-user" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-all active:scale-[0.98]">Simpan Akun</button>
         </div>
       </form>
-
     </div>
   </div>
 </div>
 
-<!-- Modal Ekspor Data -->
+<!-- Modal Ekspor -->
 <div id="modal-export" class="fixed inset-0 z-[100] hidden">
-  <!-- Overlay with blur effect -->
   <div id="modal-export-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"></div>
-
-  <!-- Modal Container -->
   <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none">
-    <div id="modal-export-content" class="bg-white rounded-2xl shadow-2xl max-w-lg w-full border border-slate-100 overflow-hidden flex flex-col transition-all pointer-events-auto transform duration-300 scale-95 opacity-0 translate-y-4">
-
-      <!-- Header Modal -->
-      <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
-        <div class="flex items-center gap-3.5">
-          <div>
-            <h3 class="text-base font-bold text-slate-900 leading-tight">Ekspor Data Pengguna &amp; Inventaris</h3>
-            <p class="text-xs text-slate-500 mt-0.5 leading-normal">Pilih format berkas, rentang tanggal, dan parameter data yang ingin diunduh.</p>
-          </div>
-        </div>
-        <button aria-label="Tutup Modal" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors ml-2" id="btn-close-export" type="button">
-          <span class="material-symbols-outlined text-[20px]">close</span>
-        </button>
-      </div>
-
-      <!-- Content Form Modal Body -->
-      <div class="p-6 space-y-5 max-h-[72vh] overflow-y-auto">
-
-        <!-- Pilihan Format Berkas (Format File) -->
+    <div id="modal-export-content" class="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-slate-100 overflow-hidden flex flex-col transition-all pointer-events-auto transform duration-300 scale-95 opacity-0 translate-y-4">
+      <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2.5">
-            Format Berkas Ekspor
-          </label>
-          <div class="grid grid-cols-3 gap-2.5" id="export-format-group">
-
-            <!-- Option 1: Excel (Selected) -->
-            <label class="export-format-option relative flex flex-col p-3 rounded-xl border-2 border-blue-600 bg-blue-50/40 cursor-pointer shadow-xs transition-all" data-format="xlsx">
-              <input checked="" class="sr-only" name="export_format" type="radio" value="xlsx"/>
-              <div class="flex items-center justify-between mb-2">
-                <div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">
-                  <span class="material-symbols-outlined text-[18px]">table_chart</span>
-                </div>
-              </div>
-              <span class="text-xs font-bold text-slate-900 leading-tight">Microsoft Excel</span>
-              <span class="text-[10px] text-slate-500 mt-0.5">Format .xlsx</span>
-            </label>
-
-            <!-- Option 2: PDF -->
-            <label class="export-format-option relative flex flex-col p-3 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50/70 bg-white cursor-pointer transition-all" data-format="pdf">
-              <input class="sr-only" name="export_format" type="radio" value="pdf"/>
-              <div class="flex items-center justify-between mb-2">
-                <div class="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-xs">
-                  <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
-                </div>
-              </div>
-              <span class="text-xs font-bold text-slate-800 leading-tight">Dokumen PDF</span>
-              <span class="text-[10px] text-slate-400 mt-0.5">Format .pdf</span>
-            </label>
-
-            <!-- Option 3: CSV -->
-            <label class="export-format-option relative flex flex-col p-3 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50/70 bg-white cursor-pointer transition-all" data-format="csv">
-              <input class="sr-only" name="export_format" type="radio" value="csv"/>
-              <div class="flex items-center justify-between mb-2">
-                <div class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-xs">
-                  <span class="material-symbols-outlined text-[18px]">description</span>
-                </div>
-              </div>
-              <span class="text-xs font-bold text-slate-800 leading-tight">File CSV</span>
-              <span class="text-[10px] text-slate-400 mt-0.5">Format .csv</span>
-            </label>
-
-          </div>
+          <h3 class="text-base font-bold text-slate-900 leading-tight">Ekspor Data Pengguna</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Ekspor daftar pengguna yang sedang ditampilkan.</p>
         </div>
-
-        <!-- Cakupan Data -->
+        <button class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors" id="btn-close-export" type="button"><span class="material-symbols-outlined text-[20px]">close</span></button>
+      </div>
+      <div class="p-6 space-y-4">
         <div>
-          <div class="flex items-center justify-between mb-2">
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">
-              Cakupan Data Ekspor
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2.5">Format Berkas</label>
+          <div class="grid grid-cols-2 gap-2.5" id="export-format-group">
+            <label class="export-format-option relative flex flex-col p-3 rounded-xl border-2 border-blue-600 bg-blue-50/40 cursor-pointer transition-all" data-format="csv">
+              <input checked class="sr-only" name="export_format" type="radio" value="csv"/>
+              <span class="text-xs font-bold text-slate-900">CSV</span>
+              <span class="text-[10px] text-slate-500 mt-0.5">Kompatibel Excel</span>
+            </label>
+            <label class="export-format-option relative flex flex-col p-3 rounded-xl border border-slate-200 bg-white cursor-pointer transition-all" data-format="xlsx">
+              <input class="sr-only" name="export_format" type="radio" value="xlsx"/>
+              <span class="text-xs font-bold text-slate-800">Excel (.xlsx)</span>
+              <span class="text-[10px] text-slate-400 mt-0.5">Via CSV kompatibel</span>
             </label>
           </div>
-          <div class="relative">
-
-            <!-- Trigger Input State -->
-            <button class="w-full h-10 pl-3.5 pr-9 rounded-xl bg-white border-2 border-blue-600 text-slate-800 text-xs font-semibold flex items-center justify-between shadow-xs transition-all" id="btn-toggle-export-scope" type="button">
-              <span class="flex items-center gap-2 text-slate-800 truncate">
-                <span class="">Pilih Data Baris Spesifik (Kustom)</span>
-              </span>
-              <span class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-blue-600">
-                <span class="material-symbols-outlined text-[18px]" id="export-scope-arrow">keyboard_arrow_up</span>
-              </span>
-            </button>
-
-            <!-- Dropdown Popover / Multi-select Menu List -->
-            <div class="mt-2 bg-white rounded-xl border border-slate-200 shadow-xl overflow-hidden divide-y divide-slate-100 transition-all duration-150" id="export-scope-dropdown">
-
-              <!-- Search & Quick Action Header -->
-              <div class="p-2.5 bg-slate-50/90 flex items-center justify-between gap-2">
-                <label class="inline-flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer select-none">
-                  <input class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" id="export-select-all" type="checkbox"/>
-                  <span class="">Pilih Semua (348 Data)</span>
-                </label>
-                <button class="text-[11px] font-semibold text-blue-600 hover:text-brand-700 transition-colors" id="export-reset-selection" type="button">
-                  Reset Pilihan
-                </button>
-              </div>
-
-              <!-- Scrollable Checklist Rows -->
-              <div class="max-h-48 overflow-y-auto divide-y divide-slate-100/80 p-1">
-
-                <!-- Item 1 (Selected) -->
-                <label class="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-50/50 hover:bg-blue-50 cursor-pointer transition-colors">
-                  <input checked="" class="export-row-check rounded border-blue-600 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" type="checkbox"/>
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between gap-2">
-                      <p class="text-xs font-bold text-slate-900 truncate">Dr. Ir. Hendra Wijaya, M.T.</p>
-                    </div>
-                    <p class="text-[11px] text-slate-400 font-mono mt-0.5 truncate">198503142010121001 • Teknik Elektro</p>
-                  </div>
-                </label>
-
-                <!-- Item 2 (Selected) -->
-                <label class="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-50/50 hover:bg-blue-50 cursor-pointer transition-colors">
-                  <input checked="" class="export-row-check rounded border-blue-600 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" type="checkbox"/>
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between gap-2">
-                      <p class="text-xs font-bold text-slate-900 truncate">Fathur Rahman</p>
-                    </div>
-                    <p class="text-[11px] text-slate-400 font-mono mt-0.5 truncate">21060120140023 • Fisika Instrumentasi</p>
-                  </div>
-                </label>
-
-                <!-- Item 3 (Selected) -->
-                <label class="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-50/50 hover:bg-blue-50 cursor-pointer transition-colors">
-                  <input checked="" class="export-row-check rounded border-blue-600 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" type="checkbox"/>
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between gap-2">
-                      <p class="text-xs font-bold text-slate-900 truncate">Siti Nurhaliza, S.Si.</p>
-                    </div>
-                    <p class="text-[11px] text-slate-400 font-mono mt-0.5 truncate">199107222019032008 • Lab Biologi Terpadu</p>
-                  </div>
-                </label>
-
-                <!-- Item 4 (Unselected) -->
-                <label class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
-                  <input class="export-row-check rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" type="checkbox"/>
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between gap-2">
-                      <p class="text-xs font-medium text-slate-700 truncate">Bima Satria Wicaksono</p>
-                      <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-600 shrink-0">Suspend</span>
-                    </div>
-                    <p class="text-[11px] text-slate-400 font-mono mt-0.5 truncate">20060119130045 • Teknik Kimia</p>
-                  </div>
-                </label>
-
-                <!-- Item 5 (Unselected) -->
-                <label class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
-                  <input class="export-row-check rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" type="checkbox"/>
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between gap-2">
-                      <p class="text-xs font-medium text-slate-700 truncate">Prof. Dr. Bambang Sudiro</p>
-                      <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-600 shrink-0">Dosen</span>
-                    </div>
-                    <p class="text-[11px] text-slate-400 font-mono mt-0.5 truncate">197011082005011003 • Teknik Mesin</p>
-                  </div>
-                </label>
-
-                <!-- Item 6 (Unselected) -->
-                <label class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
-                  <input class="export-row-check rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" type="checkbox"/>
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between gap-2">
-                      <p class="text-xs font-medium text-slate-700 truncate">Allya Amanda Putri</p>
-                      <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-600 shrink-0">Mahasiswa</span>
-                    </div>
-                    <p class="text-[11px] text-slate-400 font-mono mt-0.5 truncate">21080121120019 • Farmasi Klinis</p>
-                  </div>
-                </label>
-
-              </div>
-
-              <!-- Dropdown Bottom Tip / Note -->
-              <div class="px-3 py-2 bg-slate-50 flex items-center justify-between text-[11px] text-slate-500">
-                <span class="font-mono font-medium text-slate-400">Hal 1 dari 58</span>
-              </div>
-
-            </div>
-          </div>
         </div>
-
+        <p class="text-[11px] text-slate-500">Ekspor mengikuti filter pencarian/role/status yang aktif saat ini.</p>
       </div>
-
-      <!-- Footer Modal Actions -->
-      <div class="px-6 py-4 bg-slate-50/90 border-t border-slate-100 flex items-center justify-end gap-2.5 shrink-0">
-        <button class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-semibold text-xs shadow-2xs transition-colors" id="btn-cancel-export" type="button">
-          Batal
-        </button>
-        <button class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-sm shadow-blue-500/25 flex items-center gap-2 transition-all active:scale-[0.99]" type="button">
-          <span class="material-symbols-outlined text-[16px]">file_download</span>
-          <span class="">Unduh &amp; Ekspor Sekarang</span>
+      <div class="px-6 py-4 bg-slate-50/90 border-t border-slate-100 flex items-center justify-end gap-2.5">
+        <button class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 font-semibold text-xs" id="btn-cancel-export" type="button">Batal</button>
+        <button class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-sm flex items-center gap-2" id="btn-do-export" type="button">
+          <span class="material-symbols-outlined text-[16px]">file_download</span><span>Unduh</span>
         </button>
       </div>
-
     </div>
   </div>
 </div>
 
-<!-- Script Interactivity Modal Tambah User -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  const modal = document.getElementById('modal-tambah-user');
-  const modalOverlay = document.getElementById('modal-overlay');
-  const modalContent = document.getElementById('modal-content');
-  const btnOpenModal = document.getElementById('btn-open-modal');
-  const btnCloseModal = document.getElementById('btn-close-modal');
-  const btnCancelModal = document.getElementById('btn-cancel-modal');
-  const formTambahUser = document.getElementById('form-tambah-user');
-  const submitBtn = document.getElementById('btn-submit-user');
-  const modalTitle = document.getElementById('modal-user-title');
-  const modalSubtitle = document.getElementById('modal-user-subtitle');
-  const passwordInput = document.getElementById('input-password');
-  const passwordHint = document.getElementById('password-hint');
-  const passwordRequiredMark = document.getElementById('password-required-mark');
-  let editingRow = null;
+document.addEventListener('DOMContentLoaded', function () {
+  var modal = document.getElementById('modal-tambah-user');
+  var modalOverlay = document.getElementById('modal-overlay');
+  var modalContent = document.getElementById('modal-content');
+  var form = document.getElementById('form-tambah-user');
+  var btnOpen = document.getElementById('btn-open-modal');
+  var btnClose = document.getElementById('btn-close-modal');
+  var btnCancel = document.getElementById('btn-cancel-modal');
+  var submitBtn = document.getElementById('btn-submit-user');
+  var modalTitle = document.getElementById('modal-user-title');
+  var modalSubtitle = document.getElementById('modal-user-subtitle');
+  var passwordInput = document.getElementById('input-password');
+  var passwordHint = document.getElementById('password-hint');
+  var passwordRequiredMark = document.getElementById('password-required-mark');
+  var editingId = null;
 
-  const wait = function (ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); };
+  function $(id) { return document.getElementById(id); }
+  function val(id, v) { var el = $(id); if (!el) return; if (arguments.length > 1) el.value = v == null ? '' : v; return el.value; }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
   function setMode(mode) {
-    const isEdit = mode === 'edit';
-    if (submitBtn) submitBtn.dataset.mode = isEdit ? 'edit' : 'tambah';
-    if (modalTitle) modalTitle.textContent = isEdit ? 'Ubah Akun Pengguna' : 'Tambah Akun Pengguna';
-    if (modalSubtitle) modalSubtitle.textContent = isEdit
-      ? 'Perbarui informasi kredensial dan hak akses civitas laboratorium'
-      : 'Lengkapi informasi kredensial dan hak akses civitas laboratorium';
-    if (submitBtn) submitBtn.textContent = isEdit ? 'Simpan Perubahan' : 'Simpan Akun';
-    if (passwordInput) {
-      passwordInput.required = !isEdit;
-      passwordInput.value = '';
-      passwordInput.placeholder = isEdit ? 'Kosongkan jika tidak diubah' : 'Minimal 8 karakter';
-    }
-    if (passwordRequiredMark) passwordRequiredMark.classList.toggle('hidden', isEdit);
-    if (passwordHint) passwordHint.textContent = isEdit ? 'Kosongkan jika tidak ingin mengubah kata sandi.' : 'Wajib diisi untuk akun baru.';
+    var isEdit = mode === 'edit';
+    modalTitle.textContent = isEdit ? 'Ubah Akun Pengguna' : 'Tambah Akun Pengguna';
+    modalSubtitle.textContent = isEdit ? 'Perbarui informasi kredensial dan hak akses civitas laboratorium' : 'Lengkapi informasi kredensial dan hak akses civitas laboratorium';
+    submitBtn.textContent = isEdit ? 'Simpan Perubahan' : 'Simpan Akun';
+    submitBtn.dataset.mode = isEdit ? 'edit' : 'tambah';
+    passwordInput.required = !isEdit;
+    passwordInput.placeholder = isEdit ? 'Kosongkan jika tidak diubah' : 'Minimal 8 karakter';
+    passwordInput.value = '';
+    passwordRequiredMark.classList.toggle('hidden', isEdit);
+    passwordHint.textContent = isEdit ? 'Kosongkan jika tidak ingin mengubah kata sandi.' : 'Wajib diisi untuk akun baru (min. 8 karakter).';
   }
 
   function openModal(mode) {
     setMode(mode || 'tambah');
     modal.classList.remove('hidden');
     void modal.offsetWidth;
-    modalContent.classList.remove('scale-95', 'opacity-0', 'translate-y-4');
-    modalContent.classList.add('scale-100', 'opacity-100', 'translate-y-0');
+    modalContent.classList.remove('scale-95','opacity-0','translate-y-4');
+    modalContent.classList.add('scale-100','opacity-100','translate-y-0');
     document.body.style.overflow = 'hidden';
   }
-
   function closeModal() {
-    modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
-    modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
-    setTimeout(() => {
+    modalContent.classList.remove('scale-100','opacity-100','translate-y-0');
+    modalContent.classList.add('scale-95','opacity-0','translate-y-4');
+    setTimeout(function () {
       modal.classList.add('hidden');
       document.body.style.overflow = '';
-      if (formTambahUser) formTambahUser.reset();
-      editingRow = null;
+      form.reset();
+      editingId = null;
       setMode('tambah');
-    }, 300);
+    }, 250);
   }
 
-  function openAddModal() {
-    editingRow = null;
-    if (formTambahUser) formTambahUser.reset();
-    const status = document.getElementById('select-status');
-    if (status) status.value = 'Aktif';
-    openModal('tambah');
-  }
+  btnOpen.addEventListener('click', function () { editingId = null; form.reset(); val('select-status','Aktif'); openModal('tambah'); });
+  btnClose.addEventListener('click', closeModal);
+  btnCancel.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', closeModal);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal(); });
 
-  if (btnOpenModal) btnOpenModal.addEventListener('click', openAddModal);
-  if (btnCloseModal) btnCloseModal.addEventListener('click', closeModal);
-  if (btnCancelModal) btnCancelModal.addEventListener('click', closeModal);
-  if (modalOverlay) modalOverlay.addEventListener('click', closeModal);
-
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-      closeModal();
-    }
+  $('toggle-password').addEventListener('click', function () {
+    var hidden = passwordInput.type === 'password';
+    passwordInput.type = hidden ? 'text' : 'password';
+    this.querySelector('.material-symbols-outlined').textContent = hidden ? 'visibility_off' : 'visibility';
   });
 
-  const togglePassword = document.getElementById('toggle-password');
-  if (togglePassword && passwordInput) {
-    togglePassword.addEventListener('click', function () {
-      const isHidden = passwordInput.type === 'password';
-      passwordInput.type = isHidden ? 'text' : 'password';
-      const icon = togglePassword.querySelector('.material-symbols-outlined');
-      if (icon) icon.textContent = isHidden ? 'visibility_off' : 'visibility';
-    });
-  }
-
-  // =============================================
-  // Modal Ekspor Data
-  // =============================================
-  const exportModal = document.getElementById('modal-export');
-  const exportModalOverlay = document.getElementById('modal-export-overlay');
-  const exportModalContent = document.getElementById('modal-export-content');
-  const btnOpenExport = document.getElementById('btn-open-export');
-  const btnCloseExport = document.getElementById('btn-close-export');
-  const btnCancelExport = document.getElementById('btn-cancel-export');
-
-  function openExportModal() {
-    exportModal.classList.remove('hidden');
-    void exportModalContent.offsetWidth;
-    exportModalContent.classList.remove('scale-95', 'opacity-0', 'translate-y-4');
-    exportModalContent.classList.add('scale-100', 'opacity-100', 'translate-y-0');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeExportModal() {
-    exportModalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
-    exportModalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
-    setTimeout(() => {
-      exportModal.classList.add('hidden');
-      document.body.style.overflow = '';
-    }, 300);
-  }
-
-  if (btnOpenExport) {
-    btnOpenExport.addEventListener('click', function(e) {
-      e.preventDefault();
-      openExportModal();
-    });
-  }
-
-  if (btnCloseExport) btnCloseExport.addEventListener('click', closeExportModal);
-  if (btnCancelExport) btnCancelExport.addEventListener('click', closeExportModal);
-  if (exportModalOverlay) exportModalOverlay.addEventListener('click', closeExportModal);
-
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && exportModal && !exportModal.classList.contains('hidden')) {
-      closeExportModal();
-    }
-  });
-
-  // Format pilihan ekspor (highlight kartu terpilih)
-  const formatOptions = document.querySelectorAll('.export-format-option');
-  formatOptions.forEach(function(option) {
-    const radio = option.querySelector('input[type="radio"]');
-    if (radio) {
-      radio.addEventListener('change', function() {
-        formatOptions.forEach(function(opt) {
-          opt.classList.remove('border-2', 'border-blue-600', 'bg-blue-50/40', 'shadow-xs');
-          opt.classList.add('border', 'border-slate-200', 'bg-white');
-        });
-        option.classList.remove('border', 'border-slate-200', 'bg-white');
-        option.classList.add('border-2', 'border-blue-600', 'bg-blue-50/40', 'shadow-xs');
-      });
-    }
-  });
-
-  // Toggle dropdown cakupan data
-  const btnToggleExportScope = document.getElementById('btn-toggle-export-scope');
-  const exportScopeDropdown = document.getElementById('export-scope-dropdown');
-  const exportScopeArrow = document.getElementById('export-scope-arrow');
-
-  if (btnToggleExportScope && exportScopeDropdown) {
-    btnToggleExportScope.addEventListener('click', function() {
-      const isHidden = exportScopeDropdown.classList.toggle('hidden');
-      if (exportScopeArrow) {
-        exportScopeArrow.textContent = isHidden ? 'keyboard_arrow_down' : 'keyboard_arrow_up';
-      }
-    });
-  }
-
-  // Pilih semua / reset pilihan baris
-  const exportSelectAll = document.getElementById('export-select-all');
-  const exportRowChecks = document.querySelectorAll('.export-row-check');
-  const exportResetSelection = document.getElementById('export-reset-selection');
-
-  if (exportSelectAll) {
-    exportSelectAll.addEventListener('change', function() {
-      exportRowChecks.forEach(function(cb) { cb.checked = exportSelectAll.checked; });
-    });
-  }
-
-  if (exportResetSelection) {
-    exportResetSelection.addEventListener('click', function() {
-      exportRowChecks.forEach(function(cb) { cb.checked = false; });
-      if (exportSelectAll) exportSelectAll.checked = false;
-    });
-  }
-
-  // =============================================
-  // Tabel: edit / hapus
-  // =============================================
-  const textOf = function (el) { return el ? (el.textContent || '').replace(/\s+/g, ' ').trim() : ''; };
-
-  function readUserRow(row) {
-    const cells = row ? row.querySelectorAll('td') : [];
-    const nameCell = cells[2];
-    const spans = nameCell ? nameCell.querySelectorAll('span') : [];
-    const identity = textOf(spans[1]);
-    const parts = identity.split('•').map(function (s) { return s.trim(); });
-    const username = (parts[0] || '').replace(/^@/, '');
-    const email = parts[1] || '';
+  function rowData(row) {
     return {
-      nip: textOf(cells[1]),
-      nama: textOf(spans[0]),
-      username: username,
-      email: email,
-      role: textOf(cells[3]),
-      fakultas: textOf(cells[4]),
-      status: textOf(cells[6])
+      id: row.dataset.id,
+      nama_lengkap: row.dataset.nama || '',
+      username: row.dataset.username || '',
+      email: row.dataset.email || '',
+      nip_nim: row.dataset.nip || '',
+      role: row.dataset.role || 'user',
+      tipe_pengguna: row.dataset.tipe || '',
+      fakultas_unit: row.dataset.fakultas || '',
+      status_akun: row.dataset.status || 'Aktif'
     };
   }
 
-  function statusTone(status) {
+  function fillForm(d) {
+    val('input-user-id', d.id || '');
+    val('input-nama-lengkap', d.nama_lengkap);
+    val('input-nip-nim', d.nip_nim);
+    val('input-username', d.username);
+    val('input-email', d.email);
+    val('select-role', d.role);
+    val('select-status', d.status_akun);
+    val('input-tipe-pengguna', d.tipe_pengguna);
+    val('input-fakultas-unit', d.fakultas_unit);
+  }
+
+  function collectPayload() {
+    return {
+      nama_lengkap: val('input-nama-lengkap').trim(),
+      nip_nim: val('input-nip-nim').trim(),
+      username: val('input-username').trim().replace(/^@+/, ''),
+      email: val('input-email').trim(),
+      role: val('select-role'),
+      status_akun: val('select-status'),
+      tipe_pengguna: val('input-tipe-pengguna').trim(),
+      fakultas_unit: val('input-fakultas-unit').trim(),
+      password: val('input-password')
+    };
+  }
+
+  async function api(url, options) {
+    var res = await fetch(url, Object.assign({ headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } }, options || {}));
+    var data = await res.json().catch(function () { return {}; });
+    if (!res.ok || data.ok === false) throw new Error(data.message || 'Permintaan gagal.');
+    return data;
+  }
+
+  function roleLabel(role) { return role === 'admin' ? 'Admin' : (role === 'petugas' ? 'Petugas' : 'User'); }
+  function statusMeta(status) {
     if (status === 'Aktif') return { text: 'text-emerald-600', dot: 'bg-emerald-500' };
-    if (status === 'Suspend') return { text: 'text-rose-600', dot: 'bg-rose-500' };
     if (status === 'Pending') return { text: 'text-amber-600', dot: 'bg-amber-500' };
-    return { text: 'text-slate-500', dot: 'bg-slate-400' };
+    return { text: 'text-rose-600', dot: 'bg-rose-500' };
+  }
+  function fmtTanggal(iso) {
+    var d = iso ? new Date(iso) : null;
+    if (!d || isNaN(d.getTime())) return { tanggal: '-', jam: '' };
+    return {
+      tanggal: d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),
+      jam: d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB'
+    };
   }
 
-  function setStatusCell(cell, status) {
-    if (!cell) return;
-    const wrap = cell.querySelector('div');
-    if (!wrap) return;
-    const tone = statusTone(status);
-    wrap.className = 'inline-flex items-center gap-2 text-xs font-semibold whitespace-nowrap ' + tone.text;
-    const dot = wrap.querySelector('span:first-child');
-    const label = wrap.querySelector('span:last-child');
-    if (dot) dot.className = 'w-1.5 h-1.5 rounded-full ' + tone.dot;
-    if (label) label.textContent = status || '-';
+  function renderRow(u, idx) {
+    var tgl = fmtTanggal(u.created_at);
+    var sm = statusMeta(u.status_akun);
+    return '<tr class="hover:bg-slate-50/80 transition-colors duration-150 group user-row"' +
+      ' data-id="'+esc(u.id)+'" data-nama="'+esc(u.nama_lengkap)+'" data-username="'+esc(u.username)+'" data-email="'+esc(u.email)+'"' +
+      ' data-nip="'+esc(u.nip_nim)+'" data-role="'+esc(u.role)+'" data-tipe="'+esc(u.tipe_pengguna||'')+'"' +
+      ' data-fakultas="'+esc(u.fakultas_unit||'')+'" data-status="'+esc(u.status_akun)+'">' +
+      '<td class="w-12 px-3 py-3.5 text-center font-mono text-xs text-slate-400 row-no">'+String(idx+1).padStart(2,'0')+'</td>' +
+      '<td class="w-36 px-4 py-3.5 font-mono text-xs font-semibold text-slate-700 whitespace-nowrap">'+esc(u.nip_nim||'-')+'</td>' +
+      '<td class="min-w-[280px] w-[320px] px-4 py-3.5 whitespace-nowrap"><div class="flex flex-col whitespace-nowrap">' +
+        '<span class="font-bold text-slate-900 leading-tight whitespace-nowrap">'+esc(u.nama_lengkap)+'</span>' +
+        '<span class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">@'+esc(u.username)+' • '+esc(u.email)+'</span></div></td>' +
+      '<td class="min-w-[120px] px-4 py-3.5 text-slate-600 font-medium text-xs whitespace-nowrap">'+esc(roleLabel(u.role))+'</td>' +
+      '<td class="min-w-[160px] px-4 py-3.5 text-slate-600 text-xs whitespace-nowrap">'+esc(u.fakultas_unit||'-')+'</td>' +
+      '<td class="py-3.5 px-4 text-xs font-mono text-slate-700 whitespace-nowrap min-w-[140px]"><div class="font-medium">'+esc(tgl.tanggal)+'</div><div class="text-slate-400">'+esc(tgl.jam)+'</div></td>' +
+      '<td class="min-w-[120px] pl-6 pr-3 py-3.5 whitespace-nowrap"><div class="inline-flex items-center gap-2 text-xs font-semibold '+sm.text+'"><span class="w-2 h-2 rounded-full '+sm.dot+' shrink-0"></span><span>'+esc(u.status_akun)+'</span></div></td>' +
+      '<td class="min-w-[90px] w-24 px-4 py-3.5 text-center"><div class="inline-flex items-center justify-center gap-1.5">' +
+        '<button class="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-blue-50 transition-colors btn-edit-user" title="Ubah Akun" type="button"><span class="material-symbols-outlined text-[18px]">edit</span></button>' +
+        '<button class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors btn-delete-user" title="Hapus Akun" type="button"><span class="material-symbols-outlined text-[18px]">delete</span></button>' +
+      '</div></td></tr>';
   }
 
-  function setRowData(row, data) {
-    const cells = row.querySelectorAll('td');
-    const nama = String(data.nama || '').trim();
-    const username = String(data.username || '').replace(/^@/, '').trim();
-    const usernameAt = username ? '@' + username : '';
-    const email = String(data.email || '').trim();
-    const identity = usernameAt + (email ? ' • ' + email : '');
+  function renumber() {
+    document.querySelectorAll('#users-tbody tr.user-row').forEach(function (tr, i) {
+      var no = tr.querySelector('.row-no'); if (no) no.textContent = String(i + 1).padStart(2, '0');
+    });
+  }
 
-    if (cells[1]) cells[1].textContent = data.nip || '-';
-    if (cells[2]) {
-      const spans = cells[2].querySelectorAll('span');
-      if (spans[0]) spans[0].textContent = nama || '-';
-      if (spans[1]) spans[1].textContent = identity || '-';
+  function bindRowActions(scope) {
+    (scope || document).querySelectorAll('.btn-edit-user').forEach(function (btn) {
+      btn.onclick = function () {
+        var row = btn.closest('tr');
+        var d = rowData(row);
+        editingId = d.id;
+        fillForm(d);
+        openModal('edit');
+      };
+    });
+    (scope || document).querySelectorAll('.btn-delete-user').forEach(function (btn) {
+      btn.onclick = function () {
+        var row = btn.closest('tr');
+        var d = rowData(row);
+        window.sipatModal.confirm({
+          title: 'Hapus Akun Pengguna?',
+          subtitle: 'Tindakan ini tidak dapat dibatalkan.',
+          tone: 'danger',
+          message: '<div class="text-sm text-slate-700 space-y-2">' +
+            '<p>Apakah Anda yakin ingin menghapus akun pengguna ini?</p>' +
+            '<div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">' +
+            '<p class="font-semibold text-slate-900">' + esc(d.nama_lengkap) + '</p>' +
+            '<p class="font-mono text-xs text-slate-500">@' + esc(d.username) + ' • ' + esc(d.email) + '</p>' +
+            '<p class="text-xs text-slate-500">' + esc(roleLabel(d.role)) + ' • ' + esc(d.fakultas_unit || '-') + '</p>' +
+            '</div></div>',
+          confirmText: 'Hapus Akun',
+          cancelText: 'Batal',
+          loadingText: 'Menghapus...',
+          onConfirm: async function () {
+            await api('/admin/users/' + encodeURIComponent(d.id) + '/delete', { method: 'POST', body: '{}' });
+            row.remove();
+            renumber();
+            var shown = document.querySelectorAll('#users-tbody tr.user-row').length;
+            var countShown = $('count-shown'); if (countShown) countShown.textContent = shown;
+            var countTotal = $('count-total'); if (countTotal) countTotal.textContent = Math.max(0, (parseInt(countTotal.textContent.replace(/\./g,''),10)||1) - 1).toLocaleString('id-ID');
+            var statTotal = $('stat-total'); if (statTotal) statTotal.textContent = countTotal.textContent;
+            window.sipatModal.toast('Akun ' + d.nama_lengkap + ' berhasil dihapus.', 'success');
+            if (!shown) location.reload();
+          }
+        });
+      };
+    });
+  }
+
+  bindRowActions(document);
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var payload = collectPayload();
+    if (!payload.nama_lengkap || !payload.nip_nim || !payload.username || !payload.email || !payload.role || !payload.fakultas_unit) {
+      window.sipatModal.alert({ title: 'Data belum lengkap', message: 'Nama, NIP/NIM, username, email, role, dan fakultas/unit wajib diisi.', tone: 'warning' });
+      return;
     }
-    if (cells[3]) cells[3].textContent = data.role || '-';
-    if (cells[4]) cells[4].textContent = data.fakultas || '-';
-    setStatusCell(cells[6], data.status || 'Aktif');
+    var isEdit = !!editingId;
+    if (!isEdit && payload.password.length < 8) {
+      window.sipatModal.alert({ title: 'Kata sandi tidak valid', message: 'Kata sandi minimal 8 karakter untuk akun baru.', tone: 'warning' });
+      return;
+    }
+    if (isEdit && payload.password && payload.password.length < 8) {
+      window.sipatModal.alert({ title: 'Kata sandi tidak valid', message: 'Jika diisi, kata sandi minimal 8 karakter.', tone: 'warning' });
+      return;
+    }
+    var original = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Menyimpan...';
+    try {
+      var url = isEdit ? '/admin/users/' + encodeURIComponent(editingId) : '/admin/users';
+      var data = await api(url, { method: 'POST', body: JSON.stringify(payload) });
+      var u = data.data || data.item || payload;
+      if (isEdit) {
+        var row = document.querySelector('tr.user-row[data-id="' + CSS.escape(String(editingId)) + '"]');
+        if (row) { row.outerHTML = renderRow(u, 0); renumber(); bindRowActions(document.getElementById('users-tbody')); }
+        window.sipatModal.toast('Akun ' + (u.nama_lengkap || payload.nama_lengkap) + ' berhasil diperbarui.', 'success');
+      } else {
+        window.sipatModal.toast('Akun ' + (u.nama_lengkap || payload.nama_lengkap) + ' berhasil ditambahkan.', 'success');
+        closeModal();
+        location.reload();
+        return;
+      }
+      closeModal();
+    } catch (err) {
+      window.sipatModal.alert({ title: 'Gagal menyimpan akun', message: err.message || 'Terjadi kesalahan.', tone: 'danger' });
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = original;
+    }
+  });
 
-    row.querySelectorAll('button[title="Ubah Akun"], button[title="Edit"]').forEach(function (button) {
-      button.dataset.nama = nama;
-      button.dataset.username = usernameAt;
-      button.dataset.role = data.role || '';
-    });
-    row.querySelectorAll('button[title="Hapus Akun"], button[title="Hapus"]').forEach(function (button) {
-      button.dataset.nama = nama;
-      button.dataset.username = usernameAt;
-    });
-  }
+  // Export modal
+  var exportModal = $('modal-export');
+  var exportOverlay = $('modal-export-overlay');
+  var exportContent = $('modal-export-content');
+  function openExport() { exportModal.classList.remove('hidden'); void exportContent.offsetWidth; exportContent.classList.remove('scale-95','opacity-0','translate-y-4'); exportContent.classList.add('scale-100','opacity-100','translate-y-0'); document.body.style.overflow='hidden'; }
+  function closeExport() { exportContent.classList.remove('scale-100','opacity-100','translate-y-0'); exportContent.classList.add('scale-95','opacity-0','translate-y-4'); setTimeout(function(){ exportModal.classList.add('hidden'); document.body.style.overflow=''; }, 250); }
+  $('btn-open-export').addEventListener('click', openExport);
+  $('btn-close-export').addEventListener('click', closeExport);
+  $('btn-cancel-export').addEventListener('click', closeExport);
+  exportOverlay.addEventListener('click', closeExport);
 
-  function setField(id, value) {
-    const el = document.getElementById(id);
-    if (el) el.value = value == null ? '' : value;
-  }
-
-  function openEditModal(row) {
-    if (!row) return;
-    editingRow = row;
-    const data = readUserRow(row);
-    setField('input-user-id', row.dataset.userId || '');
-    setField('input-nama-lengkap', data.nama);
-    setField('input-nip-nim', data.nip);
-    setField('input-username', data.username);
-    setField('input-email', data.email);
-    setField('select-role', data.role);
-    setField('select-status', data.status || 'Aktif');
-    setField('input-fakultas-unit', data.fakultas);
-    openModal('edit');
-  }
-
-  document.querySelectorAll('button[title="Edit"], button[title="Ubah Akun"]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      openEditModal(btn.closest('tr'));
+  document.querySelectorAll('.export-format-option').forEach(function (opt) {
+    opt.querySelector('input').addEventListener('change', function () {
+      document.querySelectorAll('.export-format-option').forEach(function (o) { o.classList.remove('border-2','border-blue-600','bg-blue-50/40'); o.classList.add('border','border-slate-200','bg-white'); });
+      opt.classList.remove('border','border-slate-200','bg-white'); opt.classList.add('border-2','border-blue-600','bg-blue-50/40');
     });
   });
 
-  if (formTambahUser) {
-    formTambahUser.addEventListener('submit', async function (e) {
-      e.preventDefault();
-      const mode = submitBtn ? (submitBtn.dataset.mode || 'tambah') : 'tambah';
-      const nama = (document.getElementById('input-nama-lengkap') || {}).value || '';
-      const nip = (document.getElementById('input-nip-nim') || {}).value || '';
-      const username = ((document.getElementById('input-username') || {}).value || '').replace(/^@/, '').trim();
-      const email = (document.getElementById('input-email') || {}).value || '';
-      const role = (document.getElementById('select-role') || {}).value || '';
-      const status = (document.getElementById('select-status') || {}).value || 'Aktif';
-      const fakultas = (document.getElementById('input-fakultas-unit') || {}).value || '';
-      const password = (document.getElementById('input-password') || {}).value || '';
-
-      if (!nama.trim() || !nip.trim() || !username || !email.trim() || !role || !fakultas.trim()) {
-        window.sipatModal.alert({
-          title: 'Data belum lengkap',
-          subtitle: 'Periksa kembali isian formulir.',
-          message: 'Nama, NIP/NIM, username, email, role, dan fakultas/unit wajib diisi.',
-          tone: 'warning'
-        });
-        return;
-      }
-      if (mode === 'tambah' && !password.trim()) {
-        window.sipatModal.alert({
-          title: 'Kata sandi wajib diisi',
-          subtitle: 'Akun baru memerlukan kata sandi.',
-          message: 'Isi kata sandi minimal 8 karakter untuk akun baru.',
-          tone: 'warning'
-        });
-        return;
-      }
-
-      const originalText = submitBtn ? submitBtn.textContent : '';
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = mode === 'edit' ? 'Menyimpan...' : 'Menyimpan...';
-      }
-
-      try {
-        await wait(550);
-        if (mode === 'edit') {
-          if (!editingRow || !editingRow.parentNode) throw new Error('Data pengguna tidak ditemukan atau sudah dihapus.');
-          setRowData(editingRow, { nip: nip, nama: nama, username: username, email: email, role: role, fakultas: fakultas, status: status });
-          window.sipatModal.toast('Data akun ' + nama + ' berhasil diperbarui.', 'success');
-        } else {
-          window.sipatModal.toast('Akun ' + nama + ' berhasil ditambahkan.', 'success');
-          // Optional: prepend row; for now keep simple and close modal.
-        }
-        closeModal();
-      } catch (err) {
-        window.sipatModal.alert({
-          title: 'Gagal menyimpan akun',
-          subtitle: 'Periksa data lalu coba lagi.',
-          message: (err && err.message) ? err.message : 'Terjadi kesalahan saat menyimpan data akun.',
-          tone: 'danger'
-        });
-      } finally {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = originalText || (mode === 'edit' ? 'Simpan Perubahan' : 'Simpan Akun');
-        }
-      }
+  $('btn-do-export').addEventListener('click', function () {
+    var rows = Array.prototype.slice.call(document.querySelectorAll('#users-tbody tr.user-row'));
+    var csv = ['NIP/NIM,Nama Lengkap,Username,Email,Role,Tipe Pengguna,Fakultas/Unit,Status,Tanggal Dibuat'];
+    rows.forEach(function (r) {
+      var d = rowData(r);
+      var tds = r.querySelectorAll('td');
+      var tgl = tds[5] ? tds[5].innerText.replace(/\n/g,' ').trim() : '';
+      csv.push([d.nip_nim,d.nama_lengkap,d.username,d.email,roleLabel(d.role),d.tipe_pengguna,d.fakultas_unit,d.status_akun,tgl].map(function(v){
+        v = String(v==null?'':v).replace(/"/g,'""'); return /[",\n]/.test(v) ? '"'+v+'"' : v;
+      }).join(','));
     });
-  }
-
-  function renumberRows() {
-    const tbody = document.querySelector('table tbody');
-    if (!tbody) return;
-    Array.prototype.forEach.call(tbody.querySelectorAll('tr'), function (row, index) {
-      const first = row.querySelector('td');
-      if (first) first.textContent = String(index + 1).padStart(2, '0');
-    });
-  }
-
-  document.querySelectorAll('button[title="Hapus Akun"], button[title="Hapus"]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      const row = btn.closest('tr');
-      const data = readUserRow(row);
-      const identity = '@' + String(data.username || '').replace(/^@/, '') + (data.email ? ' • ' + data.email : '');
-
-      window.sipatModal.confirm({
-        title: 'Hapus Akun Pengguna?',
-        subtitle: 'Tindakan ini tidak dapat dibatalkan.',
-        tone: 'danger',
-        message: '<div class="text-sm text-slate-700 space-y-2">' +
-          '<p>Apakah Anda yakin ingin menghapus akun pengguna ini dari sistem?</p>' +
-          '<div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">' +
-          '<p class="font-semibold text-slate-900">' + window.sipatModal.escape(data.nama || '-') + '</p>' +
-          '<p class="font-mono text-xs text-slate-500">' + window.sipatModal.escape(identity) + '</p>' +
-          '<p class="text-xs text-slate-500">' + window.sipatModal.escape(data.role || '-') + ' • ' + window.sipatModal.escape(data.fakultas || '-') + '</p>' +
-          '</div></div>',
-        confirmText: 'Hapus Akun',
-        cancelText: 'Batal',
-        loadingText: 'Menghapus...',
-        onConfirm: async function () {
-          await wait(550);
-          if (!row || !row.parentNode) throw new Error('Data pengguna tidak ditemukan atau sudah dihapus.');
-          row.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
-          row.style.opacity = '0';
-          row.style.transform = 'translateY(-4px)';
-          await wait(180);
-          row.remove();
-          renumberRows();
-          window.sipatModal.toast('Akun ' + (data.nama || identity) + ' berhasil dihapus.', 'success');
-        }
-      });
-    });
+    var blob = new Blob(['\uFEFF' + csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'users-export-' + new Date().toISOString().slice(0,10) + '.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    window.sipatModal.toast('Data pengguna berhasil diekspor.', 'success');
+    closeExport();
   });
 });
 </script>

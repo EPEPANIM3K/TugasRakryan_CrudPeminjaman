@@ -1,4 +1,5 @@
 const Peminjaman = require('../models/Peminjaman');
+const User = require('../models/User');
 const LogAktivitas = require('../models/LogAktivitas');
 const { formatTanggal, formatTanggalSaja, statusMeta } = require('../utils/format');
 
@@ -115,7 +116,8 @@ exports.removePeminjaman = async (req, res) => {
   }
 };
 
-exports.aktivitasPage = async (req, res) => {  try {
+exports.aktivitasPage = async (req, res) => {
+  try {
     const filters = {
       search: String(req.query.search || '').trim(),
       role: String(req.query.role || '').trim(),

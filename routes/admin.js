@@ -5,6 +5,7 @@ const multer = require('multer');
 const router = express.Router();
 const AlatController = require('../controllers/alatController');
 const AdminController = require('../controllers/adminController');
+const UsersController = require('../controllers/usersController');
 
 const uploadDir = path.join(__dirname, '..', 'public', 'images', 'alat');
 fs.mkdirSync(uploadDir, { recursive: true });
@@ -29,6 +30,12 @@ router.post('/alat/:id/delete', AlatController.remove);
 router.get('/peminjaman', AdminController.peminjamanPage);
 router.post('/peminjaman/:id/status', AdminController.updateStatus);
 router.post('/peminjaman/:id/delete', AdminController.removePeminjaman);
+
+router.get('/users', UsersController.usersPage);
+router.get('/users/list', UsersController.getUsers);
+router.post('/users', UsersController.createUser);
+router.post('/users/:id', UsersController.updateUser);
+router.post('/users/:id/delete', UsersController.removeUser);
 
 router.get('/aktivitas', AdminController.aktivitasPage);
 router.post('/aktivitas/:id/delete', AdminController.removeAktivitas);

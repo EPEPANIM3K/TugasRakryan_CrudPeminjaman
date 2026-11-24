@@ -52,12 +52,6 @@ app.get('/admin', (req, res) => {
     });
 });
 
-app.get('/admin/users', (req, res) => {
-    res.render('pages/admin/users', {
-        pageTitle: 'Kelola Pengguna'
-    });
-});
-
 // Route peminjaman menggunakan router admin
 const adminRoutes = require('./routes/admin');
 app.use('/admin', adminRoutes);
